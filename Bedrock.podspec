@@ -9,16 +9,21 @@ Pod::Spec.new do |s|
   s.author    = { 'nickbolton' => 'nick@deucent.com' }             
   s.source    = { :git => 'https://github.com/nickbolton/Bedrock.git',
                   :branch => 'master'}
-  s.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac/**/*.{h,m}'
-  s.ios.source_files  = 'Shared/**/*.{h,m}', 'iOS-Core/**/*.{h,m}'
   s.prefix_header_file = 'Shared/Bedrock.h'
   s.license = 'MIT'
 
+  s.subspec 'Core' do |c|
+    c.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac/**/*.{h,m}'
+    c.ios.source_files  = 'Shared/**/*.{h,m}', 'iOS-Core/**/*.{h,m}'
+  end
+
   s.subspec 'AutoLayout' do |al|
+    al.dependency 'Bedrock/Core'
     al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
   end
 
   s.subspec 'Emitter' do |em|
+    em.dependency 'Bedrock/Core'
     em.ios.source_files  = 'Emitter/**/*.{h,m}'
     em.ios.resources = 'Emitter/EmitterList/PBListCell.xib', 'Emitter/EmitterList/PBTitleCell.xib'
   end
