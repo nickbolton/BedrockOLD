@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
                   :branch => 'master'}
   s.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac/**/*.{h,m}'
   s.ios.source_files  = 'Shared/**/*.{h,m}', 'iOS-Core/**/*.{h,m}'
-  s.prefix_header_file = 'Bedrock.h'
+  s.prefix_header_file = 'Shared/Bedrock.h'
   s.license = 'MIT'
 
   s.subspec 'AutoLayout' do |al|
