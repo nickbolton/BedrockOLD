@@ -1,13 +1,13 @@
 //
 //  PBDateRange.m
-//  PBFoundation
+//  PBBedrock
 //
 //  Created by Nick Bolton on 3/24/12.
 //  Copyright (c) 2012 Pixelbleed LLC. All rights reserved.
 //
 
 #import "PBDateRange.h"
-#import "NSDate+PBFoundation.h"
+#import "NSDate+PBBedrock.h"
 
 @interface PBDateRange()
 

@@ -10,8 +10,17 @@ Pod::Spec.new do |s|
   s.source    = { :git => 'https://github.com/nickbolton/PBBedrock.git',
                   :branch => 'master'}
   s.osx.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'Mac', 'Mac/**/*.{h,m}'
-  s.ios.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'iOS', 'iOS/**/*.{h,m}'
+  s.ios.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'iOS-Core', 'iOS-Core/**/*.{h,m}'
   s.ios.resources = 'iOS/ListView/PBListCell.xib', 'iOS/ListView/PBTitleCell.xib'
   s.prefix_header_file = 'PBBedrock.h'
   s.license = 'MIT'
+
+  s.subspec 'AutoLayout' do |al|
+    al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
+  end
+
+  s.subspec 'PBEmitter' do |em|
+    em.ios.source_files  = 'PBEmitter/**/*.{h,m}'
+    em.ios.resources = 'PBEmitter/EmitterList/PBListCell.xib', 'PBEmitter/EmitterList/PBTitleCell.xib'
+  end
 end
