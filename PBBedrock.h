@@ -43,30 +43,6 @@
 #import "UINavigationController+PBFoundation.h"
 #else
 
-#define PB_WINDOW_ANIMATION_DURATION 0.25f
-#define PB_EASE_IN ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn])
-#define PB_EASE_OUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut])
-#define PB_EASE_INOUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut])
-
-#import "NSColor+PBFoundation.h"
-#import "NSAlert+PBFoundation.h"
-#import "NSImage+PBFoundation.h"
-#import "NSAppleScript+PBFoundation.h"
-#import "NSAttributedString+PBFoundation.h"
-#import "NSTask+PBFoundation.h"
-#import "NSWindow+PBFoundation.h"
-#import "NSView+PBFoundation.h"
-#import "NSButton+PBFoundation.h"
-#import "NSFileManager+PBFoundation.h"
-#import "NSUserNotification+PBFoundation.h"
-#import "NSEvent+PBFoundation.h"
-#import "NSTextField+PBFoundation.h"
-#import "PBMainWindow.h"
-#import "PBAnimator.h"
-#import "PBClickableLabel.h"
-#import "PBClickableView.h"
-#import "PBApplication.h"
-
 #endif
 
 #define PBLoc(key) NSLocalizedString(key, nil)
