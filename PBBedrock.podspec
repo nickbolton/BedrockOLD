@@ -12,6 +12,6 @@ Pod::Spec.new do |s|
   s.osx.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'Mac', 'Mac/**/*.{h,m}'
   s.ios.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'iOS', 'iOS/**/*.{h,m}'
   s.ios.resources = 'iOS/ListView/PBListCell.xib', 'iOS/ListView/PBTitleCell.xib'
-  s.prefix_header_file = 'PBFoundation.h'
+  s.prefix_header_file = 'PBBedrock.h'
   s.license = 'MIT'
 end
