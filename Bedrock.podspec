@@ -9,8 +9,8 @@ Pod::Spec.new do |s|
   s.author    = { 'nickbolton' => 'nick@deucent.com' }             
   s.source    = { :git => 'https://github.com/nickbolton/Bedrock.git',
                   :branch => 'master'}
-  s.osx.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'Mac', 'Mac/**/*.{h,m}'
-  s.ios.source_files  = '*.{h,m}', 'Shared', 'Shared/**/*.{h,m}', 'iOS-Core', 'iOS-Core/**/*.{h,m}'
+  s.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac/**/*.{h,m}'
+  s.ios.source_files  = 'Shared/**/*.{h,m}', 'iOS-Core/**/*.{h,m}'
   s.prefix_header_file = 'Bedrock.h'
   s.license = 'MIT'
 
