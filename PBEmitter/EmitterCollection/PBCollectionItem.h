@@ -1,6 +1,6 @@
 //
 //  PBCollectionItem.h
-//  PBBedrock
+//  Bedrock
 //
 //  Created by Nick Bolton on 11/12/13.
 //  Copyright (c) 2013 Pixelbleed. All rights reserved.

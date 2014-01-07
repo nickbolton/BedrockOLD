@@ -1,6 +1,6 @@
 //
 //  PBManagedObjectContextManager.m
-//  PBBedrock
+//  Bedrock
 //
 //  Created by Nick Bolton on 12/22/12.
 //  Copyright 2012 Pixelbleed. All rights reserved.

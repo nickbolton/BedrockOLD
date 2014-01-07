@@ -1,4 +1,4 @@
-PBBedrock
+Bedrock
 ============
 
-PBBedrock is a collection of useful Mac and iOS utilities and view subclasses.
+Bedrock is a collection of useful Mac and iOS utilities and view subclasses.

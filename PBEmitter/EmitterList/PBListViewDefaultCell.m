@@ -8,7 +8,7 @@
 
 #import "PBListViewDefaultCell.h"
 #import "PBListItem.h"
-#import "NSLayoutConstraint+PBBedrock.h"
+#import "NSLayoutConstraint+Bedrock.h"
 #import "PBListViewController.h"
 
 @interface PBListViewDefaultCell()
