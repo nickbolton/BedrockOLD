@@ -1,6 +1,6 @@
 //
 //  PBListViewControllerItem.h
-//  PBEmitterViewControllerListExample
+//  Bedrock
 //
 //  Created by Nick Bolton on 1/6/14.
 //  Copyright (c) 2014 Pixelbleed. All rights reserved.
@@ -12,20 +12,15 @@
 
 @optional
 - (CGFloat)listViewItemHeight;
-- (void)setListViewItemHeight;
+- (void)setListViewItemHeight:(CGFloat)height;
 
 @end
 
 @interface PBListViewControllerItem : PBListItem
 
-@property (nonatomic, readonly) UIViewController <PBListViewControllerItemProtocol> *viewController;
+@property (nonatomic, readonly) UIViewController <PBListViewControllerItemProtocol> *contentViewController;
 
-+ (instancetype)customNibItemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
-                                         cellID:(NSString *)cellID
-                                        cellNib:(UINib *)cellNib;
-
-+ (instancetype)customClassItemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
-                                           cellID:(NSString *)cellID
-                                        cellClass:(Class)cellClass;
++ (instancetype)itemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
+                                cellID:(NSString *)cellID;
 
 @end

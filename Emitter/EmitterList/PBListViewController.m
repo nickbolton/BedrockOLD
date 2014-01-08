@@ -10,6 +10,7 @@
 #import "PBListItem.h"
 #import "PBListCell.h"
 #import "PBTitleCell.h"
+#import "PBSectionItem.h"
 
 NSString * const kPBListCellID = @"default-cell-id";
 NSString * const kPBListSpacerCellID = @"spacer-cell-id";
@@ -23,9 +24,7 @@ static NSInteger const kPBListCheckedTag = 103;
 static NSInteger const kPBListDefaultTag = 105;
 
 @interface PBListViewController () <UITableViewDataSource, UITableViewDelegate> {
-
-    BOOL _sectioned;
-    BOOL _createTable;
+    BOOL _viewDidLoadReload;
 }
 
 @property (nonatomic, readwrite) NSArray *dataSource;
@@ -71,7 +70,8 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)commonInit {
     self.reloadDataOnViewLoad = YES;
-    _createTable = YES;
+    [self createTableViewIfNecessary];
+    [self reloadDataSource];
 }
 
 - (void)dealloc {
@@ -193,7 +193,6 @@ static NSInteger const kPBListDefaultTag = 105;
         self.view.backgroundColor = [UIColor clearColor];
     }
 
-    [self createTableViewIfNecessary];
     [self setupNavigationBar];
     [self setupNotifications];
     [self setupTableView];
@@ -205,6 +204,7 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 
     if (self.reloadDataOnViewLoad) {
+        _viewDidLoadReload = YES;
         [self reloadData];
     }
 }
@@ -222,51 +222,50 @@ static NSInteger const kPBListDefaultTag = 105;
 #pragma mark - Getters and Setters
 
 - (void)setDataSource:(NSArray *)dataSource {
-    _dataSource = dataSource;
-    _sectioned = [dataSource.firstObject isKindOfClass:[NSArray class]];
 
-    NSMutableArray *selectedIndexes = [NSMutableArray array];
+    if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]] == NO) {
 
-    if (_sectioned) {
+        PBSectionItem *groupItem =
+        [PBSectionItem
+         sectionItemWithHeaderTitle:nil
+         footerTitle:nil
+         items:dataSource];
 
-        NSInteger section = 0;
-
-        for (NSArray *rowArray in self.dataSource) {
-
-            NSInteger row = 0;
-
-            for (PBListItem *item in rowArray) {
-
-                if (item.isSelected) {
-
-                    NSIndexPath *indexPath =
-                    [NSIndexPath indexPathForRow:row inSection:section];
-
-                    [selectedIndexes addObject:indexPath];
-                }
-
-                row++;
-            }
-
-            section++;
-        }
+        _dataSource = @[groupItem];
 
     } else {
 
+        _dataSource = dataSource;
+    }
+
+    NSMutableArray *selectedIndexes = [NSMutableArray array];
+
+    NSInteger section = 0;
+
+    for (PBSectionItem *sectionItem in self.dataSource) {
+
+        NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+                 @"dataSource not a PBGroupItem class");
+
         NSInteger row = 0;
 
-        for (PBListItem *item in self.dataSource) {
+        for (PBListItem *item in sectionItem.items) {
+
+            NSAssert([item isKindOfClass:[PBListItem class]],
+                     @"section item not a PBListItem class");
 
             if (item.isSelected) {
 
                 NSIndexPath *indexPath =
-                [NSIndexPath indexPathForRow:row inSection:0];
+                [NSIndexPath indexPathForRow:row inSection:section];
 
                 [selectedIndexes addObject:indexPath];
             }
 
             row++;
         }
+
+        section++;
     }
 
     self.selectedRowIndexes = selectedIndexes;
@@ -289,10 +288,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
     for (PBListItem *item in items) {
 
-        NSArray *rowArray = [self rowArrayAtSection:section];
+        PBSectionItem *sectionItem = [self sectionItemAtSection:section];
 
         NSInteger index =
-        [rowArray indexOfObject:item];
+        [sectionItem.items indexOfObject:item];
 
         NSIndexPath *indexPath =
         [NSIndexPath indexPathForRow:index inSection:section];
@@ -310,10 +309,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
     for (PBListItem *item in items) {
 
-        NSArray *rowArray = [self rowArrayAtSection:section];
+        PBSectionItem *sectionItem = [self sectionItemAtSection:section];
 
         NSInteger index =
-        [rowArray indexOfObject:item];
+        [sectionItem.items indexOfObject:item];
 
         NSIndexPath *indexPath =
         [NSIndexPath indexPathForRow:index inSection:section];
@@ -330,7 +329,9 @@ static NSInteger const kPBListDefaultTag = 105;
 
     NSMutableArray *items = [NSMutableArray array];
 
-    for (PBListItem *item in [self rowArrayAtSection:section]) {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+
+    for (PBListItem *item in sectionItem.items) {
 
         if (item != targetItem) {
             [items addObject:item];
@@ -340,32 +341,25 @@ static NSInteger const kPBListDefaultTag = 105;
     [self deselectItems:items inSection:section];
 }
 
-- (NSArray *)rowArrayAtSection:(NSInteger)section {
-
-    if (_sectioned) {
-
-        if (section < self.dataSource.count) {
-            return self.dataSource[section];
-        }
-
-        return nil;
+- (PBSectionItem *)sectionItemAtSection:(NSInteger)section {
+    if (section < self.dataSource.count) {
+        return self.dataSource[section];
     }
-
-    return self.dataSource;
+    return nil;
 }
 
 - (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
-
-    NSArray *rowArray = [self rowArrayAtSection:indexPath.section];
-    return [self itemAtRow:indexPath.row inRowArray:rowArray];
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+    return [self itemAtRow:indexPath.row inSectionItem:sectionItem];
 }
 
-- (PBListItem *)itemAtRow:(NSInteger)row inRowArray:(NSArray *)rowArray {
+- (PBListItem *)itemAtRow:(NSInteger)row
+            inSectionItem:(PBSectionItem *)sectionItem {
 
     PBListItem *item = nil;
 
-    if (row < rowArray.count) {
-        item = rowArray[row];
+    if (row < sectionItem.items.count) {
+        item = sectionItem.items[row];
 
         NSAssert([item isKindOfClass:[PBListItem class]],
                  @"item not a PBListItem");
@@ -399,21 +393,14 @@ static NSInteger const kPBListDefaultTag = 105;
         self.dataSource = [self buildDataSource];
     }
 
-    if (_sectioned) {
-
-        for (NSArray *section in self.dataSource) {
-            [self reloadDataSourceSection:section];
-        }
-
-    } else {
-
-        [self reloadDataSourceSection:self.dataSource];
+    for (PBSectionItem *sectionItem in self.dataSource) {
+        [self reloadDataSourceSectionItem:sectionItem];
     }
 }
 
-- (void)reloadDataSourceSection:(NSArray *)sectionArray {
+- (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem {
 
-    for (PBListItem *item in sectionArray) {
+    for (PBListItem *item in sectionItem.items) {
 
         if (item.itemType == PBItemTypeCustom) {
 
@@ -456,17 +443,14 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)reloadData {
 
-    [self reloadDataSource];
+    if (_viewDidLoadReload == NO) {
+        [self reloadDataSource];
+    }
 
-    if (_sectioned) {
+    _viewDidLoadReload = NO;
 
-        for (NSArray *section in self.dataSource) {
-            [self clearSectionConfigured:section];
-        }
-
-    } else {
-
-        [self clearSectionConfigured:self.dataSource];
+    for (PBSectionItem *sectionItem in self.dataSource) {
+        [self clearSectionConfigured:sectionItem];
     }
 
     [self.tableView reloadData];
@@ -483,60 +467,21 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)setSelectionDisabled:(BOOL)selectionDisabled
-                 forItemIndexes:(NSArray *)itemIndexes {
+              forItemIndexes:(NSArray *)itemIndexes {
 
     for (NSIndexPath *indexPath in itemIndexes) {
 
-        NSArray *rowArray = [self rowArrayAtSection:indexPath.section];
-
-        if (indexPath.row < rowArray.count) {
-            PBListItem *item = rowArray[indexPath.row];
-            item.selectionDisabled = selectionDisabled;
-        }
+        PBListItem *item = [self itemAtIndexPath:indexPath];
+        item.selectionDisabled = selectionDisabled;
     }
 }
 
-- (void)clearSectionConfigured:(NSArray *)sectionArray {
+- (void)clearSectionConfigured:(PBSectionItem *)sectionItem {
 
-    for (PBListItem *item in sectionArray) {
+    for (PBListItem *item in sectionItem.items) {
         item.itemConfigured = NO;
     }
 }
-
-//- (void)addSeparatorToCell:(UITableViewCell *)cell
-//                      item:(PBListItem *)item {
-//
-//    UIView *separator = [cell viewWithTag:kPBListSeparatorTag];
-//
-//    if (separator == nil) {
-//        separator = [[UIView alloc] init];
-//        separator.backgroundColor = item.separatorColor;
-//        separator.tag = kPBListSeparatorTag;
-//        [cell addSubview:separator];
-//    }
-//
-//    CGFloat scale = [[UIScreen mainScreen] scale];
-//
-//    CGFloat height = 1.0f / scale;
-//
-//    CGFloat width = 0.0f;
-//
-//    if (CGRectGetWidth(self.tableView.frame) > 0) {
-//        width =
-//        CGRectGetWidth(self.tableView.frame) -
-//        item.separatorInsets.left -
-//        item.separatorInsets.right;
-//    }
-//
-//    CGRect frame =
-//    CGRectMake(item.separatorInsets.left,
-//               item.rowHeight-height,
-//               width,
-//               height);
-//
-//    separator.frame = frame;
-//    separator.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//}
 
 - (void)configureSpacerCell:(UITableViewCell *)cell
                    withItem:(PBListItem *)item {
@@ -695,17 +640,12 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    NSArray *rowArray = [self rowArrayAtSection:section];
-    return rowArray.count;
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.items.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
-    if (_sectioned) {
-        return self.dataSource.count;
-    }
-
-    return 1;
+    return self.dataSource.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -814,7 +754,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
         NSInteger selectionCount = 0;
 
-        for (PBListItem *item in [self rowArrayAtSection:indexPath.section]) {
+        PBSectionItem *sectionItem =
+        [self sectionItemAtSection:indexPath.section];
+
+        for (PBListItem *item in sectionItem.items) {
 
             if (item.isSelected) {
                 selectionCount++;
@@ -835,7 +778,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
         NSInteger selectionCount = 0;
 
-        for (PBListItem *item in [self rowArrayAtSection:indexPath.section]) {
+        PBSectionItem *sectionItem =
+        [self sectionItemAtSection:indexPath.section];
+
+        for (PBListItem *item in sectionItem.items) {
 
             if (item.isSelected) {
                 selectionCount++;
@@ -889,6 +835,16 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 
     return indexPath;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.headerTitle;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.footerTitle;
 }
 
 - (void)tableView:(UITableView *)tableView

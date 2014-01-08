@@ -37,7 +37,7 @@
         self.backgroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
         self.backgroundView.alpha = 0.0;
         self.backgroundColor = [UIColor clearColor];
-        [self.contentView addSubview:self.backgroundImageView];
+        [self.contentView insertSubview:self.backgroundImageView atIndex:0];
         [NSLayoutConstraint expandToSuperview:self.backgroundImageView];
     }
 

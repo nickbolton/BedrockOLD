@@ -26,6 +26,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = [NSString stringWithFormat:@"Detail %ld", self.navigationController.viewControllers.count];
     self.tableView.scrollEnabled = NO;
+    self.tableView.backgroundColor = [UIColor yellowColor];
 }
 
 - (void)didReceiveMemoryWarning {

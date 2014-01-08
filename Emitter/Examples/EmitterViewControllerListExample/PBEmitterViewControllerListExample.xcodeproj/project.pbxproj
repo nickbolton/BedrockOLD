@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BBB5A411DD6C43A7B5CF7745 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA131FE6127F4F17A12B0F71 /* libPods.a */; };
 		FE2A4787187B6F0B007A4178 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A4786187B6F0B007A4178 /* Foundation.framework */; };
 		FE2A4789187B6F0B007A4178 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A4788187B6F0B007A4178 /* CoreGraphics.framework */; };
 		FE2A478B187B6F0B007A4178 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A478A187B6F0B007A4178 /* UIKit.framework */; };
@@ -24,6 +23,42 @@
 		FE2A47E6187B7215007A4178 /* PBSelectionListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47E5187B7215007A4178 /* PBSelectionListViewController.m */; };
 		FE2A47EF187B874B007A4178 /* PBDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47EE187B874B007A4178 /* PBDetailViewController.m */; };
 		FE2A47F2187B8D35007A4178 /* PBGrowingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47F1187B8D35007A4178 /* PBGrowingViewController.m */; };
+		FE40426D187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */; };
+		FE40426E187CA0B70028C249 /* PBCollectionDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */; };
+		FE40426F187CA0B70028C249 /* PBCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BC187CA0B70028C249 /* PBCollectionItem.m */; };
+		FE404270187CA0B70028C249 /* PBCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */; };
+		FE404271187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */; };
+		FE404272187CA0B70028C249 /* PBCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */; };
+		FE404273187CA0B70028C249 /* PBListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C5187CA0B70028C249 /* PBListCell.m */; };
+		FE404274187CA0B70028C249 /* PBListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4041C6187CA0B70028C249 /* PBListCell.xib */; };
+		FE404275187CA0B70028C249 /* PBListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C8187CA0B70028C249 /* PBListItem.m */; };
+		FE404276187CA0B70028C249 /* PBListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CA187CA0B70028C249 /* PBListViewController.m */; };
+		FE404277187CA0B70028C249 /* PBListViewControllerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */; };
+		FE404278187CA0B70028C249 /* PBListViewDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */; };
+		FE404279187CA0B70028C249 /* PBTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041D0187CA0B70028C249 /* PBTitleCell.m */; };
+		FE40427A187CA0B70028C249 /* PBTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4041D1187CA0B70028C249 /* PBTitleCell.xib */; };
+		FE4042C4187CA0B70028C249 /* UIAlertView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */; };
+		FE4042C5187CA0B70028C249 /* UIButton+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404244187CA0B70028C249 /* UIButton+Bedrock.m */; };
+		FE4042C6187CA0B70028C249 /* UIColor+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404246187CA0B70028C249 /* UIColor+Bedrock.m */; };
+		FE4042C7187CA0B70028C249 /* UIImage+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404248187CA0B70028C249 /* UIImage+Bedrock.m */; };
+		FE4042C8187CA0B70028C249 /* UINavigationController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */; };
+		FE4042C9187CA0B70028C249 /* UIView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424C187CA0B70028C249 /* UIView+Bedrock.m */; };
+		FE4042CA187CA0B70028C249 /* PBActionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424F187CA0B70028C249 /* PBActionDelegate.m */; };
+		FE4042CB187CA0B70028C249 /* UIBezierButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404252187CA0B70028C249 /* UIBezierButton.m */; };
+		FE4042CC187CA0B70028C249 /* UIBezierView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404254187CA0B70028C249 /* UIBezierView.m */; };
+		FE4042CD187CA0B70028C249 /* NSArray+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404259187CA0B70028C249 /* NSArray+Bedrock.m */; };
+		FE4042CE187CA0B70028C249 /* NSDate+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */; };
+		FE4042CF187CA0B70028C249 /* NSNotification+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */; };
+		FE4042D0187CA0B70028C249 /* NSObject+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */; };
+		FE4042D1187CA0B70028C249 /* NSString+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404261187CA0B70028C249 /* NSString+Bedrock.m */; };
+		FE4042D2187CA0B70028C249 /* PBCalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404264187CA0B70028C249 /* PBCalendarManager.m */; };
+		FE4042D3187CA0B70028C249 /* PBDateRange.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404266187CA0B70028C249 /* PBDateRange.m */; };
+		FE4042D4187CA0B70028C249 /* PBDummyClass.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404268187CA0B70028C249 /* PBDummyClass.m */; };
+		FE4042D5187CA0B70028C249 /* PBManagedObjectContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */; };
+		FE4042D6187CA0B70028C249 /* PBRunningAverageValue.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */; };
+		FE4042D9187CA54A0028C249 /* PBListViewControllerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */; };
+		FE4042DC187CE0C50028C249 /* PBGroupedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042DB187CE0C50028C249 /* PBGroupedViewController.m */; };
+		FE4042DF187CE0F30028C249 /* PBSectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042DE187CE0F30028C249 /* PBSectionItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,8 +72,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		049259B7155E4125BB78C8A6 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
-		EA131FE6127F4F17A12B0F71 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE2A4783187B6F0B007A4178 /* PBEmitterViewControllerListExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PBEmitterViewControllerListExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE2A4786187B6F0B007A4178 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FE2A4788187B6F0B007A4178 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -63,6 +96,78 @@
 		FE2A47EE187B874B007A4178 /* PBDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDetailViewController.m; sourceTree = "<group>"; };
 		FE2A47F0187B8D35007A4178 /* PBGrowingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGrowingViewController.h; sourceTree = "<group>"; };
 		FE2A47F1187B8D35007A4178 /* PBGrowingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGrowingViewController.m; sourceTree = "<group>"; };
+		FE4041B4187CA0B70028C249 /* NSLayoutConstraint+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+Bedrock.h"; sourceTree = "<group>"; };
+		FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+Bedrock.m"; sourceTree = "<group>"; };
+		FE4041B7187CA0B70028C249 /* Emitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Emitter.h; sourceTree = "<group>"; };
+		FE4041B9187CA0B70028C249 /* PBCollectionDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionDefaultCell.h; sourceTree = "<group>"; };
+		FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionDefaultCell.m; sourceTree = "<group>"; };
+		FE4041BB187CA0B70028C249 /* PBCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItem.h; sourceTree = "<group>"; };
+		FE4041BC187CA0B70028C249 /* PBCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionItem.m; sourceTree = "<group>"; };
+		FE4041BD187CA0B70028C249 /* PBCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionLayout.h; sourceTree = "<group>"; };
+		FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionLayout.m; sourceTree = "<group>"; };
+		FE4041BF187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionSupplimentaryImageItem.h; sourceTree = "<group>"; };
+		FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionSupplimentaryImageItem.m; sourceTree = "<group>"; };
+		FE4041C1187CA0B70028C249 /* PBCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionViewController.h; sourceTree = "<group>"; };
+		FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionViewController.m; sourceTree = "<group>"; };
+		FE4041C4187CA0B70028C249 /* PBListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListCell.h; sourceTree = "<group>"; };
+		FE4041C5187CA0B70028C249 /* PBListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListCell.m; sourceTree = "<group>"; };
+		FE4041C6187CA0B70028C249 /* PBListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBListCell.xib; sourceTree = "<group>"; };
+		FE4041C7187CA0B70028C249 /* PBListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListItem.h; sourceTree = "<group>"; };
+		FE4041C8187CA0B70028C249 /* PBListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListItem.m; sourceTree = "<group>"; };
+		FE4041C9187CA0B70028C249 /* PBListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewController.h; sourceTree = "<group>"; };
+		FE4041CA187CA0B70028C249 /* PBListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewController.m; sourceTree = "<group>"; };
+		FE4041CB187CA0B70028C249 /* PBListViewControllerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerItem.h; sourceTree = "<group>"; };
+		FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerItem.m; sourceTree = "<group>"; };
+		FE4041CD187CA0B70028C249 /* PBListViewDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewDefaultCell.h; sourceTree = "<group>"; };
+		FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewDefaultCell.m; sourceTree = "<group>"; };
+		FE4041CF187CA0B70028C249 /* PBTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBTitleCell.h; sourceTree = "<group>"; };
+		FE4041D0187CA0B70028C249 /* PBTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBTitleCell.m; sourceTree = "<group>"; };
+		FE4041D1187CA0B70028C249 /* PBTitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBTitleCell.xib; sourceTree = "<group>"; };
+		FE404241187CA0B70028C249 /* UIAlertView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Bedrock.h"; sourceTree = "<group>"; };
+		FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Bedrock.m"; sourceTree = "<group>"; };
+		FE404243187CA0B70028C249 /* UIButton+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Bedrock.h"; sourceTree = "<group>"; };
+		FE404244187CA0B70028C249 /* UIButton+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bedrock.m"; sourceTree = "<group>"; };
+		FE404245187CA0B70028C249 /* UIColor+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Bedrock.h"; sourceTree = "<group>"; };
+		FE404246187CA0B70028C249 /* UIColor+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Bedrock.m"; sourceTree = "<group>"; };
+		FE404247187CA0B70028C249 /* UIImage+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Bedrock.h"; sourceTree = "<group>"; };
+		FE404248187CA0B70028C249 /* UIImage+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Bedrock.m"; sourceTree = "<group>"; };
+		FE404249187CA0B70028C249 /* UINavigationController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+Bedrock.h"; sourceTree = "<group>"; };
+		FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+Bedrock.m"; sourceTree = "<group>"; };
+		FE40424B187CA0B70028C249 /* UIView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Bedrock.h"; sourceTree = "<group>"; };
+		FE40424C187CA0B70028C249 /* UIView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Bedrock.m"; sourceTree = "<group>"; };
+		FE40424E187CA0B70028C249 /* PBActionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBActionDelegate.h; sourceTree = "<group>"; };
+		FE40424F187CA0B70028C249 /* PBActionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBActionDelegate.m; sourceTree = "<group>"; };
+		FE404251187CA0B70028C249 /* UIBezierButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierButton.h; sourceTree = "<group>"; };
+		FE404252187CA0B70028C249 /* UIBezierButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierButton.m; sourceTree = "<group>"; };
+		FE404253187CA0B70028C249 /* UIBezierView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierView.h; sourceTree = "<group>"; };
+		FE404254187CA0B70028C249 /* UIBezierView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierView.m; sourceTree = "<group>"; };
+		FE404256187CA0B70028C249 /* Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bedrock.h; sourceTree = "<group>"; };
+		FE404258187CA0B70028C249 /* NSArray+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Bedrock.h"; sourceTree = "<group>"; };
+		FE404259187CA0B70028C249 /* NSArray+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Bedrock.m"; sourceTree = "<group>"; };
+		FE40425A187CA0B70028C249 /* NSDate+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Bedrock.h"; sourceTree = "<group>"; };
+		FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Bedrock.m"; sourceTree = "<group>"; };
+		FE40425C187CA0B70028C249 /* NSNotification+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotification+Bedrock.h"; sourceTree = "<group>"; };
+		FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+Bedrock.m"; sourceTree = "<group>"; };
+		FE40425E187CA0B70028C249 /* NSObject+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Bedrock.h"; sourceTree = "<group>"; };
+		FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Bedrock.m"; sourceTree = "<group>"; };
+		FE404260187CA0B70028C249 /* NSString+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Bedrock.h"; sourceTree = "<group>"; };
+		FE404261187CA0B70028C249 /* NSString+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Bedrock.m"; sourceTree = "<group>"; };
+		FE404263187CA0B70028C249 /* PBCalendarManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarManager.h; sourceTree = "<group>"; };
+		FE404264187CA0B70028C249 /* PBCalendarManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarManager.m; sourceTree = "<group>"; };
+		FE404265187CA0B70028C249 /* PBDateRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDateRange.h; sourceTree = "<group>"; };
+		FE404266187CA0B70028C249 /* PBDateRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDateRange.m; sourceTree = "<group>"; };
+		FE404267187CA0B70028C249 /* PBDummyClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDummyClass.h; sourceTree = "<group>"; };
+		FE404268187CA0B70028C249 /* PBDummyClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDummyClass.m; sourceTree = "<group>"; };
+		FE404269187CA0B70028C249 /* PBManagedObjectContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBManagedObjectContextManager.h; sourceTree = "<group>"; };
+		FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBManagedObjectContextManager.m; sourceTree = "<group>"; };
+		FE40426B187CA0B70028C249 /* PBRunningAverageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBRunningAverageValue.h; sourceTree = "<group>"; };
+		FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBRunningAverageValue.m; sourceTree = "<group>"; };
+		FE4042D7187CA54A0028C249 /* PBListViewControllerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerCell.h; sourceTree = "<group>"; };
+		FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerCell.m; sourceTree = "<group>"; };
+		FE4042DA187CE0C50028C249 /* PBGroupedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGroupedViewController.h; sourceTree = "<group>"; };
+		FE4042DB187CE0C50028C249 /* PBGroupedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGroupedViewController.m; sourceTree = "<group>"; };
+		FE4042DD187CE0F30028C249 /* PBSectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBSectionItem.h; sourceTree = "<group>"; };
+		FE4042DE187CE0F30028C249 /* PBSectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBSectionItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +178,6 @@
 				FE2A4789187B6F0B007A4178 /* CoreGraphics.framework in Frameworks */,
 				FE2A478B187B6F0B007A4178 /* UIKit.framework in Frameworks */,
 				FE2A4787187B6F0B007A4178 /* Foundation.framework in Frameworks */,
-				BBB5A411DD6C43A7B5CF7745 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,11 +197,11 @@
 		FE2A477A187B6F0B007A4178 = {
 			isa = PBXGroup;
 			children = (
+				FE4041B2187CA09E0028C249 /* Bedrock */,
 				FE2A478C187B6F0B007A4178 /* PBEmitterViewControllerListExample */,
 				FE2A47AE187B6F0B007A4178 /* PBEmitterViewControllerListExampleTests */,
 				FE2A4785187B6F0B007A4178 /* Frameworks */,
 				FE2A4784187B6F0B007A4178 /* Products */,
-				049259B7155E4125BB78C8A6 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -117,7 +221,6 @@
 				FE2A4788187B6F0B007A4178 /* CoreGraphics.framework */,
 				FE2A478A187B6F0B007A4178 /* UIKit.framework */,
 				FE2A47A8187B6F0B007A4178 /* XCTest.framework */,
-				EA131FE6127F4F17A12B0F71 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -135,6 +238,8 @@
 				FE2A47EE187B874B007A4178 /* PBDetailViewController.m */,
 				FE2A47F0187B8D35007A4178 /* PBGrowingViewController.h */,
 				FE2A47F1187B8D35007A4178 /* PBGrowingViewController.m */,
+				FE4042DA187CE0C50028C249 /* PBGroupedViewController.h */,
+				FE4042DB187CE0C50028C249 /* PBGroupedViewController.m */,
 				FE2A47A1187B6F0B007A4178 /* Images.xcassets */,
 				FE2A478D187B6F0B007A4178 /* Supporting Files */,
 			);
@@ -170,6 +275,175 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		FE4041B2187CA09E0028C249 /* Bedrock */ = {
+			isa = PBXGroup;
+			children = (
+				FE4041B3187CA0B70028C249 /* AutoLayout */,
+				FE4041B6187CA0B70028C249 /* Emitter */,
+				FE40423F187CA0B70028C249 /* iOS-Core */,
+				FE404255187CA0B70028C249 /* Shared */,
+			);
+			name = Bedrock;
+			sourceTree = "<group>";
+		};
+		FE4041B3187CA0B70028C249 /* AutoLayout */ = {
+			isa = PBXGroup;
+			children = (
+				FE4041B4187CA0B70028C249 /* NSLayoutConstraint+Bedrock.h */,
+				FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */,
+			);
+			name = AutoLayout;
+			path = ../../../AutoLayout;
+			sourceTree = "<group>";
+		};
+		FE4041B6187CA0B70028C249 /* Emitter */ = {
+			isa = PBXGroup;
+			children = (
+				FE4041B7187CA0B70028C249 /* Emitter.h */,
+				FE4041B8187CA0B70028C249 /* EmitterCollection */,
+				FE4041C3187CA0B70028C249 /* EmitterList */,
+			);
+			name = Emitter;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		FE4041B8187CA0B70028C249 /* EmitterCollection */ = {
+			isa = PBXGroup;
+			children = (
+				FE4041B9187CA0B70028C249 /* PBCollectionDefaultCell.h */,
+				FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */,
+				FE4041BB187CA0B70028C249 /* PBCollectionItem.h */,
+				FE4041BC187CA0B70028C249 /* PBCollectionItem.m */,
+				FE4041BD187CA0B70028C249 /* PBCollectionLayout.h */,
+				FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */,
+				FE4041BF187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.h */,
+				FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */,
+				FE4041C1187CA0B70028C249 /* PBCollectionViewController.h */,
+				FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */,
+			);
+			path = EmitterCollection;
+			sourceTree = "<group>";
+		};
+		FE4041C3187CA0B70028C249 /* EmitterList */ = {
+			isa = PBXGroup;
+			children = (
+				FE4041C4187CA0B70028C249 /* PBListCell.h */,
+				FE4041C5187CA0B70028C249 /* PBListCell.m */,
+				FE4041C6187CA0B70028C249 /* PBListCell.xib */,
+				FE4041C7187CA0B70028C249 /* PBListItem.h */,
+				FE4041C8187CA0B70028C249 /* PBListItem.m */,
+				FE4042DD187CE0F30028C249 /* PBSectionItem.h */,
+				FE4042DE187CE0F30028C249 /* PBSectionItem.m */,
+				FE4041C9187CA0B70028C249 /* PBListViewController.h */,
+				FE4041CA187CA0B70028C249 /* PBListViewController.m */,
+				FE4041CB187CA0B70028C249 /* PBListViewControllerItem.h */,
+				FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */,
+				FE4041CD187CA0B70028C249 /* PBListViewDefaultCell.h */,
+				FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */,
+				FE4042D7187CA54A0028C249 /* PBListViewControllerCell.h */,
+				FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */,
+				FE4041CF187CA0B70028C249 /* PBTitleCell.h */,
+				FE4041D0187CA0B70028C249 /* PBTitleCell.m */,
+				FE4041D1187CA0B70028C249 /* PBTitleCell.xib */,
+			);
+			path = EmitterList;
+			sourceTree = "<group>";
+		};
+		FE40423F187CA0B70028C249 /* iOS-Core */ = {
+			isa = PBXGroup;
+			children = (
+				FE404240187CA0B70028C249 /* Categories */,
+				FE40424D187CA0B70028C249 /* Utilities */,
+				FE404250187CA0B70028C249 /* Views */,
+			);
+			name = "iOS-Core";
+			path = "../../../iOS-Core";
+			sourceTree = "<group>";
+		};
+		FE404240187CA0B70028C249 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FE404241187CA0B70028C249 /* UIAlertView+Bedrock.h */,
+				FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */,
+				FE404243187CA0B70028C249 /* UIButton+Bedrock.h */,
+				FE404244187CA0B70028C249 /* UIButton+Bedrock.m */,
+				FE404245187CA0B70028C249 /* UIColor+Bedrock.h */,
+				FE404246187CA0B70028C249 /* UIColor+Bedrock.m */,
+				FE404247187CA0B70028C249 /* UIImage+Bedrock.h */,
+				FE404248187CA0B70028C249 /* UIImage+Bedrock.m */,
+				FE404249187CA0B70028C249 /* UINavigationController+Bedrock.h */,
+				FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */,
+				FE40424B187CA0B70028C249 /* UIView+Bedrock.h */,
+				FE40424C187CA0B70028C249 /* UIView+Bedrock.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		FE40424D187CA0B70028C249 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FE40424E187CA0B70028C249 /* PBActionDelegate.h */,
+				FE40424F187CA0B70028C249 /* PBActionDelegate.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		FE404250187CA0B70028C249 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FE404251187CA0B70028C249 /* UIBezierButton.h */,
+				FE404252187CA0B70028C249 /* UIBezierButton.m */,
+				FE404253187CA0B70028C249 /* UIBezierView.h */,
+				FE404254187CA0B70028C249 /* UIBezierView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FE404255187CA0B70028C249 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				FE404256187CA0B70028C249 /* Bedrock.h */,
+				FE404257187CA0B70028C249 /* Categories */,
+				FE404262187CA0B70028C249 /* Utilities */,
+			);
+			name = Shared;
+			path = ../../../Shared;
+			sourceTree = "<group>";
+		};
+		FE404257187CA0B70028C249 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FE404258187CA0B70028C249 /* NSArray+Bedrock.h */,
+				FE404259187CA0B70028C249 /* NSArray+Bedrock.m */,
+				FE40425A187CA0B70028C249 /* NSDate+Bedrock.h */,
+				FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */,
+				FE40425C187CA0B70028C249 /* NSNotification+Bedrock.h */,
+				FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */,
+				FE40425E187CA0B70028C249 /* NSObject+Bedrock.h */,
+				FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */,
+				FE404260187CA0B70028C249 /* NSString+Bedrock.h */,
+				FE404261187CA0B70028C249 /* NSString+Bedrock.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		FE404262187CA0B70028C249 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FE404263187CA0B70028C249 /* PBCalendarManager.h */,
+				FE404264187CA0B70028C249 /* PBCalendarManager.m */,
+				FE404265187CA0B70028C249 /* PBDateRange.h */,
+				FE404266187CA0B70028C249 /* PBDateRange.m */,
+				FE404267187CA0B70028C249 /* PBDummyClass.h */,
+				FE404268187CA0B70028C249 /* PBDummyClass.m */,
+				FE404269187CA0B70028C249 /* PBManagedObjectContextManager.h */,
+				FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */,
+				FE40426B187CA0B70028C249 /* PBRunningAverageValue.h */,
+				FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -177,11 +451,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FE2A47B8187B6F0B007A4178 /* Build configuration list for PBXNativeTarget "PBEmitterViewControllerListExample" */;
 			buildPhases = (
-				653D4880A5A74BF9B16888F5 /* Check Pods Manifest.lock */,
 				FE2A477F187B6F0B007A4178 /* Sources */,
 				FE2A4780187B6F0B007A4178 /* Frameworks */,
 				FE2A4781187B6F0B007A4178 /* Resources */,
-				2F7C3695C338444E811AF863 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -249,6 +521,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE40427A187CA0B70028C249 /* PBTitleCell.xib in Resources */,
+				FE404274187CA0B70028C249 /* PBListCell.xib in Resources */,
 				FE2A47A2187B6F0B007A4178 /* Images.xcassets in Resources */,
 				FE2A4791187B6F0B007A4178 /* InfoPlist.strings in Resources */,
 			);
@@ -264,50 +538,51 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		2F7C3695C338444E811AF863 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		653D4880A5A74BF9B16888F5 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		FE2A477F187B6F0B007A4178 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE4042C7187CA0B70028C249 /* UIImage+Bedrock.m in Sources */,
+				FE4042C5187CA0B70028C249 /* UIButton+Bedrock.m in Sources */,
+				FE404279187CA0B70028C249 /* PBTitleCell.m in Sources */,
 				FE2A4797187B6F0B007A4178 /* PBAppDelegate.m in Sources */,
+				FE4042C4187CA0B70028C249 /* UIAlertView+Bedrock.m in Sources */,
+				FE4042D2187CA0B70028C249 /* PBCalendarManager.m in Sources */,
+				FE404277187CA0B70028C249 /* PBListViewControllerItem.m in Sources */,
+				FE4042CD187CA0B70028C249 /* NSArray+Bedrock.m in Sources */,
+				FE4042CE187CA0B70028C249 /* NSDate+Bedrock.m in Sources */,
 				FE2A47A0187B6F0B007A4178 /* PBViewController.m in Sources */,
+				FE40426F187CA0B70028C249 /* PBCollectionItem.m in Sources */,
+				FE4042CB187CA0B70028C249 /* UIBezierButton.m in Sources */,
+				FE404271187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m in Sources */,
+				FE404273187CA0B70028C249 /* PBListCell.m in Sources */,
+				FE4042D3187CA0B70028C249 /* PBDateRange.m in Sources */,
+				FE40426D187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m in Sources */,
+				FE4042C9187CA0B70028C249 /* UIView+Bedrock.m in Sources */,
 				FE2A4793187B6F0B007A4178 /* main.m in Sources */,
+				FE4042D4187CA0B70028C249 /* PBDummyClass.m in Sources */,
 				FE2A47EF187B874B007A4178 /* PBDetailViewController.m in Sources */,
+				FE404275187CA0B70028C249 /* PBListItem.m in Sources */,
+				FE4042D6187CA0B70028C249 /* PBRunningAverageValue.m in Sources */,
+				FE4042DF187CE0F30028C249 /* PBSectionItem.m in Sources */,
+				FE404278187CA0B70028C249 /* PBListViewDefaultCell.m in Sources */,
+				FE4042CF187CA0B70028C249 /* NSNotification+Bedrock.m in Sources */,
 				FE2A47F2187B8D35007A4178 /* PBGrowingViewController.m in Sources */,
+				FE4042D1187CA0B70028C249 /* NSString+Bedrock.m in Sources */,
+				FE404272187CA0B70028C249 /* PBCollectionViewController.m in Sources */,
+				FE4042D5187CA0B70028C249 /* PBManagedObjectContextManager.m in Sources */,
+				FE404270187CA0B70028C249 /* PBCollectionLayout.m in Sources */,
+				FE4042CA187CA0B70028C249 /* PBActionDelegate.m in Sources */,
+				FE4042C6187CA0B70028C249 /* UIColor+Bedrock.m in Sources */,
+				FE4042C8187CA0B70028C249 /* UINavigationController+Bedrock.m in Sources */,
 				FE2A47E6187B7215007A4178 /* PBSelectionListViewController.m in Sources */,
+				FE4042DC187CE0C50028C249 /* PBGroupedViewController.m in Sources */,
+				FE404276187CA0B70028C249 /* PBListViewController.m in Sources */,
+				FE4042D9187CA54A0028C249 /* PBListViewControllerCell.m in Sources */,
+				FE4042CC187CA0B70028C249 /* UIBezierView.m in Sources */,
+				FE4042D0187CA0B70028C249 /* NSObject+Bedrock.m in Sources */,
+				FE40426E187CA0B70028C249 /* PBCollectionDefaultCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,7 +700,6 @@
 		};
 		FE2A47B9187B6F0B007A4178 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 049259B7155E4125BB78C8A6 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -439,7 +713,6 @@
 		};
 		FE2A47BA187B6F0B007A4178 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 049259B7155E4125BB78C8A6 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

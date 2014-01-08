@@ -11,6 +11,7 @@
 
 #import "PBListViewController.h"
 #import "PBListItem.h"
+#import "PBSectionItem.h"
 #import "PBListViewControllerItem.h"
 #import "PBListCell.h"
 #import "PBListViewDefaultCell.h"

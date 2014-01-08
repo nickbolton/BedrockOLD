@@ -1,6 +1,6 @@
 //
 //  PBListViewControllerItem.m
-//  PBEmitterViewControllerListExample
+//  Bedrock
 //
 //  Created by Nick Bolton on 1/6/14.
 //  Copyright (c) 2014 Pixelbleed. All rights reserved.
@@ -9,99 +9,86 @@
 #import "PBListViewControllerItem.h"
 #import "PBListViewDefaultCell.h"
 #import "PBListViewController.h"
+#import "PBListViewControllerCell.h"
 
 static void *ObservationContext = &ObservationContext;
 
 @interface PBListViewControllerItem()
 
-@property (nonatomic, readwrite) UIViewController <PBListViewControllerItemProtocol> *viewController;
-@property (nonatomic, weak) PBListViewController *listViewController;
+@property (nonatomic, readwrite) UIViewController <PBListViewControllerItemProtocol> *contentViewController;
+@property (nonatomic, strong) PBListViewController *listViewController;
 
 @end
 
 @implementation PBListViewControllerItem
 
-+ (instancetype)customNibItemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
-                                         cellID:(NSString *)cellID
-                                        cellNib:(UINib *)cellNib {
++ (instancetype)itemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
+                                cellID:(NSString *)cellID {
 
     PBListViewControllerItem *item = [[PBListViewControllerItem alloc] init];
 
     [item commonInit];
-    item.viewController = viewController;
+    item.contentViewController = viewController;
     item.itemType = PBItemTypeCustom;
     item.cellID = cellID;
-    item.cellNib = cellNib;
-    [item setupConfigureBlock];
+    item.cellClass = [PBListViewControllerCell class];
+    [item setupBindingBlock];
 
-    return item;
-}
-
-+ (instancetype)customClassItemWithViewController:(UIViewController <PBListViewControllerItemProtocol> *)viewController
-                                           cellID:(NSString *)cellID
-                                        cellClass:(Class)cellClass {
-
-    PBListViewControllerItem *item = [[PBListViewControllerItem alloc] init];
-
-    [item commonInit];
-    item.viewController = viewController;
-    item.itemType = PBItemTypeCustom;
-    item.cellID = cellID;
-    item.cellClass = cellClass;
-    [item setupConfigureBlock];
-
-    return item;
-}
-
-- (void)setupConfigureBlock {
-
-    __weak typeof(self) this = self;
-
-    self.configureBlock = ^(PBListViewController *parentViewController, PBListItem *item, PBListViewDefaultCell *cell) {
-
-        this.listViewController = parentViewController;
-
-        [parentViewController addChildViewController:this.viewController];
-
-        this.viewController.view.autoresizingMask =
-        UIViewAutoresizingFlexibleHeight |
-        UIViewAutoresizingFlexibleWidth;
-
-        [cell addSubview:this.viewController.view];
-
-        [this.viewController didMoveToParentViewController:parentViewController];
-
-        [parentViewController reloadTableRow:item.indexPath.row];
-
-        [this.viewController
-         addObserver:this
+    if ([viewController respondsToSelector:@selector(setListViewItemHeight:)]) {
+        [viewController
+         addObserver:item
          forKeyPath:@"listViewItemHeight"
          options:NSKeyValueObservingOptionInitial
          context:&ObservationContext];
+    }
+
+    return item;
+}
+
+- (void)setupBindingBlock {
+
+    __weak typeof(self) this = self;
+
+    self.bindingBlock = ^(PBListViewController *parentViewController, NSIndexPath *indexPath, PBListItem *item, PBListViewControllerCell *cell) {
+
+        cell.contentViewController = this.contentViewController;
+        this.listViewController = parentViewController;
+
+        [parentViewController addChildViewController:this.contentViewController];
+
+        this.contentViewController.view.autoresizingMask =
+        UIViewAutoresizingFlexibleHeight |
+        UIViewAutoresizingFlexibleWidth;
+
+        [cell.contentView addSubview:this.contentViewController.view];
+
+        [this.contentViewController didMoveToParentViewController:parentViewController];
     };
 }
 
 - (CGFloat)rowHeight {
 
-    if ([self.viewController isKindOfClass:[PBListViewController class]]) {
+    if ([self.contentViewController isKindOfClass:[PBListViewController class]]) {
 
         // calculate the row height based of the embedded list view controller data source
 
         CGFloat result = 0.0f;
 
-        PBListViewController *listViewController = (id)self.viewController;
+        PBListViewController *listViewController = (id)self.contentViewController;
 
-        for (PBListItem *item in listViewController.dataSource) {
-            result += item.rowHeight;
+        for (PBSectionItem *sectionItem in listViewController.dataSource) {
+            for (PBListItem *item in sectionItem.items) {
+                result += item.rowHeight;
+            }
         }
         
         return result;
     }
 
-    NSAssert([self.viewController respondsToSelector:@selector(listViewItemHeight)],
+    NSAssert([self.contentViewController respondsToSelector:@selector(listViewItemHeight)],
              @"PBListViewControllerItem viewController does not listViewItemHeight method");
     
-    return [self.viewController listViewItemHeight];
+    return [self.contentViewController listViewItemHeight];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {

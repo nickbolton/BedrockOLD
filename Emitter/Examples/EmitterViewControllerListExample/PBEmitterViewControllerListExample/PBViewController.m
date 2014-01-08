@@ -10,6 +10,7 @@
 #import "PBSelectionListViewController.h"
 #import "PBDetailViewController.h"
 #import "PBGrowingViewController.h"
+#import "PBGroupedViewController.h"
 
 @interface PBViewController ()
 
@@ -26,9 +27,8 @@
 
     return
     [PBListViewControllerItem
-     customClassItemWithViewController:viewController
-     cellID:NSStringFromClass([viewController class])
-     cellClass:[PBListCell class]];
+     itemWithViewController:viewController
+     cellID:NSStringFromClass([viewController class])];
 }
 
 - (PBListItem *)buildModalViewControllerItem {
@@ -93,9 +93,19 @@
 
     return
     [PBListViewControllerItem
-     customClassItemWithViewController:viewController
-     cellID:NSStringFromClass([viewController class])
-     cellClass:[PBListCell class]];
+     itemWithViewController:viewController
+     cellID:NSStringFromClass([viewController class])];
+}
+
+- (PBListItem *)buildSectionViewControllerItem {
+
+    PBGroupedViewController *viewController =
+    [[PBGroupedViewController alloc] init];
+
+    return
+    [PBListViewControllerItem
+     itemWithViewController:viewController
+     cellID:NSStringFromClass([viewController class])];
 }
 
 - (PBListItem *)spacerItem {
@@ -126,6 +136,8 @@
     [items addObject:[self buildPushingViewControllerItem]];
     [items addObject:[self spacerItem]];
     [items addObject:[self buildGrowingViewControllerItem]];
+    [items addObject:[self spacerItem]];
+    [items addObject:[self buildSectionViewControllerItem]];
     [items addObject:[self spacerItem]];
     [items addObject:[self buildSimpleSelectionViewControllerItem]];
 
