@@ -10,6 +10,7 @@
 #import "PBListViewDefaultCell.h"
 #import "PBListViewController.h"
 #import "PBListViewControllerCell.h"
+#import "PBSectionItem.h"
 
 static void *ObservationContext = &ObservationContext;
 
