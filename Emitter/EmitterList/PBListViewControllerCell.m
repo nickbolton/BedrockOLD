@@ -7,6 +7,7 @@
 //
 
 #import "PBListViewControllerCell.h"
+#import "PBListViewController.h"
 
 @implementation PBListViewControllerCell
 
