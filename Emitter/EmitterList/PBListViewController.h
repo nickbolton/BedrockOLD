@@ -40,6 +40,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) BOOL reloadDataOnViewLoad;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
+@property (nonatomic) BOOL showRoundedGroups;
 
 - (id)initWithItems:(NSArray *)items;
 - (id)initWithNib;
