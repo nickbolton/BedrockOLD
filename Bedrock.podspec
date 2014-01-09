@@ -18,7 +18,6 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'AutoLayout' do |al|
-    al.dependency 'Bedrock/Core'
     al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
   end
 

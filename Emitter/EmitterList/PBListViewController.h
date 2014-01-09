@@ -41,6 +41,8 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
 @property (nonatomic) BOOL showRoundedGroups;
+@property (nonatomic) Class headerViewClass;
+@property (nonatomic) Class footerViewClass;
 
 - (id)initWithItems:(NSArray *)items;
 - (id)initWithNib;
