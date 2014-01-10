@@ -42,6 +42,9 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic, strong) UIImage *selectedBackgroundImage;
 @property (nonatomic, strong) UIImage *hightlightedBackgroundImage;
 @property (nonatomic, strong) UIImage *highlightedSelectedBackgroundImage;
+@property (nonatomic) BOOL rowHeightBasedOnTitleSize;
+@property (nonatomic) CGFloat heightPadding;
+@property (nonatomic, strong) NSParagraphStyle *titleParagraphStyle;
 
 @property (nonatomic) UIEdgeInsets separatorInsets;
 @property (nonatomic) BOOL hasDisclosure;

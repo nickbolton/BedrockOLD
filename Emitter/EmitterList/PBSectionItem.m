@@ -37,11 +37,6 @@
         self.headerTitle = headerTitle;
         self.footerTitle = footerTitle;
         self.items = items;
-        self.headerViewReuseIdentifier = @"table-view-section-header";
-        self.footerViewReuseIdentifier = @"table-view-section-footer";
-        self.headerHeightPadding = 27.0f;
-        self.footerHeightPadding = 0.0f;
-        self.footerFont = [UIFont systemFontOfSize:11.0f];
     }
     return self;
 }

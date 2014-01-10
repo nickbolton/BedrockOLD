@@ -265,20 +265,6 @@ static NSInteger const kPBListDefaultTag = 105;
             row++;
         }
 
-        if (sectionItem.headerTitle.length > 0) {
-
-            [self.tableView
-             registerClass:[UITableViewHeaderFooterView class]
-             forHeaderFooterViewReuseIdentifier:sectionItem.headerViewReuseIdentifier];
-        }
-
-        if (sectionItem.footerTitle.length > 0) {
-
-            [self.tableView
-             registerClass:[UITableViewHeaderFooterView class]
-             forHeaderFooterViewReuseIdentifier:sectionItem.footerViewReuseIdentifier];
-        }
-
         section++;
     }
 
@@ -694,17 +680,20 @@ static NSInteger const kPBListDefaultTag = 105;
 
             PBListViewDefaultCell *defaultCell = (id)cell;
 
-            if (item.configureBlock != nil &&
-                (defaultCell.cellConfigured == NO ||
-                item.itemConfigured == NO)) {
+            if (item.itemConfigured == NO) {
 
                 cell.selectionStyle = item.selectionStyle;
                 cell.separatorInset = item.separatorInsets;
 
-                item.configureBlock(self, item, cell);
-                defaultCell.cellConfigured = YES;
                 item.itemConfigured = YES;
+            }
 
+            if (item.configureBlock != nil) {
+
+                if (defaultCell.cellConfigured == NO) {
+                    item.configureBlock(self, item, cell);
+                    defaultCell.cellConfigured = YES;
+                }
             }
 
             if (item.bindingBlock != nil) {
@@ -866,7 +855,28 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
-    return item.rowHeight;
+
+    if (item.rowHeightBasedOnTitleSize) {
+
+        NSDictionary *attributes =
+        @{
+          NSFontAttributeName : item.titleFont,
+          NSParagraphStyleAttributeName : item.titleParagraphStyle,
+          };
+
+        CGSize size = CGSizeMake(CGRectGetWidth(self.tableView.frame), MAXFLOAT);
+
+        CGRect boundingRect =
+        [item.title
+         boundingRectWithSize:size
+         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+         attributes:attributes
+         context:nil];
+
+        return boundingRect.size.height + item.heightPadding;
+    }
+
+    return item.rowHeight + item.heightPadding;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -922,173 +932,14 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - Headers and Footers
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    return [self headerViewForSection:section];
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    return [self footerViewForSection:section];
-}
-
-- (UITableViewHeaderFooterView *)headerViewForSection:(NSInteger)section {
-
-    UITableViewHeaderFooterView *view = nil;
-
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     PBSectionItem *sectionItem = [self sectionItemAtSection:section];
-    if (sectionItem.headerTitle.length > 0) {
-
-        view =
-        [self.tableView
-         dequeueReusableHeaderFooterViewWithIdentifier:sectionItem.headerViewReuseIdentifier];
-
-        if (sectionItem.headerFont != nil) {
-            view.textLabel.font = sectionItem.headerFont;
-        }
-
-        if (sectionItem.headerTextColor != nil) {
-            view.textLabel.textColor = sectionItem.headerTextColor;
-        }
-
-        view.textLabel.textAlignment = sectionItem.headerTextAlignment;
-        view.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        view.textLabel.text = sectionItem.headerTitle;
-        view.textLabel.numberOfLines = 0;
-    }
-
-    return view;
+    return sectionItem.headerTitle;
 }
 
-- (UITableViewHeaderFooterView *)footerViewForSection:(NSInteger)section {
-
-    UITableViewHeaderFooterView *view = nil;
-
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     PBSectionItem *sectionItem = [self sectionItemAtSection:section];
-    if (sectionItem.footerTitle.length > 0) {
-
-        static CGFloat textLabelTag = 99;
-
-        view =
-        [self.tableView
-         dequeueReusableHeaderFooterViewWithIdentifier:sectionItem.footerViewReuseIdentifier];
-
-        UILabel *textLabel = [view viewWithTag:textLabelTag];
-
-        if (textLabel == nil) {
-
-            CGFloat tableWidth = CGRectGetWidth(self.tableView.frame);
-
-            if (tableWidth == 0.0f) {
-                UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-
-                if (UIDeviceOrientationIsLandscape(orientation)) {
-                    tableWidth = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-                } else {
-                    tableWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-                }
-            }
-
-            CGRect frame =
-            CGRectMake(sectionItem.footerTextMargin,
-                       0.0f,
-                       tableWidth - (2.0f * sectionItem.footerTextMargin),
-                       0.0f);
-
-            textLabel = [[UILabel alloc] initWithFrame:frame];
-            textLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-
-            textLabel.tag = textLabelTag;
-            textLabel.numberOfLines = 0;
-            textLabel.textAlignment = sectionItem.footerTextAlignment;
-
-            if (sectionItem.footerFont != nil) {
-                textLabel.font = sectionItem.footerFont;
-                view.textLabel.font = sectionItem.footerFont; // so we can access it when determining footer height
-            }
-
-            if (sectionItem.footerTextColor != nil) {
-                textLabel.textColor = sectionItem.footerTextColor;
-            }
-
-            [view addSubview:textLabel];
-        }
-
-        view.backgroundColor = [UIColor redColor];
-
-        textLabel.text = sectionItem.footerTitle;
-    }
-
-    return view;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-
-    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
-    if (sectionItem.headerTitle.length > 0) {
-
-        UITableViewHeaderFooterView *headerView =
-        [self headerViewForSection:section];
-
-        CGSize maxSize = CGSizeMake(CGRectGetWidth(tableView.frame), MAXFLOAT);
-
-        NSMutableParagraphStyle *paragraphStyle =
-        [[NSMutableParagraphStyle alloc] init];
-
-        paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-        paragraphStyle.alignment = sectionItem.headerTextAlignment;
-
-        CGSize boundingBox =
-        [sectionItem.headerTitle
-         boundingRectWithSize:maxSize
-         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-         attributes:@{NSFontAttributeName : headerView.textLabel.font, NSParagraphStyleAttributeName : paragraphStyle}
-         context:nil].size;
-
-        return boundingBox.height + sectionItem.headerHeightPadding;
-    }
-
-    return 0.0f;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-
-    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
-    if (sectionItem.footerTitle.length > 0) {
-
-        UITableViewHeaderFooterView *footerView =
-        [self footerViewForSection:section];
-
-        CGSize maxSize = CGSizeMake(CGRectGetWidth(tableView.frame), MAXFLOAT);
-
-        if (maxSize.width == 0.0f) {
-
-            UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-
-            if (UIDeviceOrientationIsLandscape(orientation)) {
-                maxSize.width = CGRectGetHeight([[UIScreen mainScreen] bounds]);
-            } else {
-                maxSize.width = CGRectGetWidth([[UIScreen mainScreen] bounds]);
-            }
-        }
-
-        maxSize.width -= 2.0f * sectionItem.footerTextMargin;
-
-        NSMutableParagraphStyle *paragraphStyle =
-        [[NSMutableParagraphStyle alloc] init];
-
-        paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-        paragraphStyle.alignment = sectionItem.footerTextAlignment;
-
-        CGSize boundingBox =
-        [sectionItem.footerTitle
-         boundingRectWithSize:maxSize
-         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-         attributes:@{NSFontAttributeName : footerView.textLabel.font, NSParagraphStyleAttributeName : paragraphStyle}
-         context:nil].size;
-        
-        return boundingBox.height + sectionItem.footerHeightPadding;
-    }
-    
-    return 0.0f;
+    return sectionItem.footerTitle;
 }
 
 @end

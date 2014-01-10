@@ -48,6 +48,8 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     item.rowHeight = height;
     item.selectionStyle = UITableViewCellSelectionStyleNone;
 
+    [item setDefaultParagraphStyle];
+
     return item;
 }
 
@@ -72,6 +74,8 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     selectionItem.selectionStyle = itemType == PBItemTypeChecked ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleGray;
     selectionItem.titleAlignment = NSTextAlignmentLeft;
 
+    [selectionItem setDefaultParagraphStyle];
+
     return selectionItem;
 }
 
@@ -92,6 +96,8 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     selectionItem.selectActionBlock = selectActionBlock;
     selectionItem.deleteActionBlock = deleteActionBlock;
     selectionItem.titleAlignment = NSTextAlignmentLeft;
+
+    [selectionItem setDefaultParagraphStyle];
 
     return selectionItem;
 }
@@ -118,6 +124,8 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     selectionItem.selectActionBlock = selectActionBlock;
     selectionItem.deleteActionBlock = deleteActionBlock;
 
+    [selectionItem setDefaultParagraphStyle];
+
     return selectionItem;
 }
 
@@ -142,7 +150,20 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     selectionItem.selectActionBlock = selectActionBlock;
     selectionItem.deleteActionBlock = deleteActionBlock;
 
+    [selectionItem setDefaultParagraphStyle];
+
     return selectionItem;
+}
+
+- (void)setDefaultParagraphStyle {
+
+    NSMutableParagraphStyle *paragraphStyle =
+    [[NSMutableParagraphStyle alloc] init];
+
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraphStyle.alignment = self.titleAlignment;
+
+    self.titleParagraphStyle = paragraphStyle;
 }
 
 - (void)commonInit {
