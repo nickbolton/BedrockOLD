@@ -24,7 +24,6 @@ static NSInteger const kPBListCheckedTag = 103;
 static NSInteger const kPBListDefaultTag = 105;
 
 @interface PBListViewController () <UITableViewDataSource, UITableViewDelegate> {
-    BOOL _viewDidLoadReload;
 }
 
 @property (nonatomic, readwrite) NSArray *dataSource;
@@ -41,7 +40,6 @@ static NSInteger const kPBListDefaultTag = 105;
 
     self = [super initWithCoder:decoder];
     if (self) {
-        [self commonInit];
     }
     return self;
 }
@@ -59,7 +57,6 @@ static NSInteger const kPBListDefaultTag = 105;
     self = [super init];
     if (self) {
         self.providedDataSource = items;
-        [self commonInit];
     }
     return self;
 }
@@ -185,6 +182,9 @@ static NSInteger const kPBListDefaultTag = 105;
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
+
+    [self commonInit];
+
     [super viewDidLoad];
 
     if (self.backgroundColor != nil) {
@@ -205,7 +205,6 @@ static NSInteger const kPBListDefaultTag = 105;
 
     if (self.reloadDataOnViewLoad) {
         [self reloadData];
-        _viewDidLoadReload = YES;
     }
 }
 
@@ -443,11 +442,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)reloadData {
 
-    if (_viewDidLoadReload == NO) {
-        [self reloadDataSource];
-    }
-
-    _viewDidLoadReload = NO;
+    [self reloadDataSource];
 
     for (PBSectionItem *sectionItem in self.dataSource) {
         [self clearSectionConfigured:sectionItem];
