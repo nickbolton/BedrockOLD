@@ -147,11 +147,6 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)setupTableView {
 
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-
     UINib *nib =
     [UINib
      nibWithNibName:NSStringFromClass([PBListCell class])
@@ -177,6 +172,11 @@ static NSInteger const kPBListDefaultTag = 105;
     [self.tableView
      registerClass:[PBListViewDefaultCell class]
      forCellReuseIdentifier:kPBListActionCellID];
+
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 }
 
 #pragma mark - View Lifecycle
