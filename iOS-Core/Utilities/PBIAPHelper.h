@@ -17,6 +17,8 @@ UIKIT_EXTERN NSString *const IAPHelperProductPurchasedNotification;
 
 - (id)initWithProductIdentifiers:(NSSet *)productIdentifiers;
 - (void)requestProductsWithCompletionHandler:(void (^)(BOOL success, NSArray * products))completionHandler;
+- (void)buyProductWithIdentifier:(NSString *)productIdentifier
+        completion:(void(^)(BOOL success, NSError *error))completionHandler;
 - (void)buyProduct:(SKProduct *)product
         completion:(void(^)(BOOL success, NSError *error))completionHandler;
 

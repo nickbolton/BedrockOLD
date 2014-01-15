@@ -79,6 +79,43 @@ NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurcha
     return [_purchasedProductIdentifiers containsObject:productIdentifier];
 }
 
+- (void)buyProductWithIdentifier:(NSString *)productIdentifier
+                      completion:(void(^)(BOOL success, NSError *error))completionHandler {
+
+    SKProduct *product = [self productWithIdentifier:productIdentifier];
+
+    if (product == nil) {
+
+        __weak typeof(self) this = self;
+
+        [self requestProductsWithCompletionHandler:^(BOOL success, NSArray *products) {
+
+            SKProduct *product = [this productWithIdentifier:productIdentifier];
+
+            if (product != nil) {
+
+                [this buyProduct:product completion:completionHandler];
+
+            } else {
+
+                NSError *error =
+                [NSError
+                 errorWithDomain:@"bedrock"
+                 code:0
+                 userInfo:
+                 @{
+                   NSLocalizedDescriptionKey : @"No product found",
+                   }];
+
+                completionHandler(NO, error);
+            }
+        }];
+    } else {
+
+        [self buyProduct:product completion:completionHandler];
+    }
+}
+
 - (void)buyProduct:(SKProduct *)product
         completion:(void(^)(BOOL success, NSError *error))completionHandler {
 
