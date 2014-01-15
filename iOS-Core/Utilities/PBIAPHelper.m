@@ -82,6 +82,23 @@ NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurcha
 - (void)buyProduct:(SKProduct *)product
         completion:(void(^)(BOOL success, NSError *error))completionHandler {
 
+    if (product == nil) {
+
+        if (completionHandler != nil) {
+            NSError *error =
+            [NSError
+             errorWithDomain:@"bedrock"
+             code:0
+             userInfo:
+             @{
+               NSLocalizedDescriptionKey : @"No product found",
+               }];
+
+            completionHandler(NO, error);
+        }
+        return;
+    }
+
     self.purchaseCompletionHandler = completionHandler;
 
     PBLog(@"Buying %@...", product.productIdentifier);
@@ -184,7 +201,7 @@ NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurcha
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
 
-    PBLog(@"Failed to load list of products.");
+    PBLog(@"Failed to load list of products: %@", error);
     self.productsRequest = nil;
 
     if (self.completionHandler != nil) {
