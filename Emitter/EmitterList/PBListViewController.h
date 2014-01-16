@@ -61,5 +61,6 @@ extern NSString * const kPBListActionCellID;
 - (void)keyboardWillShow:(NSNotification *)notification;
 - (void)keyboardWillHide:(NSNotification *)notification;
 - (void)dismissKeyboard;
+- (IBAction)cancelPressed:(id)sender;
 
 @end

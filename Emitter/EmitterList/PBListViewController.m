@@ -272,7 +272,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
 #pragma mark - Actions
 
-- (void)cancelPressed:(id)sender {
+- (IBAction)cancelPressed:(id)sender {
 
     if (self.navigationController != nil && self.navigationController.viewControllers.count > 1) {
         [self.navigationController popViewControllerAnimated:YES];
