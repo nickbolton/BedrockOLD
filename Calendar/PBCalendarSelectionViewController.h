@@ -25,19 +25,23 @@
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
+                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                          withSelectedDateRange:(PBDateRange *)dateRange
                                     completion:(void(^)(void))completionBlock;
 
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
+                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                               withSelectedDate:(NSDate *)date
                                     completion:(void(^)(void))completionBlock;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-                   modeSwitchOn:(BOOL)modeSwitchOn;
+                   modeSwitchOn:(BOOL)modeSwitchOn
+              firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
 - (id)initWithSelectedDate:(NSDate *)date
-              modeSwitchOn:(BOOL)modeSwitchOn;
+              modeSwitchOn:(BOOL)modeSwitchOn
+         firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
 
 @property (nonatomic) UIEdgeInsets separatorInsets;
 @property (nonatomic, readonly) BOOL modeSwitchOn;

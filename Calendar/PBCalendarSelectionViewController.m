@@ -34,6 +34,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
+@property (nonatomic) NSInteger firstDayOfTheWeek;
 
 @end
 
@@ -42,13 +43,15 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
+                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                          withSelectedDateRange:(PBDateRange *)dateRange
                                     completion:(void(^)(void))completionBlock {
 
     PBCalendarSelectionViewController *viewController =
     [[PBCalendarSelectionViewController alloc]
      initWithSelectedDateRange:dateRange
-     modeSwitchOn:modeSwitchOn];
+     modeSwitchOn:modeSwitchOn
+     firstDayOfTheWeek:firstDayOfTheWeek];
 
     viewController.delegate = delegate;
 
@@ -61,13 +64,15 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
+                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                               withSelectedDate:(NSDate *)date
                                     completion:(void(^)(void))completionBlock {
 
     PBCalendarSelectionViewController *viewController =
     [[PBCalendarSelectionViewController alloc]
      initWithSelectedDate:date
-     modeSwitchOn:modeSwitchOn];
+     modeSwitchOn:modeSwitchOn
+     firstDayOfTheWeek:firstDayOfTheWeek];
 
     viewController.delegate = delegate;
 
@@ -78,25 +83,29 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 }
 
 - (id)initWithSelectedDate:(NSDate *)date
-              modeSwitchOn:(BOOL)modeSwitchOn {
+              modeSwitchOn:(BOOL)modeSwitchOn
+         firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek {
 
     self = [super init];
     if (self) {
         self.currentStartDate = date;
         self.modeSwitchOn = modeSwitchOn;
+        self.firstDayOfTheWeek = firstDayOfTheWeek;
         [self _commonInit];
     }
     return self;
 }
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-                   modeSwitchOn:(BOOL)modeSwitchOn {
+                   modeSwitchOn:(BOOL)modeSwitchOn
+              firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek {
 
     self = [super init];
     if (self) {
         self.selectedDateRange = dateRange;
         self.currentStartDate = dateRange.startDate;
         self.modeSwitchOn = modeSwitchOn;
+        self.firstDayOfTheWeek = firstDayOfTheWeek;
         [self _commonInit];
 
         _rangeMode =
@@ -861,34 +870,59 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
         NSCalendar *calendar =
         [[PBCalendarManager sharedInstance] calendarForCurrentThread];
 
-        NSInteger distanceToStartDate =
+        NSDateComponents *dateComponents =
         [calendar
-         daysWithinEraFromDate:self.selectedDateRange.startDate
-         toDate:date];
+         components:NSCalendarUnitWeekday
+         fromDate:date];
 
-        distanceToStartDate = ABS(distanceToStartDate);
+        NSInteger distanceStartOfWeek = self.firstDayOfTheWeek - dateComponents.weekday;
 
-        NSInteger distanceToEndDate =
-        [calendar
-         daysWithinEraFromDate:self.selectedDateRange.endDate.midnight
-         toDate:date];
+        dateComponents.weekday = 0;
 
-        distanceToEndDate = ABS(distanceToEndDate);
+        NSDate *startDate;
+        NSDate *endDate;
 
-        if (distanceToStartDate <= distanceToEndDate) {
+        if (distanceStartOfWeek <= 0) {
 
-            self.selectedDateRange =
-            [PBDateRange
-             dateRangeWithStartDate:date
-             endDate:self.selectedDateRange.endDate];
+            dateComponents.day = distanceStartOfWeek;
+
+            startDate =
+            [calendar
+             dateByAddingComponents:dateComponents
+             toDate:date
+             options:0];
+
+            dateComponents.day = 6;
+
+            endDate =
+            [calendar
+             dateByAddingComponents:dateComponents
+             toDate:startDate
+             options:0];
 
         } else {
 
-            self.selectedDateRange =
-            [PBDateRange
-             dateRangeWithStartDate:self.selectedDateRange.startDate
-             endDate:date];
+            dateComponents.day = distanceStartOfWeek - 1;
+
+            endDate =
+            [calendar
+             dateByAddingComponents:dateComponents
+             toDate:date
+             options:0];
+
+            dateComponents.day = -6;
+
+            startDate =
+            [calendar
+             dateByAddingComponents:dateComponents
+             toDate:endDate
+             options:0];
         }
+
+        self.selectedDateRange =
+        [PBDateRange
+         dateRangeWithStartDate:startDate
+         endDate:endDate];
 
         [self updateVisibleCalendarSelection];
     }

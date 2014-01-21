@@ -47,7 +47,8 @@
     PBCalendarSelectionViewController *viewController =
     [[PBCalendarSelectionViewController alloc]
      initWithSelectedDateRange:self.selectedDateRange
-     modeSwitchOn:YES];
+     modeSwitchOn:YES
+     firstDayOfTheWeek:1];
 
     viewController.delegate = self;
 
