@@ -22,6 +22,7 @@
 - (void)prepareForReuse {
     [super prepareForReuse];
     self.item = nil;
+    self.indexPath = nil;
 
     _backgroundImageView.image = nil;
 }

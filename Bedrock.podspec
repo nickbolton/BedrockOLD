@@ -21,6 +21,10 @@ Pod::Spec.new do |s|
     al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
   end
 
+  s.subspec 'Calendar' do |al|
+    al.ios.source_files  = 'Calendar/**/*.{h,m}'
+  end
+
   s.subspec 'Emitter' do |em|
     em.dependency 'Bedrock/Core'
     em.ios.source_files  = 'Emitter/**/*.{h,m}'

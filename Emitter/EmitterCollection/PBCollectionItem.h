@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UIImage *highlightedSelectedBackgroundImage;
 @property (nonatomic, strong) NSString *reuseIdentifier;
 @property (nonatomic, strong) UINib *cellNib;
+@property (nonatomic) Class cellClass;
 @property (nonatomic,  strong) NSString *kind;
 @property (nonatomic, strong) id userContext;
 @property (nonatomic, strong) NSIndexPath *indexPath;
@@ -53,6 +54,15 @@
 customNibItemWithUserContext:(id)userContext
 reuseIdentifier:(NSString *)reuseIdentifier
 cellNib:(UINib *)cellNib
+configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
+binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock
+deleteAction:(void(^)(PBCollectionViewController *viewController))deleteActionBlock;
+
++ (instancetype)
+customClassItemWithUserContext:(id)userContext
+reuseIdentifier:(NSString *)reuseIdentifier
+cellClass:(Class)cellClass
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
 selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock

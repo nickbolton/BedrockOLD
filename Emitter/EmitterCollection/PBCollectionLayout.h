@@ -15,5 +15,6 @@
 @property (nonatomic, weak) PBCollectionViewController *viewController;
 
 @property (nonatomic) CGSize minContentSize;
+@property (nonatomic, getter = isDebugging) BOOL debugging;
 
 @end

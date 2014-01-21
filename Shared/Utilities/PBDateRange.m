@@ -84,7 +84,7 @@
     PBDateRange *that = object;
     
     if ([that isKindOfClass:[PBDateRange class]] == YES) {
-        return [self.startDate isEqualToDate:that.startDate] && [self.endDate isEqualToDate:self.endDate];
+        return [self.startDate isEqualToDate:that.startDate] && [self.endDate isEqualToDate:that.endDate];
     }
     return NO;
 }

@@ -13,17 +13,21 @@ extern NSString * const kPBCollectionViewSupplimentaryKind;
 extern NSString * const kPBCollectionViewDecorationKind;
 
 @class PBCollectionItem;
+@class PBCollectionLayout;
 
 @interface PBCollectionViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, readonly) NSArray *dataSource;
+@property (nonatomic, strong) NSArray *providedDataSource;
+
 @property (nonatomic) BOOL reloadDataOnViewLoad;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic, weak) id doneTarget;
 @property (nonatomic) SEL doneSelector;
 @property (nonatomic) BOOL dismissOnDone;
 @property (nonatomic, getter = isSectioned, readonly) BOOL sectioned;
+@property (nonatomic, readonly) IBOutlet PBCollectionLayout *collectionLayout;
 
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, strong) UIColor *collectionBackgroundColor;

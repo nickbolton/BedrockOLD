@@ -29,6 +29,9 @@
 + (NSArray *)expandWidthToSuperview:(UIView *)view;
 + (NSArray *)expandHeightToSuperview:(UIView *)view;
 + (NSArray *)expandToSuperview:(UIView *)view;
++ (NSArray *)expandWidthToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets;
++ (NSArray *)expandHeightToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets;
++ (NSArray *)expandToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets;
 + (NSLayoutConstraint *)alignToTop:(UIView *)view withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)alignToBottom:(UIView *)view withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)alignToLeft:(UIView *)view withPadding:(CGFloat)padding;
@@ -51,6 +54,9 @@
 + (NSArray *)expandWidthToSuperview:(NSView *)view;
 + (NSArray *)expandHeightToSuperview:(NSView *)view;
 + (NSArray *)expandToSuperview:(NSView *)view;
++ (NSArray *)expandWidthToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets;
++ (NSArray *)expandHeightToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets;
++ (NSArray *)expandToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets;
 + (NSLayoutConstraint *)alignToTop:(NSView *)view withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)alignToBottom:(NSView *)view withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)alignToLeft:(NSView *)view withPadding:(CGFloat)padding;

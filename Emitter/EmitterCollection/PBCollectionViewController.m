@@ -18,9 +18,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 @interface PBCollectionViewController () {
 }
 
-@property (nonatomic, strong) IBOutlet PBCollectionLayout *collectionLayout;
+@property (nonatomic, readwrite) IBOutlet PBCollectionLayout *collectionLayout;
 @property (nonatomic, readwrite) NSArray *dataSource;
-@property (nonatomic, strong) NSArray *providedDataSource;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
 @property (nonatomic, strong) NSMutableArray *selectedItemIndexes;
 @property (nonatomic, strong) PBCollectionItem *selectAllItem;
@@ -155,7 +154,13 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
         self.view.backgroundColor = [UIColor clearColor];
     }
 
-    self.collectionLayout = [[[self.class collectionViewLayoutClass] alloc] init];
+    PBCollectionLayout *layout =
+    [[[self.class collectionViewLayoutClass] alloc] init];
+
+    NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
+             @"collection view layout must subclass PBCollectionLayout");
+
+    self.collectionLayout = layout;
     [self createCollectionViewIfNecessary];
     [self setupNavigationBar];
     [self setupNotifications];
@@ -381,6 +386,17 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 - (PBCollectionItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
 
     NSArray *rowArray = [self rowArrayAtSection:indexPath.section];
+
+    if (indexPath.section == 0 && indexPath.item == 0 &&
+        rowArray.count > 0) {
+
+        PBCollectionItem *item = rowArray[0];
+
+        if ([item.userContext isKindOfClass:[NSDateComponents class]]) {
+            NSLog(@"ZZZZ");
+        }
+    }
+
     return [self itemAtPosition:indexPath.row inRowArray:rowArray];
 }
 
@@ -421,7 +437,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)reloadDataSource {
 
-    if (self.providedDataSource.count > 0) {
+    if (self.providedDataSource != nil) {
         self.dataSource = self.providedDataSource;
     } else {
         self.dataSource = [self buildDataSource];
@@ -444,18 +460,27 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     for (PBCollectionItem *item in sectionArray) {
 
         NSAssert(item.reuseIdentifier != nil, @"No reuseIdentifier configured");
-        NSAssert(item.cellNib != nil, @"No cellNib configured");
+        NSAssert(item.cellNib != nil || item.cellClass != nil, @"No cellNib or cellClass configured");
 
-        [self.collectionView
-         registerNib:item.cellNib
-         forCellWithReuseIdentifier:item.reuseIdentifier];
+        if (item.cellNib != nil) {
 
-        NSArray *views =
-        [item.cellNib instantiateWithOwner:self options:nil];
+            [self.collectionView
+             registerNib:item.cellNib
+             forCellWithReuseIdentifier:item.reuseIdentifier];
 
-        if (views.count > 0) {
-            UIView *cell = views[0];
-            item.size = cell.frame.size;
+            NSArray *views =
+            [item.cellNib instantiateWithOwner:self options:nil];
+
+            if (views.count > 0) {
+                UIView *cell = views[0];
+                item.size = cell.frame.size;
+            }
+
+        } else {
+
+            [self.collectionView
+             registerClass:item.cellClass
+             forCellWithReuseIdentifier:item.reuseIdentifier];
         }
 
         if (item.selectAllItem) {

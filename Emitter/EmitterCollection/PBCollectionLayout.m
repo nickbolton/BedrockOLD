@@ -135,7 +135,9 @@
     newLayoutInfo[kPBCollectionViewSupplimentaryKind] = supplimentaryLayoutInfo;
     newLayoutInfo[kPBCollectionViewDecorationKind] = decorationLayoutInfo;
 
-    PBLog(@"layoutInfo: %@", newLayoutInfo);
+    if (self.isDebugging) {
+        PBLog(@"layoutInfo: %@", newLayoutInfo);
+    }
 
     self.layoutInfo = newLayoutInfo;
 }
@@ -173,7 +175,9 @@
         }];
     }];
 
-    PBLog(@"atributes for rect %@: %@", NSStringFromCGRect(rect), allAttributes);
+    if (self.isDebugging) {
+        PBLog(@"atributes for rect %@: %@", NSStringFromCGRect(rect), allAttributes);
+    }
 
     return allAttributes;
 }
@@ -281,7 +285,9 @@
         PBLog(@"No items in datasource!");
     }
 
-    NSLog(@"content size: %@", NSStringFromCGSize(CGSizeMake(width, height)));
+    if (self.isDebugging) {
+        PBLog(@"content size: %@", NSStringFromCGSize(CGSizeMake(width, height)));
+    }
 
     return CGSizeMake(width, height);
 }

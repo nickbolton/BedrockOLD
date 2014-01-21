@@ -209,42 +209,82 @@
 
 #if TARGET_OS_IPHONE
 + (NSArray *)expandWidthToSuperview:(UIView *)view {
+    return [self expandWidthToSuperview:view withInsets:UIEdgeInsetsZero];
 #else
 + (NSArray *)expandWidthToSuperview:(NSView *)view {
+    return [self expandWidthToSuperview:view withInsets:NSEdgeInsetsMake(0.0f,0.0f,0.0f,0.0f)];
 #endif
-    NSArray *constraints =
-    [NSLayoutConstraint
-     constraintsWithVisualFormat:@"H:|-(0)-[v]-(0)-|"
-     options:NSLayoutFormatAlignAllCenterX
-     metrics:nil
-     views:@{@"v" : view}];
-    [view.superview addConstraints:constraints];
-    return constraints;
 }
 
 #if TARGET_OS_IPHONE
 + (NSArray *)expandHeightToSuperview:(UIView *)view {
+    return [self expandHeightToSuperview:view withInsets:UIEdgeInsetsZero];
 #else
 + (NSArray *)expandHeightToSuperview:(NSView *)view {
+    return [self expandHeightToSuperview:view withInsets:NSEdgeInsetsMake(0.0f,0.0f,0.0f,0.0f)];
 #endif
+}
+
+#if TARGET_OS_IPHONE
++ (NSArray *)expandToSuperview:(UIView *)view {
+    return [self expandToSuperview:view withInsets:UIEdgeInsetsZero];
+#else
++ (NSArray *)expandToSuperview:(NSView *)view {
+    return [self expandToSuperview:view withInsets:NSEdgeInsetsMake(0.0f,0.0f,0.0f,0.0f)];
+#endif
+}
+
+#if TARGET_OS_IPHONE
++ (NSArray *)expandWidthToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets {
+#else
++ (NSArray *)expandWidthToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets {
+#endif
+    NSDictionary *metrics =
+    @{
+      @"left" : @(insets.left),
+      @"right" : @(insets.right),
+      };
+
     NSArray *constraints =
     [NSLayoutConstraint
-     constraintsWithVisualFormat:@"V:|-(0)-[v]-(0)-|"
-     options:NSLayoutFormatAlignAllCenterY
-     metrics:nil
+     constraintsWithVisualFormat:@"H:|-(left)-[v]-(right)-|"
+     options:NSLayoutFormatAlignAllCenterX
+     metrics:metrics
      views:@{@"v" : view}];
     [view.superview addConstraints:constraints];
     return constraints;
 }
 
 #if TARGET_OS_IPHONE
-+ (NSArray *)expandToSuperview:(UIView *)view {
++ (NSArray *)expandHeightToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets {
 #else
-+ (NSArray *)expandToSuperview:(NSView *)view {
++ (NSArray *)expandHeightToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets {
 #endif
+    NSDictionary *metrics =
+    @{
+      @"top" : @(insets.top),
+      @"bottom" : @(insets.bottom),
+      };
+
+    NSArray *constraints =
+    [NSLayoutConstraint
+     constraintsWithVisualFormat:@"V:|-(top)-[v]-(bottom)-|"
+     options:NSLayoutFormatAlignAllCenterY
+     metrics:metrics
+     views:@{@"v" : view}];
+    [view.superview addConstraints:constraints];
+    return constraints;
+}
+
+#if TARGET_OS_IPHONE
++ (NSArray *)expandToSuperview:(UIView *)view withInsets:(UIEdgeInsets)insets {
+#else
++ (NSArray *)expandToSuperview:(NSView *)view withInsets:(NSEdgeInsets)insets {
+#endif
+
     NSMutableArray *constraints = [NSMutableArray array];
-    [constraints addObjectsFromArray:[self expandWidthToSuperview:view]];
-    [constraints addObjectsFromArray:[self expandHeightToSuperview:view]];
+    [constraints addObjectsFromArray:[self expandWidthToSuperview:view withInsets:insets]];
+    [constraints addObjectsFromArray:[self expandHeightToSuperview:view withInsets:insets]];
     return constraints;
 }
 
