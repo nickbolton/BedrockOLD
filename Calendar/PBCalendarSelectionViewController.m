@@ -113,24 +113,33 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
 - (void)setupNavigationBar {
 
-    self.navbar = [[UINavigationBar alloc] init];
-    self.navbar.translatesAutoresizingMaskIntoConstraints = NO;
-    self.navbar.translucent = YES;
-    self.navbar.barTintColor = [UIColor whiteColor];
+    UINavigationItem *navigationItem;
 
-    UINavigationItem *navigationItem = [[UINavigationItem alloc] init];
+    if (self.navigationItem == nil) {
 
-    self.navbar.items = @[navigationItem];
+        self.navbar = [[UINavigationBar alloc] init];
+        self.navbar.translatesAutoresizingMaskIntoConstraints = NO;
+        self.navbar.translucent = YES;
+        self.navbar.barTintColor = [UIColor whiteColor];
 
-    [self.view addSubview:self.navbar];
+        navigationItem = [[UINavigationItem alloc] init];
 
-    [NSLayoutConstraint
-     addHeightConstraint:kPBCalendarSelectionViewControllerNavigationBarHeight
-     toView:self.navbar];
+        self.navbar.items = @[navigationItem];
 
-    [NSLayoutConstraint expandWidthToSuperview:self.navbar];
+        [self.view addSubview:self.navbar];
 
-    [NSLayoutConstraint alignToTop:self.navbar withPadding:0.0f];
+        [NSLayoutConstraint
+         addHeightConstraint:kPBCalendarSelectionViewControllerNavigationBarHeight
+         toView:self.navbar];
+
+        [NSLayoutConstraint expandWidthToSuperview:self.navbar];
+        
+        [NSLayoutConstraint alignToTop:self.navbar withPadding:0.0f];
+
+    } else {
+
+        navigationItem = self.navigationItem;
+    }
 
     UIBarButtonItem *cancelItem =
     [[UIBarButtonItem alloc]
