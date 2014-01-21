@@ -115,7 +115,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
     UINavigationItem *navigationItem;
 
-    if (self.navigationItem == nil) {
+    if (self.navigationController == nil) {
 
         self.navbar = [[UINavigationBar alloc] init];
         self.navbar.translatesAutoresizingMaskIntoConstraints = NO;
