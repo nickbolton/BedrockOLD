@@ -291,8 +291,8 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
         [self.selectedDateRange dateWithinRange:date];
     }
 
-//    NSLog(@"day: %ld", (long)day);
-//    NSLog(@"realDay: %ld", (long)realDay);
+//    NSLog(@"day: %ld", (long)self.day);
+//    NSLog(@"realDay: %ld", (long)self.realDay);
 //    NSLog(@"realDate: %@", realDate);
 //    NSLog(@"startingDay: %d", startingDay);
 //    NSLog(@"endingDay: %d", endingDay);

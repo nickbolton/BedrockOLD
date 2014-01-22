@@ -1087,7 +1087,9 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
              endDate:startDate];
         }
 
-        calendarView.selectedDateRange = self.selectedDateRange;
+        [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+            calendarView.selectedDateRange = self.selectedDateRange;
+        }];
     }
 }
 
