@@ -978,43 +978,22 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
 
-            if (_rangeMode) {
-                [self handleRangePanBegan:gesture];
-            } else {
-                [self handleSingleSelectionPanBegan:gesture];
-            }
+            [self handlePanBegan:gesture];
             break;
 
         case UIGestureRecognizerStateChanged:
 
-            if (_rangeMode) {
-                [self handleRangePanChanged:gesture];
-            } else {
-                [self handleSingleSelectionPanChanged:gesture];
-            }
+            [self handlePanChanged:gesture];
             break;
 
         default:
 
-            if (_rangeMode) {
-                [self handleRangePanEnded:gesture];
-            } else {
-                [self handleSingleSelectionPanEnded:gesture];
-            }
+            [self handlePanEnded:gesture];
             break;
     }
 }
 
-- (void)handleSingleSelectionPanBegan:(UIGestureRecognizer *)gesture {
-}
-
-- (void)handleSingleSelectionPanChanged:(UIGestureRecognizer *)gesture {
-}
-
-- (void)handleSingleSelectionPanEnded:(UIGestureRecognizer *)gesture {
-}
-
-- (void)handleRangePanBegan:(UIGestureRecognizer *)gesture {
+- (void)handlePanBegan:(UIGestureRecognizer *)gesture {
 
     CGPoint location = [gesture locationInView:self.view];
 
@@ -1038,7 +1017,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
     }
 }
 
-- (void)handleRangePanChanged:(UIGestureRecognizer *)gesture {
+- (void)handlePanChanged:(UIGestureRecognizer *)gesture {
 
     if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
         return;
@@ -1050,61 +1029,82 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
     NSDate *date = [self nearestDateAtPoint:location];
 
+    NSLog(@"Date: %@", date);
+
     if (date == nil) return;
 
     NSDate *startDate = self.selectedDateRange.startDate;
     NSDate *endDate = self.selectedDateRange.endDate.midnight;
 
-    if (self.draggingStartDate != nil) {
+    if (_rangeMode) {
 
-        if ([date isLessThan:startDate] || [date isLessThanOrEqualTo:endDate]) {
-            startDate = date;
-            self.draggingStartDate = date;
-        } else if ([date isGreaterThan:endDate]) {
-            self.draggingStartDate = nil;
-            self.draggingEndDate = date;
+        if (self.draggingStartDate != nil) {
 
-            startDate = endDate;
-            endDate = date;
+            if ([date isLessThan:startDate] || [date isLessThanOrEqualTo:endDate]) {
+                startDate = date;
+                self.draggingStartDate = date;
+            } else if ([date isGreaterThan:endDate]) {
+                self.draggingStartDate = nil;
+                self.draggingEndDate = date;
+
+                startDate = endDate;
+                endDate = date;
+            }
+
+        } else {
+
+            if ([date isGreaterThan:endDate] || [date isGreaterThanOrEqualTo:startDate]) {
+                endDate = date;
+                self.draggingEndDate = date;
+            } else if ([date isLessThan:startDate]) {
+                endDate = startDate;
+                startDate = date;
+                self.draggingEndDate = nil;
+                self.draggingStartDate = date;
+            }
         }
 
     } else {
 
-        if ([date isGreaterThan:endDate] || [date isGreaterThanOrEqualTo:startDate]) {
-            endDate = date;
-            self.draggingEndDate = date;
-        } else if ([date isLessThan:startDate]) {
-            endDate = startDate;
-            startDate = date;
-            self.draggingEndDate = nil;
-            self.draggingStartDate = date;
-        }
+        startDate = date;
     }
 
     if ([startDate isEqualToDate:self.selectedDateRange.startDate] == NO ||
         [endDate isEqualToDate:self.selectedDateRange.endDate.midnight] == NO) {
 
-        self.selectedDateRange =
-        [PBDateRange
-         dateRangeWithStartDate:startDate
-         endDate:endDate];
+        if (_rangeMode) {
+
+            self.selectedDateRange =
+            [PBDateRange
+             dateRangeWithStartDate:startDate
+             endDate:endDate];
+
+        } else {
+
+            self.selectedDateRange =
+            [PBDateRange
+             dateRangeWithStartDate:startDate
+             endDate:startDate];
+        }
 
         calendarView.selectedDateRange = self.selectedDateRange;
     }
 }
 
-- (void)handleRangePanEnded:(UIGestureRecognizer *)gesture {
+- (void)handlePanEnded:(UIGestureRecognizer *)gesture {
+
+    self.tableView.scrollEnabled = YES;
 
     if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
         return;
     }
 
-    if (self.modeSwitchOn &&
+    if (_rangeMode &&
+        self.modeSwitchOn &&
         [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
         [self toggleRangeMode];
     }
 
-    self.tableView.scrollEnabled = YES;
     NSLog(@"selectedDateRange: %@", self.selectedDateRange);
 }
 
