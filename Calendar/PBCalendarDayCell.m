@@ -14,11 +14,12 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 @interface PBCalendarDayCell()
 
 @property (nonatomic, readwrite) UILabel *dayLabel;
-@property (nonatomic, strong) UIView *circleView;
+@property (nonatomic, strong) UIView *endPointMarkerView;
 @property (nonatomic, strong) UIColor *endPointBackgroundColor;
 @property (nonatomic, strong) UIColor *withinRangeBackgroundColor;
 @property (nonatomic, strong) CAShapeLayer *startingDayLayerMask;
 @property (nonatomic, strong) CAShapeLayer *endingDayLayerMask;
+@property (nonatomic) BOOL endPointMarkerHidden;
 
 @end
 
@@ -44,7 +45,7 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 
     self.endPointBackgroundColor = [UIColor colorWithRGBHex:0x3060FA];
     self.withinRangeBackgroundColor = [UIColor colorWithRGBHex:0xDAE6FE];
-    [self setupCircleView];
+    [self setupEndPointMarkerView];
     [self setupDayLabel];
 }
 
@@ -79,26 +80,63 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
      withPadding:(CGRectGetWidth(self.layer.bounds) - diameter) / 2.0f];
 }
 
-- (void)setupCircleView {
+- (void)setupEndPointMarkerView {
 
-    self.circleView = [[UIView alloc] init];
-    self.circleView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.endPointMarkerView = [[UIView alloc] init];
+    self.endPointMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self addSubview:self.circleView];
+    [self addSubview:self.endPointMarkerView];
 
-    self.circleView.layer.cornerRadius = kPBCalendarDayCellEndPointRadius;
+    self.endPointMarkerView.layer.cornerRadius = kPBCalendarDayCellEndPointRadius;
 
     CGFloat diameter = kPBCalendarDayCellEndPointRadius * 2.0f;
 
-    [NSLayoutConstraint addWidthConstraint:diameter toView:self.circleView];
-    [NSLayoutConstraint addHeightConstraint:diameter toView:self.circleView];
-    [NSLayoutConstraint horizontallyCenterView:self.circleView padding:-0.5f];
-    [NSLayoutConstraint verticallyCenterView:self.circleView];
-    self.circleView.backgroundColor = self.endPointBackgroundColor;
-    self.circleView.hidden = YES;
+    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointMarkerView];
+    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointMarkerView];
+    [NSLayoutConstraint horizontallyCenterView:self.endPointMarkerView padding:-0.5f];
+    [NSLayoutConstraint verticallyCenterView:self.endPointMarkerView];
+    self.endPointMarkerView.backgroundColor = self.endPointBackgroundColor;
+    self.endPointMarkerView.hidden = YES;
+    self.endPointMarkerHidden = YES;
 }
 
 #pragma mark - Getters and Setters
+
+- (void)setHideStartingPointMarker:(BOOL)hideStartingPointMarker {
+
+    _hideStartingPointMarker = hideStartingPointMarker;
+
+    if (self.isStartingDay) {
+        if (hideStartingPointMarker) {
+
+            if (self.isEndingDay == NO) {
+                self.endPointMarkerView.hidden = YES;
+            }
+        } else {
+            self.endPointMarkerView.hidden = self.endPointMarkerHidden;
+        }
+    }
+
+    [self updateEndPointMarkerView];
+}
+
+- (void)setHideEndingPointMarker:(BOOL)hideEndingPointMarker {
+
+    _hideEndingPointMarker = hideEndingPointMarker;
+
+    if (self.isEndingDay) {
+        if (hideEndingPointMarker) {
+
+            if (self.isStartingDay == NO) {
+                self.endPointMarkerView.hidden = YES;
+            }
+        } else {
+            self.endPointMarkerView.hidden = self.endPointMarkerHidden;
+        }
+    }
+
+    [self updateEndPointMarkerView];
+}
 
 - (CAShapeLayer *)startingDayLayerMask {
 
@@ -174,7 +212,7 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
     _startingDay = startingDay;
     [self updateLayerMask];
     [self updateTextColor];
-    [self updateCircleView];
+    [self updateEndPointMarkerView];
     [self updateBackgroundColor];
 }
 
@@ -182,7 +220,7 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
     _endingDay = endingDay;
     [self updateLayerMask];
     [self updateTextColor];
-    [self updateCircleView];
+    [self updateEndPointMarkerView];
     [self updateBackgroundColor];
 }
 
@@ -336,8 +374,14 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
     }
 }
 
-- (void)updateCircleView {
-    self.circleView.hidden = self.isStartingDay == NO && self.isEndingDay == NO;
+- (void)updateEndPointMarkerView {
+
+    self.endPointMarkerHidden =
+    (self.isStartingDay == NO && self.isEndingDay == NO) ||
+    (self.isStartingDay && self.hideStartingPointMarker) ||
+    (self.isEndingDay && self.hideEndingPointMarker);
+
+    self.endPointMarkerView.hidden = self.endPointMarkerHidden;
 }
 
 @end

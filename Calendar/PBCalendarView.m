@@ -43,6 +43,22 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
     [self updateView];
 }
 
+- (void)setHideStartingPointMarker:(BOOL)hideStartingPointMarker {
+    _hideStartingPointMarker = hideStartingPointMarker;
+
+    for (PBCalendarDayCell *cell in self.collectionViewController.collectionView.visibleCells) {
+        cell.hideStartingPointMarker = hideStartingPointMarker;
+    }
+}
+
+- (void)setHideEndingPointMarker:(BOOL)hideEndingPointMarker {
+    _hideEndingPointMarker = hideEndingPointMarker;
+
+    for (PBCalendarDayCell *cell in self.collectionViewController.collectionView.visibleCells) {
+        cell.hideEndingPointMarker = hideEndingPointMarker;
+    }
+}
+
 - (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
     _selectedDateRange = selectedDateRange;
 
@@ -89,6 +105,50 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
     }
 
     return result;
+}
+
+- (CGPoint)pointForStartingMarkerView {
+
+    UICollectionView *collectionView =
+    self.collectionViewController.collectionView;
+
+    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
+
+    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
+
+        if (cell.isStartingDay) {
+
+            result =
+            [self
+             convertPoint:cell.bounds.origin
+             fromView:cell];
+            break;
+        }
+    }
+
+    return  result;
+}
+
+- (CGPoint)pointForEndingMarkerView {
+
+    UICollectionView *collectionView =
+    self.collectionViewController.collectionView;
+
+    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
+
+    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
+
+        if (cell.isEndingDay) {
+
+            result =
+            [self
+             convertPoint:cell.bounds.origin
+             fromView:cell];
+            break;
+        }
+    }
+    
+    return  result;
 }
 
 - (NSDateComponents *)nearestDateComponentsAtPoint:(CGPoint)point {

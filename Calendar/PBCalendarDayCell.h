@@ -20,6 +20,8 @@
 @property (nonatomic) NSInteger day;
 @property (nonatomic) NSInteger realDay;
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
+@property (nonatomic) BOOL hideStartingPointMarker;
+@property (nonatomic) BOOL hideEndingPointMarker;
 
 - (void)updateCellWithYear:(NSInteger)year
                      month:(NSInteger)month

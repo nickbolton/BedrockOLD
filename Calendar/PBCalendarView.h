@@ -15,6 +15,8 @@
 @property (nonatomic, readonly) NSInteger year;
 @property (nonatomic, readonly) NSInteger month;
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
+@property (nonatomic) BOOL hideStartingPointMarker;
+@property (nonatomic) BOOL hideEndingPointMarker;
 
 - (void)setYear:(NSInteger)year month:(NSInteger)month;
 - (void)setYearAndMonthFromDate:(NSDate *)date;
@@ -22,5 +24,8 @@
 - (NSDateComponents *)dateComponentsAtPoint:(CGPoint)point;
 - (NSDateComponents *)nearestDateComponentsAtPoint:(CGPoint)point;
 - (void)updateView;
+
+- (CGPoint)pointForStartingMarkerView;
+- (CGPoint)pointForEndingMarkerView;
 
 @end
