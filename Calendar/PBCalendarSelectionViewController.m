@@ -1230,7 +1230,7 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
     }
 }
 
-- (void)handlePanEnded:(UIGestureRecognizer *)gesture {
+- (void)handlePanEnded:(UIPanGestureRecognizer *)gesture {
 
     self.tableView.scrollEnabled = YES;
     self.hideEndPointMarkers = NO;
@@ -1239,35 +1239,58 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 
     [self.endPointMarkerView setNeedsLayout];
 
+    NSTimeInterval t = .3f;
+
+    CGPoint velocity = [gesture velocityInView:gesture.view];
+    CGFloat xPos = self.endPointMarkerLeadingSpace.constant + velocity.x * t / 4.0f;
+    CGFloat yPos = self.endPointMarkerTopSpace.constant + velocity.y * t / 4.0f;
+
     [UIView
-     animateWithDuration:.3f
+     animateWithDuration:t
      delay:0.0f
-     usingSpringWithDamping:.7f
-     initialSpringVelocity:15.0f
+     usingSpringWithDamping:1.0f
+     initialSpringVelocity:0.0f
      options:0
      animations:^{
 
-         self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
-
-         self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x + 4.0f;
+         self.endPointMarkerTopSpace.constant = yPos;
+         self.endPointMarkerLeadingSpace.constant = xPos;
 
          [self.endPointMarkerView layoutIfNeeded];
 
      } completion:^(BOOL finished) {
 
-         self.endPointMarkerView.hidden = YES;
+         [self.endPointMarkerView setNeedsLayout];
+         
+         [UIView
+          animateWithDuration:.3f
+          delay:0.0f
+          usingSpringWithDamping:.7f
+          initialSpringVelocity:15.0f
+          options:0
+          animations:^{
 
-         if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
-             return;
-         }
+              self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
+              self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x + 4.0f;
 
-         [self endPointMarkersHidden:NO];
+              [self.endPointMarkerView layoutIfNeeded];
 
-         if (_rangeMode &&
-             self.modeSwitchOn &&
-             [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
-             [self toggleRangeMode];
-         }
+          } completion:^(BOOL finished) {
+
+              self.endPointMarkerView.hidden = YES;
+
+              if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
+                  return;
+              }
+
+              [self endPointMarkersHidden:NO];
+
+              if (_rangeMode &&
+                  self.modeSwitchOn &&
+                  [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
+                  [self toggleRangeMode];
+              }
+          }];
      }];
 
     NSLog(@"selectedDateRange: %@", self.selectedDateRange);
