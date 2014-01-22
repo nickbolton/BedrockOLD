@@ -45,6 +45,8 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
 - (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
     _selectedDateRange = selectedDateRange;
+
+    [self updateCellsSelectedDateRange];
 }
 
 - (void)setYearAndMonthFromDate:(NSDate *)date {
@@ -235,6 +237,13 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
 #pragma mark - 
 
+- (void)updateCellsSelectedDateRange {
+
+    for (PBCalendarDayCell *cell in self.collectionViewController.collectionView.visibleCells) {
+        cell.selectedDateRange = self.selectedDateRange;
+    }
+}
+
 - (PBCollectionItem *)spacerItem:(NSNumber *)day realDay:(NSNumber *)realDay {
 
     static NSString * const dayKey = @"day";
@@ -255,81 +264,16 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
      } binding:^(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, PBCalendarDayCell *cell) {
 
-         NSCalendar *calendar =
-         [[PBCalendarManager sharedInstance] calendarForCurrentThread];
-
          NSNumber *day = item.userContext[dayKey];
          NSNumber *realDay = item.userContext[realDayKey];
 
-
-         NSDate *monthDate =
-         [NSDate
-          dateWithYear:self.year
+         [cell
+          updateCellWithYear:self.year
           month:self.month
-          day:1];
-
-         NSRange daysInMonth =
-         [calendar
-          rangeOfUnit:NSCalendarUnitDay
-          inUnit:NSCalendarUnitMonth
-          forDate:monthDate];
-
-         NSDate *realDate =
-         [NSDate
-          dateWithYear:self.year
-          month:self.month
-          day:realDay.integerValue];
-
-         BOOL startingDay =
-         [self.selectedDateRange.startDate isEqualToDate:realDate];
-
-         BOOL endingDay =
-         [self.selectedDateRange.endDate isEqualToDate:realDate.endOfDay];
-
-         BOOL withinSelectedDateRange =
-         [self.selectedDateRange dateWithinRange:realDate];
-
-         withinSelectedDateRange &= startingDay == NO;
-         withinSelectedDateRange &= endingDay == NO;
-
-         if (day.integerValue == 0) {
-
-             if (endingDay) {
-                 withinSelectedDateRange =
-                 [self.selectedDateRange.startDate
-                  isLessThan:self.selectedDateRange.endDate.midnight];
-             }
-
-         } else if (day.integerValue > daysInMonth.length) {
-
-             if (startingDay) {
-                 withinSelectedDateRange =
-                 [self.selectedDateRange.startDate
-                  isLessThan:self.selectedDateRange.endDate.midnight];
-             }
-
-         } else if (startingDay || endingDay) {
-
-             NSDate *date =
-             [NSDate
-              dateWithYear:self.year
-              month:self.month
-              day:day.integerValue];
-
-             withinSelectedDateRange =
-             [self.selectedDateRange dateWithinRange:date];
-         }
-
-//         NSLog(@"day: %d", day.intValue);
-//         NSLog(@"realDay: %d", realDay.intValue);
-//         NSLog(@"realDate: %@", realDate);
-//         NSLog(@"startingDay: %d", startingDay);
-//         NSLog(@"endingDay: %d", endingDay);
-//         NSLog(@"withinSelectedDateRange: %d", withinSelectedDateRange);
-
-         cell.withinRange =
-         withinSelectedDateRange;
-
+          day:day.integerValue
+          realDay:realDay.integerValue
+          selectedDateRange:self.selectedDateRange];
+         
      } selectAction:^(PBCollectionViewController *viewController) {
 
      } deleteAction:nil];
@@ -431,20 +375,11 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
              NSDateComponents *dayComponents = item2.userContext;
              cell.dayLabel.text = [NSString stringWithFormat:@"%ld", (long)dayComponents.day];
 
-             NSDate *date =
-             [NSDate
-              dateWithYear:dayComponents.year
-              month:dayComponents.month
-              day:dayComponents.day];
-
-             cell.startingDay =
-             [self.selectedDateRange.startDate isEqualToDate:date];
-
-             cell.endingDay =
-             [self.selectedDateRange.endDate isEqualToDate:date.endOfDay];
-
-             cell.withinRange =
-             [self.selectedDateRange dateWithinRange:date];
+             cell.year = dayComponents.year;
+             cell.month = dayComponents.month;
+             cell.day = dayComponents.day;
+             cell.realDay = dayComponents.day;
+             cell.selectedDateRange = self.selectedDateRange;
 
              cell.currentDay =
              dayComponents.day == nowComponents.day &&

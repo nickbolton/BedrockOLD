@@ -202,6 +202,105 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
     }
 }
 
+- (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
+    _selectedDateRange = selectedDateRange;
+    [self updateSelectedRangeState];
+}
+
+- (void)updateCellWithYear:(NSInteger)year
+                     month:(NSInteger)month
+                       day:(NSInteger)day
+                   realDay:(NSInteger)realDay
+         selectedDateRange:(PBDateRange *)selectedDateRange {
+
+    self.day = day;
+    self.realDay = realDay;
+    self.year = year;
+    self.month = month;
+    self.selectedDateRange = selectedDateRange;
+}
+
+- (void)updateSelectedRangeState {
+
+    NSCalendar *calendar =
+    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+
+    NSDate *monthDate =
+    [NSDate
+     dateWithYear:self.year
+     month:self.month
+     day:1];
+
+    NSRange daysInMonth =
+    [calendar
+     rangeOfUnit:NSCalendarUnitDay
+     inUnit:NSCalendarUnitMonth
+     forDate:monthDate];
+
+    NSDate *realDate =
+    [NSDate
+     dateWithYear:self.year
+     month:self.month
+     day:self.realDay];
+
+    BOOL startingDay =
+    [self.selectedDateRange.startDate isEqualToDate:realDate];
+
+    BOOL endingDay =
+    [self.selectedDateRange.endDate isEqualToDate:realDate.endOfDay];
+
+    self.startingDay = NO;
+    self.endingDay = NO;
+
+    if (self.day == self.realDay) {
+        self.startingDay = startingDay;
+        self.endingDay = endingDay;
+    }
+
+    BOOL withinSelectedDateRange =
+    [self.selectedDateRange dateWithinRange:realDate];
+
+    withinSelectedDateRange &= startingDay == NO;
+    withinSelectedDateRange &= endingDay == NO;
+
+    if (self.day == 0) {
+
+        if (endingDay) {
+            withinSelectedDateRange =
+            [self.selectedDateRange.startDate
+             isLessThan:self.selectedDateRange.endDate.midnight];
+        }
+
+    } else if (self.day > daysInMonth.length) {
+
+        if (startingDay) {
+            withinSelectedDateRange =
+            [self.selectedDateRange.startDate
+             isLessThan:self.selectedDateRange.endDate.midnight];
+        }
+
+    } else if (startingDay || endingDay) {
+
+        NSDate *date =
+        [NSDate
+         dateWithYear:self.year
+         month:self.month
+         day:self.day];
+
+        withinSelectedDateRange =
+        [self.selectedDateRange dateWithinRange:date];
+    }
+
+//    NSLog(@"day: %ld", (long)day);
+//    NSLog(@"realDay: %ld", (long)realDay);
+//    NSLog(@"realDate: %@", realDate);
+//    NSLog(@"startingDay: %d", startingDay);
+//    NSLog(@"endingDay: %d", endingDay);
+//    NSLog(@"withinSelectedDateRange: %d", withinSelectedDateRange);
+
+    self.withinRange = withinSelectedDateRange;
+}
+
 #pragma mark -
 
 - (void)updateLayerMask {

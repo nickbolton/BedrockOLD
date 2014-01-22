@@ -31,6 +31,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 @property (nonatomic, strong) UIToolbar *toolbar;
 @property (nonatomic, strong) UINavigationBar *navbar;
 @property (nonatomic, strong) NSMutableDictionary *calendarViews;
+@property (nonatomic, strong) NSMutableDictionary *calendarViewsByIndexPath;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
@@ -116,6 +117,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
 - (void)_commonInit {
     self.calendarViews = [NSMutableDictionary dictionary];
+    self.calendarViewsByIndexPath = [NSMutableDictionary dictionary];
 }
 
 #pragma mark - Setup
@@ -305,6 +307,8 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
          (id)[cell.contentView viewWithTag:kPBCalendarSelectionViewControllerCalendarTag];
 
          calendarView.selectedDateRange = self.selectedDateRange;
+
+         self.calendarViewsByIndexPath[indexPath] = calendarView;
 
          NSCalendar *calendar =
          [[PBCalendarManager sharedInstance] calendarForCurrentThread];
@@ -806,24 +810,21 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
     if (block == nil) return;
 
-    NSInteger index = 0;
+    NSArray *visiableIndexPaths = [self.tableView indexPathsForVisibleRows];
 
-    for (UIView *cell in self.tableView.visibleCells) {
+    for (NSIndexPath *indexPath in visiableIndexPaths) {
 
-        PBCalendarView *calendarView =
-        (id)[cell viewWithTag:kPBCalendarSelectionViewControllerCalendarTag];
+        PBCalendarView *calendarView = self.calendarViewsByIndexPath[indexPath];
 
         if (calendarView != nil) {
 
             BOOL stop = NO;
-            block(calendarView, index, &stop);
+            block(calendarView, indexPath.row, &stop);
 
             if (stop) {
                 break;
             }
         }
-
-        index++;
     }
 }
 
@@ -835,6 +836,33 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
     }];
 }
 
+- (UINavigationBar *)activeNavigationBar {
+
+    if (self.navbar != nil) {
+        return self.navbar;
+    }
+    return self.navigationController.navigationBar;
+}
+
+- (BOOL)pointInNavbarOrToolbar:(CGPoint)point {
+
+    CGRect toolbarRect =
+    [self.view
+     convertRect:self.toolbar.bounds
+     fromView:self.toolbar];
+
+    UINavigationBar *navbar = [self activeNavigationBar];
+
+    CGRect navbarRect =
+    [self.view
+     convertRect:navbar.bounds
+     fromView:navbar];
+
+    return
+    CGRectContainsPoint(toolbarRect, point) ||
+    CGRectContainsPoint(navbarRect, point);
+}
+
 #pragma mark - Gestures
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture {
@@ -843,12 +871,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 
         CGPoint location = [gesture locationInView:self.view];
 
-        CGRect toolbarRect =
-        [self.view
-         convertRect:self.toolbar.bounds
-         fromView:self.toolbar];
-
-        if (CGRectContainsPoint(toolbarRect, location) == NO) {
+        if ([self pointInNavbarOrToolbar:location] == NO) {
 
             if (_rangeMode) {
                 [self handleRangeModeTap:gesture];
@@ -947,39 +970,55 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
 }
 
 - (void)handlePan:(UIPanGestureRecognizer *)gesture {
-
-    if (_rangeMode) {
-        [self handleRangeModePan:gesture];
-    }
+    [self handleRangeModePan:gesture];
 }
 
 - (void)handleRangeModePan:(UIPanGestureRecognizer *)gesture {
 
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
-            [self handlePanBegan:gesture];
+
+            if (_rangeMode) {
+                [self handleRangePanBegan:gesture];
+            } else {
+                [self handleSingleSelectionPanBegan:gesture];
+            }
             break;
 
         case UIGestureRecognizerStateChanged:
-            [self handlePanChanged:gesture];
+
+            if (_rangeMode) {
+                [self handleRangePanChanged:gesture];
+            } else {
+                [self handleSingleSelectionPanChanged:gesture];
+            }
             break;
 
         default:
-            [self handlePanEnded:gesture];
+
+            if (_rangeMode) {
+                [self handleRangePanEnded:gesture];
+            } else {
+                [self handleSingleSelectionPanEnded:gesture];
+            }
             break;
     }
 }
 
-- (void)handlePanBegan:(UIGestureRecognizer *)gesture {
+- (void)handleSingleSelectionPanBegan:(UIGestureRecognizer *)gesture {
+}
 
-    CGRect toolbarRect =
-    [self.view
-     convertRect:self.toolbar.bounds
-     fromView:self.toolbar];
+- (void)handleSingleSelectionPanChanged:(UIGestureRecognizer *)gesture {
+}
+
+- (void)handleSingleSelectionPanEnded:(UIGestureRecognizer *)gesture {
+}
+
+- (void)handleRangePanBegan:(UIGestureRecognizer *)gesture {
 
     CGPoint location = [gesture locationInView:self.view];
 
-    if (CGRectContainsPoint(toolbarRect, location) == NO) {
+    if ([self pointInNavbarOrToolbar:location] == NO) {
 
         NSDate *date = [self dateAtPoint:location];
 
@@ -999,7 +1038,7 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
     }
 }
 
-- (void)handlePanChanged:(UIGestureRecognizer *)gesture {
+- (void)handleRangePanChanged:(UIGestureRecognizer *)gesture {
 
     if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
         return;
@@ -1042,16 +1081,19 @@ static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
         }
     }
 
-    self.selectedDateRange =
-    [PBDateRange
-     dateRangeWithStartDate:startDate
-     endDate:endDate];
+    if ([startDate isEqualToDate:self.selectedDateRange.startDate] == NO ||
+        [endDate isEqualToDate:self.selectedDateRange.endDate.midnight] == NO) {
 
-    calendarView.selectedDateRange = self.selectedDateRange;
-    [self reloadData];
+        self.selectedDateRange =
+        [PBDateRange
+         dateRangeWithStartDate:startDate
+         endDate:endDate];
+
+        calendarView.selectedDateRange = self.selectedDateRange;
+    }
 }
 
-- (void)handlePanEnded:(UIGestureRecognizer *)gesture {
+- (void)handleRangePanEnded:(UIGestureRecognizer *)gesture {
 
     if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
         return;
