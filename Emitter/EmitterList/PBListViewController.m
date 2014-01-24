@@ -769,6 +769,11 @@ static NSInteger const kPBListDefaultTag = 105;
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
+    if (item.itemType == PBItemTypeSpacer) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        return;
+    }
+
     if (self.tableView.allowsMultipleSelection == NO) {
 
         if (item.itemType != PBItemTypeChecked && item.itemType != PBItemTypeSelectAll) {

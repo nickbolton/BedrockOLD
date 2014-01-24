@@ -14,7 +14,6 @@ typedef NS_ENUM(NSInteger, PBItemType) {
     PBItemTypeTitle,
     PBItemTypeAction,
     PBItemTypeSpacer,
-    PBItemTypeSeparator,
     PBItemTypeChecked,
     PBItemTypeSelectAll,
     PBItemTypeCustom,
