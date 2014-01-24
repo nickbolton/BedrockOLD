@@ -11,8 +11,7 @@
 @protocol PBListViewControllerItemProtocol <NSObject>
 
 @optional
-- (CGFloat)listViewItemHeight;
-- (void)setListViewItemHeight:(CGFloat)height;
+@property (nonatomic) CGFloat listViewItemHeight;
 
 @end
 

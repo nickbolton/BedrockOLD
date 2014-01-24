@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PBListViewControllerItem.h"
 
 @class TCTimePeriodSelectorView;
 @class PBListItem;
@@ -16,7 +17,7 @@ extern NSString * const kPBListCellID;
 extern NSString * const kPBListSpacerCellID;
 extern NSString * const kPBListActionCellID;
 
-@interface PBListViewController : UIViewController
+@interface PBListViewController : UIViewController <PBListViewControllerItemProtocol>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
@@ -43,6 +44,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) BOOL showRoundedGroups;
 @property (nonatomic) Class headerViewClass;
 @property (nonatomic) Class footerViewClass;
+@property (nonatomic) CGFloat listViewItemHeight;
 
 - (id)initWithItems:(NSArray *)items;
 - (id)initWithNib;
@@ -62,5 +64,6 @@ extern NSString * const kPBListActionCellID;
 - (void)keyboardWillHide:(NSNotification *)notification;
 - (void)dismissKeyboard;
 - (IBAction)cancelPressed:(id)sender;
+- (void)updateListViewItemHeight;
 
 @end

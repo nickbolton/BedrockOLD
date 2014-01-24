@@ -56,14 +56,11 @@ static void *ObservationContext = &ObservationContext;
         this.listViewController = parentViewController;
 
         [parentViewController addChildViewController:this.contentViewController];
-
-        this.contentViewController.view.autoresizingMask =
-        UIViewAutoresizingFlexibleHeight |
-        UIViewAutoresizingFlexibleWidth;
-
+        this.contentViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
         [cell.contentView addSubview:this.contentViewController.view];
-
+        [NSLayoutConstraint expandToSuperview:this.contentViewController.view];
         [this.contentViewController didMoveToParentViewController:parentViewController];
+        [parentViewController reloadTableRow:item.indexPath.row];
     };
 }
 

@@ -270,6 +270,19 @@ static NSInteger const kPBListDefaultTag = 105;
     self.selectedRowIndexes = selectedIndexes;
 }
 
+#pragma mark - Public
+
+- (void)updateListViewItemHeight {
+
+    // Setting listViewItemHeight triggers container view controllers to
+    // update their height. The value is abitrary in our case because the
+    // container view controller will use our data source to determine
+    // our height.  If containing view controllers do not subclass from
+    // PBListViewController, then they'll have to set an actual value.
+
+    self.listViewItemHeight = self.listViewItemHeight;
+}
+
 #pragma mark - Actions
 
 - (IBAction)cancelPressed:(id)sender {
@@ -401,34 +414,29 @@ static NSInteger const kPBListDefaultTag = 105;
 
     for (PBListItem *item in sectionItem.items) {
 
-        if (item.itemType == PBItemTypeCustom) {
+        if (item.cellNib != nil) {
 
-            NSAssert(item.cellID != nil, @"No cellID configured");
-            NSAssert(item.cellNib != nil || item.cellClass != nil, @"No cellNib or cellClass configured");
+            [self.tableView
+             registerNib:item.cellNib
+             forCellReuseIdentifier:item.cellID];
 
-            if (item.cellNib != nil) {
+            NSArray *views =
+            [item.cellNib instantiateWithOwner:self options:nil];
 
-                [self.tableView
-                 registerNib:item.cellNib
-                 forCellReuseIdentifier:item.cellID];
+            if (views.count > 0) {
+                UIView *cell = views[0];
 
-                NSArray *views =
-                [item.cellNib instantiateWithOwner:self options:nil];
-
-                if (views.count > 0) {
-                    UIView *cell = views[0];
-
-                    item.rowHeight = CGRectGetHeight(cell.frame);
-                }
-
-            } else {
-
-                [self.tableView
-                 registerClass:item.cellClass
-                 forCellReuseIdentifier:item.cellID];
+                item.rowHeight = CGRectGetHeight(cell.frame);
             }
 
-        } else if (item.itemType == PBItemTypeSelectAll) {
+        } else if (item.cellID != nil) {
+
+            [self.tableView
+             registerClass:item.cellClass
+             forCellReuseIdentifier:item.cellID];
+        }
+
+        if (item.itemType == PBItemTypeSelectAll) {
 
             self.selectAllItem = item;
             self.tableView.allowsMultipleSelection = YES;
@@ -524,22 +532,27 @@ static NSInteger const kPBListDefaultTag = 105;
 
         cell.tag = kPBListCheckedTag;
 
-        cell.titleLabel.textColor =
-        item.titleColor != nil ? item.titleColor : self.titleColor;
+        if ([cell isKindOfClass:[PBListCell class]]) {
+            cell.titleLabel.textColor =
+            item.titleColor != nil ? item.titleColor : self.titleColor;
 
-        cell.titleLabel.font =
-        item.titleFont != nil ? item.titleFont : self.titleFont;
+            cell.titleLabel.font =
+            item.titleFont != nil ? item.titleFont : self.titleFont;
+
+            cell.titleLabel.textAlignment = item.titleAlignment;
+        }
 
         cell.backgroundColor =
         item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
 
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-        cell.titleLabel.textAlignment = item.titleAlignment;
     }
 
-    cell.titleLabel.text = item.title;
-    cell.valueLabel.text = nil;
+    if ([cell isKindOfClass:[PBListCell class]]) {
+        cell.titleLabel.text = item.title;
+        cell.valueLabel.text = nil;
+    }
     cell.separatorInset = item.separatorInsets;
 
     if (item.isSelected) {
@@ -556,42 +569,48 @@ static NSInteger const kPBListDefaultTag = 105;
 
         cell.tag = kPBListDefaultTag;
 
-        cell.titleLabel.textColor =
-        item.titleColor != nil ? item.titleColor : self.titleColor;
+        if ([cell isKindOfClass:[PBListCell class]]) {
 
-        cell.valueLabel.textColor =
-        item.valueColor != nil ? item.valueColor : self.valueColor;
+            cell.titleLabel.textColor =
+            item.titleColor != nil ? item.titleColor : self.titleColor;
 
-        cell.titleLabel.font =
-        item.titleFont != nil ? item.titleFont : self.titleFont;
+            cell.valueLabel.textColor =
+            item.valueColor != nil ? item.valueColor : self.valueColor;
 
-        cell.valueLabel.font =
-        item.valueFont != nil ? item.valueFont : self.valueFont;
+            cell.titleLabel.font =
+            item.titleFont != nil ? item.titleFont : self.titleFont;
+
+            cell.valueLabel.font =
+            item.valueFont != nil ? item.valueFont : self.valueFont;
+
+            cell.titleLabel.textAlignment = item.titleAlignment;
+
+            if (item.hasDisclosure == NO) {
+
+                CGRect frame = cell.valueLabel.frame;
+                frame.origin.x -= item.valueMargin;
+                cell.valueLabel.frame = frame;
+            }
+        }
 
         cell.backgroundColor =
         item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
 
         cell.selectionStyle = item.selectionStyle;
 
-        cell.titleLabel.textAlignment = item.titleAlignment;
-
         if (item.hasDisclosure) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-
-        if (item.hasDisclosure == NO) {
-
-            CGRect frame = cell.valueLabel.frame;
-            frame.origin.x -= item.valueMargin;
-            cell.valueLabel.frame = frame;
-        }
     }
 
     cell.separatorInset = item.separatorInsets;
-    cell.titleLabel.text = item.title;
-    cell.valueLabel.text = item.value;
+
+    if ([cell isKindOfClass:[PBListCell class]]) {
+        cell.titleLabel.text = item.title;
+        cell.valueLabel.text = item.value;
+    }
 }
 
 #pragma mark - Keyboard Handling
@@ -649,12 +668,17 @@ static NSInteger const kPBListDefaultTag = 105;
     item.indexPath = indexPath;
 
     UITableViewCell *cell;
+    NSString *cellID = item.cellID;
 
     switch (item.itemType) {
 
         case PBItemTypeAction: {
 
-            cell = [tableView dequeueReusableCellWithIdentifier:kPBListActionCellID];
+            if (cellID == nil) {
+                cellID = kPBListActionCellID;
+            }
+
+            cell = [tableView dequeueReusableCellWithIdentifier:cellID];
             [self configureActionCell:cell withItem:item];
 
         } break;
@@ -670,11 +694,6 @@ static NSInteger const kPBListDefaultTag = 105;
 
             cell = [tableView dequeueReusableCellWithIdentifier:item.cellID];
 
-            NSAssert([cell isKindOfClass:[PBListViewDefaultCell class]],
-                     @"custom cells must extend from PBListViewDefaultCell");
-
-            PBListViewDefaultCell *defaultCell = (id)cell;
-
             if (item.itemConfigured == NO) {
 
                 cell.selectionStyle = item.selectionStyle;
@@ -683,23 +702,15 @@ static NSInteger const kPBListDefaultTag = 105;
                 item.itemConfigured = YES;
             }
 
-            if (item.configureBlock != nil) {
-
-                if (defaultCell.cellConfigured == NO) {
-                    item.configureBlock(self, item, cell);
-                    defaultCell.cellConfigured = YES;
-                }
-            }
-
-            if (item.bindingBlock != nil) {
-                item.bindingBlock(self, indexPath, item, cell);
-            }
-
         } break;
 
         case PBItemTypeTitle: {
 
-            cell = [tableView dequeueReusableCellWithIdentifier:kPBListTitleCellID];
+            if (cellID == nil) {
+                cellID = kPBListTitleCellID;
+            }
+
+            cell = [tableView dequeueReusableCellWithIdentifier:cellID];
             [self configureDefaultCell:(id)cell withItem:item];
 
         } break;
@@ -707,22 +718,45 @@ static NSInteger const kPBListDefaultTag = 105;
         case PBItemTypeSelectAll:
         case PBItemTypeChecked: {
 
-            cell = [tableView dequeueReusableCellWithIdentifier:kPBListCellID];
+            if (cellID == nil) {
+                cellID = kPBListCellID;
+            }
+
+            cell = [tableView dequeueReusableCellWithIdentifier:cellID];
             [self configureCheckedCell:(id)cell withItem:item];
 
         } break;
 
         default: {
 
-            cell = [tableView dequeueReusableCellWithIdentifier:kPBListCellID];
+            if (cellID == nil) {
+                cellID = kPBListCellID;
+            }
+
+            cell = [tableView dequeueReusableCellWithIdentifier:cellID];
             [self configureDefaultCell:(id)cell withItem:item];
             
         } break;
     }
 
     if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
-        ((PBListViewDefaultCell *)cell).item = item;
-        ((PBListViewDefaultCell *)cell).viewController = self;
+
+        PBListViewDefaultCell *defaultCell = (id)cell;
+
+        if (item.configureBlock != nil) {
+
+            if (defaultCell.cellConfigured == NO) {
+                item.configureBlock(self, item, cell);
+                defaultCell.cellConfigured = YES;
+            }
+        }
+
+        if (item.bindingBlock != nil) {
+            item.bindingBlock(self, indexPath, item, cell);
+        }
+
+        defaultCell.item = item;
+        defaultCell.viewController = self;
     }
 
     return cell;
