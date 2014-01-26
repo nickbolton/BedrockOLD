@@ -28,6 +28,15 @@
      items:items];
 }
 
++ (PBSectionItem *)sectionItemWithItems:(NSArray *)items {
+
+    return
+    [[PBSectionItem alloc]
+     initWithHeaderTitle:nil
+     footerTitle:nil
+     items:items];
+}
+
 - (id)initWithHeaderTitle:(NSString *)headerTitle
               footerTitle:(NSString *)footerTitle
               items:(NSArray *)items {

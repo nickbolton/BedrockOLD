@@ -7,6 +7,7 @@
 //
 
 #import "PBCollectionLayout.h"
+#import "PBSectionItem.h"
 #import "PBCollectionItem.h"
 #import "PBCollectionViewController.h"
 
@@ -247,24 +248,9 @@
 
     BOOL sizeSet = NO;
 
-    if (self.viewController.isSectioned) {
+    for (PBSectionItem *sectionItem in dataSource) {
 
-        for (NSArray *section in dataSource) {
-
-            for (PBCollectionItem *item in section) {
-
-                sizeSet = YES;
-
-                CGPoint p = [self maxPointOfItem:item];
-
-                rightMostPosition = MAX(rightMostPosition, p.x);
-                bottomMostPosition = MAX(bottomMostPosition, p.y);
-            }
-        }
-
-    } else {
-
-        for (PBCollectionItem *item in dataSource) {
+        for (PBCollectionItem *item in sectionItem.items) {
 
             sizeSet = YES;
 

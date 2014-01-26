@@ -17,31 +17,16 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellClass:(Class)cellClass
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock
-deleteAction:(void(^)(PBCollectionViewController *viewController))deleteActionBlock {
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock {
 
     PBCollectionItem *item =
-    [[PBCollectionItem alloc] init];
-
-    item.userContext = userContext;
-    item.reuseIdentifier = reuseIdentifier;
-    item.cellClass = cellClass;
-    item.kind = kPBCollectionViewCellKind;
-    item.deselectable = YES;
-    item.configureBlock = configureBlock;
-    item.bindingBlock = bindingBlock;
-    item.selectActionBlock = selectActionBlock;
-    item.deleteActionBlock = deleteActionBlock;
-    item.useBackgroundImageSize = YES;
-
-    item.point = CGPointZero;
-    item.center = CGPointZero;
-    item.size = CGSizeZero;
-    item.transform3D = CATransform3DIdentity;
-    item.transform = CGAffineTransformIdentity;
-    item.alpha = 1.0f;
-    item.zIndex = 0;
-    item.hidden = NO;
+    [[PBCollectionItem alloc]
+     initWithUserContext:userContext
+     reuseIdentifier:reuseIdentifier
+     cellClass:cellClass
+     configure:configureBlock
+     binding:bindingBlock
+     selectAction:selectActionBlock];
 
     return item;
 }
@@ -52,37 +37,78 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellNib:(UINib *)cellNib
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock
-deleteAction:(void(^)(PBCollectionViewController *viewController))deleteActionBlock {
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock {
 
     PBCollectionItem *item =
-    [[PBCollectionItem alloc] init];
-
-    item.userContext = userContext;
-    item.reuseIdentifier = reuseIdentifier;
-    item.cellNib = cellNib;
-    item.kind = kPBCollectionViewCellKind;
-    item.deselectable = YES;
-    item.configureBlock = configureBlock;
-    item.bindingBlock = bindingBlock;
-    item.selectActionBlock = selectActionBlock;
-    item.deleteActionBlock = deleteActionBlock;
-    item.useBackgroundImageSize = YES;
-
-    item.point = CGPointZero;
-    item.center = CGPointZero;
-    item.size = CGSizeZero;
-    item.transform3D = CATransform3DIdentity;
-    item.transform = CGAffineTransformIdentity;
-    item.alpha = 1.0f;
-    item.zIndex = 0;
-    item.hidden = NO;
+    [[PBCollectionItem alloc]
+     initWithUserContext:userContext
+     reuseIdentifier:reuseIdentifier
+     cellNib:cellNib
+     configure:configureBlock
+     binding:bindingBlock
+     selectAction:selectActionBlock];
 
     return item;
 }
 
-- (BOOL)isDeletable {
-    return self.deleteActionBlock != nil;
+- (id)
+initWithUserContext:(id)userContext
+reuseIdentifier:(NSString *)reuseIdentifier
+cellClass:(Class)cellClass
+configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
+binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock {
+
+    self = [super init];
+    if (self) {
+
+        self.userContext = userContext;
+        self.reuseIdentifier = reuseIdentifier;
+        self.cellClass = cellClass;
+        self.configureBlock = configureBlock;
+        self.bindingBlock = bindingBlock;
+        self.selectActionBlock = selectActionBlock;
+
+        [self commonInit];
+    }
+    return self;
+}
+
+- (id)
+initWithUserContext:(id)userContext
+reuseIdentifier:(NSString *)reuseIdentifier
+cellNib:(UINib *)cellNib
+configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
+binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock {
+
+    self = [super init];
+    if (self) {
+
+        self.userContext = userContext;
+        self.reuseIdentifier = reuseIdentifier;
+        self.cellNib = cellNib;
+        self.configureBlock = configureBlock;
+        self.bindingBlock = bindingBlock;
+        self.selectActionBlock = selectActionBlock;
+
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit {
+    self.kind = kPBCollectionViewCellKind;
+    self.deselectable = YES;
+    self.useBackgroundImageSize = YES;
+    self.point = CGPointZero;
+    self.center = CGPointZero;
+    self.size = CGSizeZero;
+    self.transform3D = CATransform3DIdentity;
+    self.transform = CGAffineTransformIdentity;
+    self.alpha = 1.0f;
+    self.zIndex = 0;
+    self.hidden = NO;
 }
 
 - (void)setSelectAllItem:(BOOL)selectAllItem {

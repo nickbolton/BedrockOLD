@@ -336,7 +336,7 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
          
      } selectAction:^(PBCollectionViewController *viewController) {
 
-     } deleteAction:nil];
+     }];
 
     return item;
 }
@@ -448,7 +448,7 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
          } selectAction:^(PBCollectionViewController *viewController) {
 
-         } deleteAction:nil];
+         }];
 
         item.size = CGSizeMake(itemWidth, kPBCalendarViewItemHeight);
         item.point = CGPointMake(xPos, yPos);

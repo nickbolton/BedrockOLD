@@ -41,6 +41,7 @@
 #import "UIBezierView.h"
 #import "UIBezierButton.h"
 #import "UINavigationController+Bedrock.h"
+#import "UIViewController+Bedrock.h"
 #else
 
 #endif

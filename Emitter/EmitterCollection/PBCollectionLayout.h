@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class PBCollectionViewController;
+@class PBCollectionItem;
 
 @interface PBCollectionLayout : UICollectionViewFlowLayout
 
@@ -16,5 +17,9 @@
 
 @property (nonatomic) CGSize minContentSize;
 @property (nonatomic, getter = isDebugging) BOOL debugging;
+
+- (void)configureAttributes:(UICollectionViewLayoutAttributes *)itemAttributes
+                   withItem:(PBCollectionItem *)item
+                atIndexPath:(NSIndexPath *)indexPath;
 
 @end

@@ -18,4 +18,6 @@
                                   footerTitle:(NSString *)footerTitle
                                         items:(NSArray *)items;
 
++ (PBSectionItem *)sectionItemWithItems:(NSArray *)items;
+
 @end

@@ -26,7 +26,6 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, weak) id doneTarget;
 @property (nonatomic) SEL doneSelector;
 @property (nonatomic) BOOL dismissOnDone;
-@property (nonatomic, getter = isSectioned, readonly) BOOL sectioned;
 @property (nonatomic, readonly) IBOutlet PBCollectionLayout *collectionLayout;
 
 @property (nonatomic, strong) UIColor *backgroundColor;

@@ -35,7 +35,6 @@
 @property (nonatomic, strong) PBCollectionItem *decorationItem;
 @property (nonatomic, getter = isDeselectable) BOOL deselectable;
 @property (nonatomic, copy) void(^selectActionBlock)(id sender);
-@property (nonatomic, copy) void(^deleteActionBlock)(id sender);
 @property (nonatomic, copy) void(^configureBlock)(id sender, PBCollectionItem *item, id cell);
 @property (nonatomic, copy) void(^bindingBlock)(id sender, NSIndexPath *indexPath, PBCollectionItem *item, id cell);
 
@@ -56,8 +55,7 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellNib:(UINib *)cellNib
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock
-deleteAction:(void(^)(PBCollectionViewController *viewController))deleteActionBlock;
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock;
 
 + (instancetype)
 customClassItemWithUserContext:(id)userContext
@@ -65,7 +63,14 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellClass:(Class)cellClass
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock
-deleteAction:(void(^)(PBCollectionViewController *viewController))deleteActionBlock;
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock;
+
+- (id)
+initWithUserContext:(id)userContext
+reuseIdentifier:(NSString *)reuseIdentifier
+cellNib:(UINib *)cellNib
+configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
+binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
+selectAction:(void(^)(PBCollectionViewController *viewController))selectActionBlock;
 
 @end

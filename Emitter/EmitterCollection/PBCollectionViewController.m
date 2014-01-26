@@ -9,6 +9,7 @@
 #import "PBCollectionViewController.h"
 #import "PBCollectionLayout.h"
 #import "PBCollectionItem.h"
+#import "PBSectionItem.h"
 #import "PBCollectionDefaultCell.h"
 
 NSString * const kPBCollectionViewCellKind = @"kPBCollectionViewCellKind";
@@ -23,7 +24,6 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
 @property (nonatomic, strong) NSMutableArray *selectedItemIndexes;
 @property (nonatomic, strong) PBCollectionItem *selectAllItem;
-@property (nonatomic, getter = isSectioned, readwrite) BOOL sectioned;
 
 @end
 
@@ -224,47 +224,47 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)setDataSource:(NSArray *)dataSource {
 
-    _dataSource = dataSource;
-    _sectioned = [dataSource.firstObject isKindOfClass:[NSArray class]];
+    if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]]) {
 
-    NSMutableArray *selectedIndexes = [NSMutableArray array];
-
-    if (_sectioned) {
-
-        NSInteger section = 0;
-
-        for (NSArray *rowArray in self.dataSource) {
-
-            NSInteger itemIndex = 0;
-
-            for (PBCollectionItem *item in rowArray) {
-
-                [self
-                 configureItem:item
-                 section:section
-                 item:itemIndex
-                 selectedIndexes:self.selectedItemIndexes];
-
-                itemIndex++;
-            }
-
-            section++;
-        }
+        _dataSource = dataSource;
 
     } else {
 
+        PBSectionItem *sectionItem =
+        [PBSectionItem
+         sectionItemWithHeaderTitle:nil
+         footerTitle:nil
+         items:dataSource];
+
+        _dataSource = @[sectionItem];
+    }
+
+    NSMutableArray *selectedIndexes = [NSMutableArray array];
+
+    NSInteger section = 0;
+
+    for (PBSectionItem *sectionItem in self.dataSource) {
+
+        NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+                 @"dataSource not a PBGroupItem class (or subclass)");
+
         NSInteger itemIndex = 0;
 
-        for (PBCollectionItem *item in self.dataSource) {
+        for (PBCollectionItem *item in sectionItem.items) {
+
+            NSAssert([item isKindOfClass:[PBCollectionItem class]],
+                     @"section item not a PBCollectionItem class (or subclass)");
 
             [self
              configureItem:item
-             section:0
+             section:section
              item:itemIndex
              selectedIndexes:self.selectedItemIndexes];
 
             itemIndex++;
         }
+
+        section++;
     }
 
     self.selectedItemIndexes = selectedIndexes;
@@ -318,10 +318,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     for (PBCollectionItem *item in items) {
 
-        NSArray *rowArray = [self rowArrayAtSection:section];
+        PBSectionItem *sectionItem = [self sectionItemAtSection:section];
 
         NSInteger index =
-        [rowArray indexOfObject:item];
+        [sectionItem.items indexOfObject:item];
 
         NSIndexPath *indexPath =
         [NSIndexPath indexPathForRow:index inSection:section];
@@ -339,10 +339,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     for (PBCollectionItem *item in items) {
 
-        NSArray *rowArray = [self rowArrayAtSection:section];
+        PBSectionItem *sectionItem = [self sectionItemAtSection:section];
 
         NSInteger index =
-        [rowArray indexOfObject:item];
+        [sectionItem.items indexOfObject:item];
 
         NSIndexPath *indexPath =
         [NSIndexPath indexPathForRow:index inSection:section];
@@ -359,7 +359,9 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     NSMutableArray *items = [NSMutableArray array];
 
-    for (PBCollectionItem *item in [self rowArrayAtSection:section]) {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+
+    for (PBCollectionItem *item in sectionItem.items) {
 
         if (item != targetItem) {
             [items addObject:item];
@@ -369,46 +371,34 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     [self deselectItems:items inSection:section];
 }
 
-- (NSArray *)rowArrayAtSection:(NSInteger)section {
+- (PBSectionItem *)sectionItemAtSection:(NSInteger)section {
 
-    if (_sectioned) {
-
-        if (section < self.dataSource.count) {
-            return self.dataSource[section];
-        }
-
-        return nil;
+    if (section < self.dataSource.count) {
+        return self.dataSource[section];
     }
+    return nil;
+}
 
-    return self.dataSource;
+- (NSArray *)itemsAtSection:(NSInteger)section {
+
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.items;
 }
 
 - (PBCollectionItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
-
-    NSArray *rowArray = [self rowArrayAtSection:indexPath.section];
-
-    if (indexPath.section == 0 && indexPath.item == 0 &&
-        rowArray.count > 0) {
-
-        PBCollectionItem *item = rowArray[0];
-
-        if ([item.userContext isKindOfClass:[NSDateComponents class]]) {
-            NSLog(@"ZZZZ");
-        }
-    }
-
-    return [self itemAtPosition:indexPath.row inRowArray:rowArray];
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+    return [self itemAtPosition:indexPath.row inSectionItem:sectionItem];
 }
 
-- (PBCollectionItem *)itemAtPosition:(NSInteger)position inRowArray:(NSArray *)rowArray {
+- (PBCollectionItem *)itemAtPosition:(NSInteger)position inSectionItem:(PBSectionItem *)sectionItem {
 
     PBCollectionItem *item = nil;
 
-    if (position < rowArray.count) {
-        item = rowArray[position];
+    if (position < sectionItem.items.count) {
+        item = sectionItem.items[position];
 
         NSAssert([item isKindOfClass:[PBCollectionItem class]],
-                 @"item not a PBListItem");
+                 @"item not a PBCollectionItem (or subclass)");
     }
 
     return item;
@@ -443,21 +433,14 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
         self.dataSource = [self buildDataSource];
     }
 
-    if (_sectioned) {
-
-        for (NSArray *section in self.dataSource) {
-            [self reloadDataSourceSection:section];
-        }
-
-    } else {
-
-        [self reloadDataSourceSection:self.dataSource];
+    for (PBSectionItem *sectionItem in self.dataSource) {
+        [self reloadDataSourceSection:sectionItem];
     }
 }
 
-- (void)reloadDataSourceSection:(NSArray *)sectionArray {
+- (void)reloadDataSourceSection:(PBSectionItem *)sectionItem {
 
-    for (PBCollectionItem *item in sectionArray) {
+    for (PBCollectionItem *item in sectionItem.items) {
 
         NSAssert(item.reuseIdentifier != nil, @"No reuseIdentifier configured");
         NSAssert(item.cellNib != nil || item.cellClass != nil, @"No cellNib or cellClass configured");
@@ -497,15 +480,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     [self reloadDataSource];
 
-    if (_sectioned) {
-
-        for (NSArray *section in self.dataSource) {
-            [self clearSectionConfigured:section];
-        }
-
-    } else {
-
-        [self clearSectionConfigured:self.dataSource];
+    for (PBSectionItem *sectionItem in self.dataSource) {
+        [self clearSectionConfigured:sectionItem];
     }
 
     [self.collectionView reloadData];
@@ -525,19 +501,14 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
               forItemIndexes:(NSArray *)itemIndexes {
 
     for (NSIndexPath *indexPath in itemIndexes) {
-
-        NSArray *rowArray = [self rowArrayAtSection:indexPath.section];
-        
-        if (indexPath.row < rowArray.count) {
-            PBCollectionItem *item = rowArray[indexPath.row];
-            item.selectionDisabled = selectionDisabled;
-        }
+        PBCollectionItem *item = [self itemAtIndexPath:indexPath];
+        item.selectionDisabled = selectionDisabled;
     }
 }
 
-- (void)clearSectionConfigured:(NSArray *)sectionArray {
+- (void)clearSectionConfigured:(PBSectionItem *)sectionItem {
     
-    for (PBCollectionItem *item in sectionArray) {
+    for (PBCollectionItem *item in sectionItem.items) {
         item.itemConfigured = NO;
     }
 }
@@ -545,19 +516,14 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-
-    if (_sectioned) {
-        return self.dataSource.count;
-    }
-
-    return 1;
+    return self.dataSource.count;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView
      numberOfItemsInSection:(NSInteger)section {
 
-    NSArray *rowArray = [self rowArrayAtSection:section];
-    return rowArray.count;
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.items.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
@@ -669,7 +635,9 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
 
         NSInteger selectionCount = 0;
 
-        for (PBCollectionItem *item in [self rowArrayAtSection:indexPath.section]) {
+        PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+        for (PBCollectionItem *item in sectionItem.items) {
 
             if (item.isSelected) {
                 selectionCount++;

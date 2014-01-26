@@ -222,19 +222,19 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)setDataSource:(NSArray *)dataSource {
 
-    if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]] == NO) {
+    if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]]) {
 
-        PBSectionItem *groupItem =
+        _dataSource = dataSource;
+
+    } else {
+
+        PBSectionItem *sectionItem =
         [PBSectionItem
          sectionItemWithHeaderTitle:nil
          footerTitle:nil
          items:dataSource];
 
-        _dataSource = @[groupItem];
-
-    } else {
-
-        _dataSource = dataSource;
+        _dataSource = @[sectionItem];
     }
 
     NSMutableArray *selectedIndexes = [NSMutableArray array];
@@ -244,14 +244,14 @@ static NSInteger const kPBListDefaultTag = 105;
     for (PBSectionItem *sectionItem in self.dataSource) {
 
         NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
-                 @"dataSource not a PBGroupItem class");
+                 @"dataSource not a PBSectionItem class (or subclass)");
 
         NSInteger row = 0;
 
         for (PBListItem *item in sectionItem.items) {
 
             NSAssert([item isKindOfClass:[PBListItem class]],
-                     @"section item not a PBListItem class");
+                     @"section item not a PBListItem class (or subclass)");
 
             if (item.isSelected) {
 
@@ -429,7 +429,7 @@ static NSInteger const kPBListDefaultTag = 105;
                 item.rowHeight = CGRectGetHeight(cell.frame);
             }
 
-        } else if (item.cellID != nil) {
+        } else if (item.cellID != nil && item.cellClass != nil) {
 
             [self.tableView
              registerClass:item.cellClass
