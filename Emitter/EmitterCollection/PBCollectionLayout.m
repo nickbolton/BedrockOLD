@@ -184,7 +184,7 @@
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return self.layoutInfo[kPBCollectionViewDecorationKind][indexPath];
+    return self.layoutInfo[kPBCollectionViewCellKind][indexPath];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind
