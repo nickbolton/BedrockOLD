@@ -12,7 +12,6 @@
 
 @property (nonatomic, readwrite) NSString *headerTitle;
 @property (nonatomic, readwrite) NSString *footerTitle;
-@property (nonatomic, readwrite) NSArray *items;
 
 @end
 

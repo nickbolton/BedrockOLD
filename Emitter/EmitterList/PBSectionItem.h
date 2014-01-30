@@ -12,7 +12,7 @@
 
 @property (nonatomic, readonly) NSString *headerTitle;
 @property (nonatomic, readonly) NSString *footerTitle;
-@property (nonatomic, readonly) NSArray *items;
+@property (nonatomic, strong) NSArray *items;
 
 + (PBSectionItem *)sectionItemWithHeaderTitle:(NSString *)headerTitle
                                   footerTitle:(NSString *)footerTitle
