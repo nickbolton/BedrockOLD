@@ -40,6 +40,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
     self = [super initWithCoder:decoder];
     if (self) {
+        self.reloadDataOnViewLoad = YES;
     }
     return self;
 }
@@ -57,6 +58,7 @@ static NSInteger const kPBListDefaultTag = 105;
     self = [super init];
     if (self) {
         self.providedDataSource = items;
+        self.reloadDataOnViewLoad = YES;
     }
     return self;
 }
@@ -66,9 +68,10 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)commonInit {
-    self.reloadDataOnViewLoad = YES;
     [self createTableViewIfNecessary];
-    [self reloadDataSource];
+    if (self.reloadDataOnViewLoad) {
+        [self reloadDataSource];
+    }
 }
 
 - (void)dealloc {
