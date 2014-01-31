@@ -8,8 +8,41 @@
 
 #import "NSDate+Bedrock.h"
 #import "PBCalendarManager.h"
+#import <objc/runtime.h>
+
+static char kPBMidnightObjectKey;
+static char kPBEndOfDayObjectKey;
+
+@interface NSDate()
+
+@property (readwrite, nonatomic, strong, setter = pb_setMidnightObject:) NSDate *pb_midnightObject;
+@property (readwrite, nonatomic, strong, setter = pb_setEndOfDayObject:) NSDate *pb_endOfDayObject;
+
+@end
 
 @implementation NSDate(Utilities)
+
+- (void)dealloc {
+    [self pb_setMidnightObject:nil];
+    [self pb_setEndOfDayObject:nil];
+}
+
+- (NSDate *)pb_midnightObject {
+    return (NSMutableDictionary *)objc_getAssociatedObject(self, &kPBMidnightObjectKey);
+}
+
+- (void)pb_setMidnightObject:(NSDate *)midnight {
+    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSDate *)pb_endOfDayObject {
+    return (NSMutableDictionary *)objc_getAssociatedObject(self, &kPBEndOfDayObjectKey);
+}
+
+- (void)pb_setEndOfDayObject:(NSDate *)date {
+    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 
 #if TARGET_OS_IPHONE
 - (BOOL)isGreaterThan:(id)object {
@@ -206,7 +239,15 @@
 }
 
 - (NSDate *)endOfDay:(NSCalendar *)cal {
-    return [[[self dateByAddingDays:1 withCal:cal] midnight:cal] dateByAddingTimeInterval:-1];
+
+    NSDate *result = [self pb_endOfDayObject];
+
+    if (result == nil) {
+        result = [[[self dateByAddingDays:1 withCal:cal] midnight:cal] dateByAddingTimeInterval:-1];
+        [self pb_setEndOfDayObject:result];
+    }
+
+    return result;
 }
 
 - (NSInteger)dayOfTheWeek {
@@ -281,9 +322,18 @@
 }
 
 - (NSDate *)midnight:(NSCalendar *)cal {
-    NSDateComponents *dateComponents = 
+
+    NSDate *result = [self pb_midnightObject];
+
+    if (result == nil) {
+        NSDateComponents *dateComponents =
         [cal components:NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit fromDate:self];
-    return [cal dateFromComponents:dateComponents];
+        result = [cal dateFromComponents:dateComponents];
+
+        [self pb_setMidnightObject:result];
+    }
+
+    return result;
 }
 
 - (PBDateRange *)dateIntervalForTimePeriod:(TimePeriod)timePeriod withCal:(NSCalendar *)cal {
