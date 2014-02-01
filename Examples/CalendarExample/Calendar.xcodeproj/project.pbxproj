@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE20A65B189D508A00BDFF0F /* UIViewController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */; };
 		FE9D35BF188EB4BF007C4B63 /* PBCalendarSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE9D35BE188EB4BF007C4B63 /* PBCalendarSelectionViewController.m */; };
 		FEEA9D45188C279E0001321A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D44188C279E0001321A /* Foundation.framework */; };
 		FEEA9D47188C279E0001321A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D46188C279E0001321A /* CoreGraphics.framework */; };
@@ -75,6 +76,8 @@
 
 /* Begin PBXFileReference section */
 		F90D2BA4E7B14D71A155C3AD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE20A659189D508A00BDFF0F /* UIViewController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Bedrock.h"; sourceTree = "<group>"; };
+		FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Bedrock.m"; sourceTree = "<group>"; };
 		FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarSelectionViewController.h; sourceTree = "<group>"; };
 		FE9D35BE188EB4BF007C4B63 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
 		FEEA9D41188C279E0001321A /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -303,6 +306,8 @@
 		FEEA9DA0188EAE290001321A /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				FE20A659189D508A00BDFF0F /* UIViewController+Bedrock.h */,
+				FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */,
 				FEEA9DA1188EAE290001321A /* NSCalendar+Bedrock.h */,
 				FEEA9DA2188EAE290001321A /* NSCalendar+Bedrock.m */,
 				FEEA9DA3188EAE290001321A /* UIAlertView+Bedrock.h */,
@@ -596,6 +601,7 @@
 				FEEA9DEF188EAE330001321A /* PBListViewDefaultCell.m in Sources */,
 				FE9D35BF188EB4BF007C4B63 /* PBCalendarSelectionViewController.m in Sources */,
 				FEEA9E12188EAEB00001321A /* PBDummyClass.m in Sources */,
+				FE20A65B189D508A00BDFF0F /* UIViewController+Bedrock.m in Sources */,
 				FEEA9E18188EAECE0001321A /* NSLayoutConstraint+Bedrock.m in Sources */,
 				FEEA9D51188C279E0001321A /* main.m in Sources */,
 				FEEA9DBA188EAE290001321A /* UIAlertView+Bedrock.m in Sources */,

@@ -15,9 +15,6 @@ static char kPBEndOfDayObjectKey;
 
 @interface NSDate()
 
-@property (readwrite, nonatomic, strong, setter = pb_setMidnightObject:) NSDate *pb_midnightObject;
-@property (readwrite, nonatomic, strong, setter = pb_setEndOfDayObject:) NSDate *pb_endOfDayObject;
-
 @end
 
 @implementation NSDate(Utilities)
@@ -28,19 +25,19 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)pb_midnightObject {
-    return (NSMutableDictionary *)objc_getAssociatedObject(self, &kPBMidnightObjectKey);
+    return (NSDate *)objc_getAssociatedObject(self, &kPBMidnightObjectKey);
 }
 
 - (void)pb_setMidnightObject:(NSDate *)midnight {
-    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSDate *)pb_endOfDayObject {
-    return (NSMutableDictionary *)objc_getAssociatedObject(self, &kPBEndOfDayObjectKey);
+    return (NSDate *)objc_getAssociatedObject(self, &kPBEndOfDayObjectKey);
 }
 
 - (void)pb_setEndOfDayObject:(NSDate *)date {
-    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 
