@@ -57,6 +57,8 @@ extern NSString * const kPBListActionCellID;
 - (void)reloadDataSource;
 - (void)reloadData;
 - (void)setupNavigationBar;
+- (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
+                    withAnimation:(UITableViewRowAnimation)animation;
 - (void)reloadTableRow:(NSUInteger)row;
 - (void)reloadTableRow:(NSUInteger)row
          withAnimation:(UITableViewRowAnimation)animation;

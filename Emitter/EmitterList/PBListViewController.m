@@ -363,6 +363,15 @@ static NSInteger const kPBListDefaultTag = 105;
     return nil;
 }
 
+- (BOOL)itemExistsAtIndexPath:(NSIndexPath *)indexPath {
+
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+    PBSectionItem *item =
+    [self itemAtRow:indexPath.row inSectionItem:sectionItem];
+
+    return item != nil;
+}
+
 - (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
     PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
     return [self itemAtRow:indexPath.row inSectionItem:sectionItem];
@@ -390,9 +399,19 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)reloadTableRow:(NSUInteger)row
          withAnimation:(UITableViewRowAnimation)animation {
 
-    [self.tableView
-     reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]]
-     withRowAnimation:animation];
+    [self
+     reloadTableRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]
+     withAnimation:animation];
+}
+
+- (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
+                    withAnimation:(UITableViewRowAnimation)animation {
+
+    if ([self itemExistsAtIndexPath:indexPath]) {
+        [self.tableView
+         reloadRowsAtIndexPaths:@[indexPath]
+         withRowAnimation:animation];
+    }
 }
 
 - (NSArray *)buildDataSource {
