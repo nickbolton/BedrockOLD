@@ -41,6 +41,8 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 @property (nonatomic, strong) UIView *endPointMarkerView;
 @property (nonatomic, strong) NSLayoutConstraint *endPointMarkerLeadingSpace;
 @property (nonatomic, strong) NSLayoutConstraint *endPointMarkerTopSpace;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 
 @end
 
@@ -241,25 +243,25 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 
 - (void)setupGestures {
 
-    UITapGestureRecognizer *tapGesture =
+    self.tapGesture =
     [[UITapGestureRecognizer alloc]
      initWithTarget:self
      action:@selector(handleTap:)];
 
-    tapGesture.delegate = self;
+    self.tapGesture.delegate = self;
 
-    [self.view addGestureRecognizer:tapGesture];
+    [self.view addGestureRecognizer:self.tapGesture];
 
-    UIPanGestureRecognizer *panGesture =
+    self.panGesture =
     [[UIPanGestureRecognizer alloc]
      initWithTarget:self
      action:@selector(handlePan:)];
 
-    [tapGesture requireGestureRecognizerToFail:panGesture];
+    self.panGesture.delegate = self;
 
-    panGesture.delegate = self;
+    [self.view addGestureRecognizer:self.panGesture];
 
-    [self.view addGestureRecognizer:panGesture];
+    [self.tapGesture requireGestureRecognizerToFail:self.panGesture];
 }
 
 - (void)setupEndPointMarkerView {
@@ -1239,7 +1241,7 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 
     [self.endPointMarkerView setNeedsLayout];
 
-    NSTimeInterval t = .3f;
+    NSTimeInterval t = .15f;
 
     CGPoint velocity = [gesture velocityInView:gesture.view];
     CGFloat xPos = self.endPointMarkerLeadingSpace.constant + velocity.x * t / 4.0f;
@@ -1247,10 +1249,6 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 
     [UIView
      animateWithDuration:t
-     delay:0.0f
-     usingSpringWithDamping:1.0f
-     initialSpringVelocity:0.0f
-     options:0
      animations:^{
 
          self.endPointMarkerTopSpace.constant = yPos;
@@ -1263,7 +1261,7 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
          [self.endPointMarkerView setNeedsLayout];
          
          [UIView
-          animateWithDuration:.3f
+          animateWithDuration:.15f
           delay:0.0f
           usingSpringWithDamping:.7f
           initialSpringVelocity:15.0f
@@ -1303,7 +1301,7 @@ static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
+    return gestureRecognizer != self.tapGesture || otherGestureRecognizer != self.panGesture;
 }
 
 @end

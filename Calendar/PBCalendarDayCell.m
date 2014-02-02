@@ -93,8 +93,8 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 
     [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointMarkerView];
     [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointMarkerView];
-    [NSLayoutConstraint horizontallyCenterView:self.endPointMarkerView padding:-0.5f];
-    [NSLayoutConstraint verticallyCenterView:self.endPointMarkerView];
+    [NSLayoutConstraint horizontallyCenterView:self.endPointMarkerView padding:0.0f];
+    [NSLayoutConstraint verticallyCenterView:self.endPointMarkerView padding:0.0f];
     self.endPointMarkerView.backgroundColor = self.endPointBackgroundColor;
     self.endPointMarkerView.hidden = YES;
     self.endPointMarkerHidden = YES;
