@@ -30,6 +30,7 @@
 #import "PBDateRange.h"
 #import "PBCalendarManager.h"
 #import "NSDate+Bedrock.h"
+#import "NSDateComponents+Bedrock.h"
 
 #if TARGET_OS_IPHONE
 #import "PBActionDelegate.h"

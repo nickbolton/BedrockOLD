@@ -61,6 +61,8 @@ typedef NSInteger TimePeriod;
 - (NSDate *)dateByAddingWeeks:(NSInteger)weeks;
 - (NSDate *)dateByAddingDays:(NSInteger)days;
 - (NSDate *)dateByAddingSeconds:(NSTimeInterval)seconds;
+- (NSDate *)dateByAddingComponents:(NSDateComponents *)components;
+- (NSRange)rangeOfUnit:(NSCalendarUnit)smaller inUnit:(NSCalendarUnit)larger;
 - (NSDate *)midnight;
 - (PBDateRange *)dateIntervalForTimePeriod:(TimePeriod)timePeriod;
 - (NSInteger)dayOfTheWeek:(NSCalendar *)cal;
@@ -73,6 +75,7 @@ typedef NSInteger TimePeriod;
 - (NSDate *)endOfDay;
 - (NSDate *)endOfDay:(NSCalendar *)cal;
 + (NSString *)labelForTimePeriod:(TimePeriod)timePeriod;
+- (NSDateComponents *)components:(NSCalendarUnit)components toDate:(NSDate *)date;
 
 - (NSInteger)daysInBetweenDate:(NSDate *)date;
 

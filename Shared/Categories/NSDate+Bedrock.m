@@ -29,7 +29,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (void)pb_setMidnightObject:(NSDate *)midnight {
-//    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSDate *)pb_endOfDayObject {
@@ -37,7 +37,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (void)pb_setEndOfDayObject:(NSDate *)date {
-//    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 
@@ -162,6 +162,20 @@ static char kPBEndOfDayObjectKey;
     NSTimeInterval todaysDiff = [[self midnight] timeIntervalSinceNow];
     NSTimeInterval dateDiff = lastDiff - todaysDiff;
     return dateDiff / 86400;
+}
+
+- (NSDateComponents *)components:(NSCalendarUnit)components
+                          toDate:(NSDate *)date {
+
+    NSCalendar *calendar =
+    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+
+    return
+    [calendar
+     components:components
+     fromDate:self
+     toDate:date
+     options:0];
 }
 
 - (BOOL)isWithinRange:(PBDateRange *)dateRange {
@@ -307,6 +321,30 @@ static char kPBEndOfDayObjectKey;
     [dateComponents setSecond:seconds];
     NSDate *result = [cal dateByAddingComponents:dateComponents toDate:self options:0];
     return result;
+}
+
+- (NSDate *)dateByAddingComponents:(NSDateComponents *)components {
+
+    NSCalendar *calendar =
+    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+
+    return
+    [calendar
+     dateByAddingComponents:components
+     toDate:self
+     options:0];
+}
+
+- (NSRange)rangeOfUnit:(NSCalendarUnit)smaller inUnit:(NSCalendarUnit)larger {
+
+    NSCalendar *calendar =
+    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+
+    return
+    [calendar
+     rangeOfUnit:smaller
+     inUnit:larger
+     forDate:self];
 }
 
 - (PBDateRange *)dateIntervalForTimePeriod:(TimePeriod)timePeriod {    
