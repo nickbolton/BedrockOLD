@@ -451,7 +451,7 @@ static NSInteger const kPBListDefaultTag = 105;
                 item.rowHeight = CGRectGetHeight(cell.frame);
             }
 
-        } else if (item.cellID != nil && item.cellClass != nil) {
+        } else if (item.cellID != nil && item.cellClass != NULL) {
 
             [self.tableView
              registerClass:item.cellClass
@@ -576,12 +576,6 @@ static NSInteger const kPBListDefaultTag = 105;
         cell.valueLabel.text = nil;
     }
     cell.separatorInset = item.separatorInsets;
-
-    if (item.isSelected) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    } else {
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
 }
 
 - (void)configureDefaultCell:(PBListCell *)cell

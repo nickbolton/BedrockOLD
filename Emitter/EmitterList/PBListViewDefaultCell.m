@@ -58,9 +58,39 @@
         self.item.itemType == PBItemTypeChecked) {
 
         if (self.isSelected) {
-            self.accessoryType = UITableViewCellAccessoryCheckmark;
+
+            if (self.item.selectionAccessoryNib != nil) {
+
+                if (CGSizeEqualToSize(self.item.selectionAccessorySize, CGSizeZero)) {
+                    PBLog(@"WARN : item selectionAccessorySize not set");
+                }
+
+            } else if (self.item.selectionAccessoryClass != NULL) {
+
+                if (CGSizeEqualToSize(self.item.selectionAccessorySize, CGSizeZero)) {
+                    PBLog(@"WARN : item selectionAccessorySize not set");
+                }
+
+                CGRect frame = CGRectZero;
+                frame.size = self.item.selectionAccessorySize;
+
+                self.accessoryView =
+                [[self.item.selectionAccessoryClass alloc]
+                 initWithFrame:frame];
+
+            } else {
+                self.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+
         } else {
-            self.accessoryType = UITableViewCellAccessoryNone;
+
+            if (self.item.selectionAccessoryNib != nil ||
+                self.item.selectionAccessoryClass != NULL) {
+
+                self.accessoryView = nil;
+            } else {
+                self.accessoryType = UITableViewCellAccessoryNone;
+            }
         }
 
         [self setNeedsDisplay];
