@@ -13,4 +13,7 @@
 + (NSDateComponents *)components:(NSCalendarUnit)components
                         fromDate:(NSDate *)date;
 
+- (BOOL)dateFromComponentsBoundByComponents:(NSDateComponents *)components
+                            otherComponents:(NSDateComponents *)otherComponents;
+
 @end

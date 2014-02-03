@@ -99,6 +99,22 @@
     [date isLessThanOrEqualTo:_endDate];
 }
 
+- (BOOL)componentsWithinRange:(NSDateComponents *)components {
+
+    NSDateComponents *startDateComponents =
+    [self.startDate
+     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+
+    NSDateComponents *endDateComponents =
+    [self.endDate
+     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+
+    return
+    [components
+     dateFromComponentsBoundByComponents:startDateComponents
+     otherComponents:endDateComponents];
+}
+
 - (void)adjustDateRangeToDate:(NSDate *)date {
 
     NSTimeInterval duration =

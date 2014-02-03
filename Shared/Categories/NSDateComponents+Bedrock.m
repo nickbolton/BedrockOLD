@@ -22,4 +22,24 @@
      fromDate:date];
 }
 
+- (BOOL)dateFromComponentsBoundByComponents:(NSDateComponents *)components
+                            otherComponents:(NSDateComponents *)otherComponents {
+
+    NSInteger value = [self dateValue];
+    NSInteger componentsValue = [components dateValue];
+    NSInteger otherValue = [otherComponents dateValue];
+
+    return
+    (componentsValue <= value && value <= otherValue) ||
+    (otherValue <= value && value <= componentsValue);
+}
+
+- (NSInteger)dateValue {
+
+    NSInteger result = self.day;
+    result += self.month * 100;
+    result += self.year * 10000;
+    return  result;
+}
+
 @end

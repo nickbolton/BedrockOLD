@@ -75,6 +75,7 @@ typedef NSInteger TimePeriod;
 - (NSDate *)endOfDay;
 - (NSDate *)endOfDay:(NSCalendar *)cal;
 + (NSString *)labelForTimePeriod:(TimePeriod)timePeriod;
+- (NSDateComponents *)components:(NSCalendarUnit)components;
 - (NSDateComponents *)components:(NSCalendarUnit)components toDate:(NSDate *)date;
 
 - (NSInteger)daysInBetweenDate:(NSDate *)date;

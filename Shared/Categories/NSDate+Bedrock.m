@@ -164,6 +164,14 @@ static char kPBEndOfDayObjectKey;
     return dateDiff / 86400;
 }
 
+- (NSDateComponents *)components:(NSCalendarUnit)components {
+
+    NSCalendar *calendar =
+    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+
+    return [calendar components:components fromDate:self];
+}
+
 - (NSDateComponents *)components:(NSCalendarUnit)components
                           toDate:(NSDate *)date {
 
