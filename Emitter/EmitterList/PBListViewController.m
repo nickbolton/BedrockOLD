@@ -41,6 +41,7 @@ static NSInteger const kPBListDefaultTag = 105;
     self = [super initWithCoder:decoder];
     if (self) {
         self.reloadDataOnViewLoad = YES;
+        [self commonInit];
     }
     return self;
 }
@@ -49,6 +50,7 @@ static NSInteger const kPBListDefaultTag = 105;
     self = [super initWithNibName:NSStringFromClass([self class]) bundle:nil];
     if (self) {
         self.reloadDataOnViewLoad = YES;
+        [self commonInit];
     }
     return self;
 }
@@ -59,6 +61,7 @@ static NSInteger const kPBListDefaultTag = 105;
     if (self) {
         self.providedDataSource = items;
         self.reloadDataOnViewLoad = YES;
+        [self commonInit];
     }
     return self;
 }
@@ -68,6 +71,9 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)commonInit {
+}
+
+- (void)preLoadSetup {
     [self createTableViewIfNecessary];
     if (self.reloadDataOnViewLoad) {
         [self reloadDataSource];
@@ -186,7 +192,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)viewDidLoad {
 
-    [self commonInit];
+    [self preLoadSetup];
 
     [super viewDidLoad];
 
