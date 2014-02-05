@@ -230,10 +230,15 @@ static NSInteger const kPBListDefaultTag = 105;
         NSIndexPath *indexPath =
         self.selectedRowIndexes.firstObject;
 
-        [self.tableView
-         scrollToRowAtIndexPath:indexPath
-         atScrollPosition:UITableViewScrollPositionTop
-         animated:NO];
+        NSArray *visibleIndexPaths = [self.tableView indexPathsForVisibleRows];
+
+        if ([visibleIndexPaths containsObject:indexPath] == NO) {
+
+            [self.tableView
+             scrollToRowAtIndexPath:indexPath
+             atScrollPosition:UITableViewScrollPositionTop
+             animated:NO];
+        }
     }
 }
 
@@ -244,10 +249,15 @@ static NSInteger const kPBListDefaultTag = 105;
         NSIndexPath *indexPath =
         self.selectedRowIndexes.firstObject;
 
-        [self.tableView
-         scrollToRowAtIndexPath:indexPath
-         atScrollPosition:UITableViewScrollPositionTop
-         animated:YES];
+        NSArray *visibleIndexPaths = [self.tableView indexPathsForVisibleRows];
+
+        if ([visibleIndexPaths containsObject:indexPath] == NO) {
+
+            [self.tableView
+             scrollToRowAtIndexPath:indexPath
+             atScrollPosition:UITableViewScrollPositionMiddle
+             animated:YES];
+        }
     }
 }
 
