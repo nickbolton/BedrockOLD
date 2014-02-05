@@ -223,6 +223,20 @@ static NSInteger const kPBListDefaultTag = 105;
     self.tableView.editing = NO;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    if (self.autoScrollToSelectedItem && self.selectedRowIndexes.count > 0) {
+        NSIndexPath *indexPath =
+        self.selectedRowIndexes.firstObject;
+
+        [self.tableView
+         scrollToRowAtIndexPath:indexPath
+         atScrollPosition:UITableViewScrollPositionTop
+         animated:NO];
+    }
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 }

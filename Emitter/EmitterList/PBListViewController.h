@@ -40,6 +40,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic) BOOL reloadDataOnViewLoad;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
+@property (nonatomic) BOOL autoScrollToSelectedItem;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
 @property (nonatomic) BOOL showRoundedGroups;
 @property (nonatomic) Class headerViewClass;
