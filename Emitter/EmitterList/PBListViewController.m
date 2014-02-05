@@ -230,15 +230,17 @@ static NSInteger const kPBListDefaultTag = 105;
         NSIndexPath *indexPath =
         self.selectedRowIndexes.firstObject;
 
-        NSArray *visibleIndexPaths = [self.tableView indexPathsForVisibleRows];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSArray *visibleIndexPaths = [self.tableView indexPathsForVisibleRows];
 
-        if ([visibleIndexPaths containsObject:indexPath] == NO) {
+            if ([visibleIndexPaths containsObject:indexPath] == NO) {
 
-            [self.tableView
-             scrollToRowAtIndexPath:indexPath
-             atScrollPosition:UITableViewScrollPositionTop
-             animated:NO];
-        }
+                [self.tableView
+                 scrollToRowAtIndexPath:indexPath
+                 atScrollPosition:UITableViewScrollPositionMiddle
+                 animated:NO];
+            }
+        });
     }
 }
 
