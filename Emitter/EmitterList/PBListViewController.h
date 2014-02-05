@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "PBListViewControllerItem.h"
 
+typedef NS_ENUM (NSInteger, PBListViewAutoSelectionType) {
+
+    PBListViewAutoSelectionTypeNone = 0,
+    PBListViewAutoSelectionTypeAnimated,
+    PBListViewAutoSelectionTypeNonAnimated,
+};
+
 @class TCTimePeriodSelectorView;
 @class PBListItem;
 @class PBActionDelegate;
@@ -40,7 +47,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic) BOOL reloadDataOnViewLoad;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
-@property (nonatomic) BOOL autoScrollToSelectedItem;
+@property (nonatomic) PBListViewAutoSelectionType autoSelectionType;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
 @property (nonatomic) BOOL showRoundedGroups;
 @property (nonatomic) Class headerViewClass;

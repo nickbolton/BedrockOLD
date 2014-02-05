@@ -226,7 +226,7 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    if (self.autoScrollToSelectedItem && self.selectedRowIndexes.count > 0) {
+    if (self.autoSelectionType == PBListViewAutoSelectionTypeNonAnimated && self.selectedRowIndexes.count > 0) {
         NSIndexPath *indexPath =
         self.selectedRowIndexes.firstObject;
 
@@ -239,6 +239,16 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
+    if (self.autoSelectionType == PBListViewAutoSelectionTypeAnimated && self.selectedRowIndexes.count > 0) {
+        NSIndexPath *indexPath =
+        self.selectedRowIndexes.firstObject;
+
+        [self.tableView
+         scrollToRowAtIndexPath:indexPath
+         atScrollPosition:UITableViewScrollPositionTop
+         animated:YES];
+    }
 }
 
 #pragma mark - Getters and Setters
