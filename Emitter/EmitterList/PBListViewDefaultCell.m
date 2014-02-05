@@ -54,8 +54,8 @@
 
     self.item.selected = self.isSelected;
 
-    if (self.item.itemType == PBItemTypeSelectAll ||
-        self.item.itemType == PBItemTypeChecked) {
+    if (self.item.checkedType == PBItemCheckedTypeAll ||
+        self.item.checkedType == PBItemCheckedTypeSingle) {
 
         if (self.isSelected) {
 

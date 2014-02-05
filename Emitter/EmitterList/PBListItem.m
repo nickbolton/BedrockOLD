@@ -59,19 +59,42 @@ CGFloat const kPBListActionRowHeight = 44.0f;
                          hasDisclosure:(BOOL)hasDisclosure
                           selectAction:(void(^)(id cell))selectActionBlock
                           deleteAction:(void(^)(id cell))deleteActionBlock {
+    return
+    [self
+     selectionItemWithTitle:title
+     value:value
+     itemType:itemType
+     checkedType:PBItemCheckedTypeNone
+     hasDisclosure:hasDisclosure
+     selectAction:selectActionBlock
+     deleteAction:deleteActionBlock];
+}
+
++ (instancetype)selectionItemWithTitle:(NSString *)title
+                                 value:(NSString *)value
+                              itemType:(PBItemType)itemType
+                           checkedType:(PBItemCheckedType)checkedType
+                         hasDisclosure:(BOOL)hasDisclosure
+                          selectAction:(void(^)(id cell))selectActionBlock
+                          deleteAction:(void(^)(id cell))deleteActionBlock {
 
     PBListItem *selectionItem =
     [[PBListItem alloc] init];
 
     [selectionItem commonInit];
 
+    BOOL isCheckedType =
+    checkedType == PBItemCheckedTypeSingle ||
+    checkedType == PBItemCheckedTypeAll;
+
     selectionItem.title = title;
     selectionItem.value = value;
     selectionItem.itemType = itemType;
+    selectionItem.checkedType = checkedType;
     selectionItem.hasDisclosure = hasDisclosure;
     selectionItem.selectActionBlock = selectActionBlock;
     selectionItem.deleteActionBlock = deleteActionBlock;
-    selectionItem.selectionStyle = itemType == PBItemTypeChecked ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleGray;
+    selectionItem.selectionStyle = isCheckedType ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleGray;
     selectionItem.titleAlignment = NSTextAlignmentLeft;
 
     [selectionItem setDefaultParagraphStyle];
@@ -90,7 +113,8 @@ CGFloat const kPBListActionRowHeight = 44.0f;
 
     selectionItem.title = title;
     selectionItem.value = nil;
-    selectionItem.itemType = PBItemTypeSelectAll;
+    selectionItem.itemType = PBItemTypeDefault;
+    selectionItem.checkedType = PBItemCheckedTypeAll;
     selectionItem.deselectable = NO;
     selectionItem.hasDisclosure = NO;
     selectionItem.selectActionBlock = selectActionBlock;

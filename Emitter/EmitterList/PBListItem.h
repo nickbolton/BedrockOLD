@@ -14,9 +14,14 @@ typedef NS_ENUM(NSInteger, PBItemType) {
     PBItemTypeTitle,
     PBItemTypeAction,
     PBItemTypeSpacer,
-    PBItemTypeChecked,
-    PBItemTypeSelectAll,
     PBItemTypeCustom,
+};
+
+typedef NS_ENUM(NSInteger, PBItemCheckedType) {
+
+    PBItemCheckedTypeNone = 0,
+    PBItemCheckedTypeSingle,
+    PBItemCheckedTypeAll,
 };
 
 extern CGFloat const kPBListRowHeight;
@@ -66,6 +71,7 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic, copy) void(^configureBlock)(id sender, PBListItem *item, id cell);
 @property (nonatomic, copy) void(^bindingBlock)(id sender, NSIndexPath *indexPath, PBListItem *item, id cell);
 @property (nonatomic) PBItemType itemType;
+@property (nonatomic) PBItemCheckedType checkedType;
 @property (nonatomic) UITableViewCellSelectionStyle selectionStyle;
 @property (nonatomic) NSTextAlignment titleAlignment;
 
@@ -76,6 +82,14 @@ extern CGFloat const kPBListActionRowHeight;
 + (instancetype)selectionItemWithTitle:(NSString *)title
                                  value:(NSString *)value
                               itemType:(PBItemType)itemType
+                         hasDisclosure:(BOOL)hasDisclosure
+                          selectAction:(void(^)(id cell))selectActionBlock
+                          deleteAction:(void(^)(id cell))deleteActionBlock;
+
++ (instancetype)selectionItemWithTitle:(NSString *)title
+                                 value:(NSString *)value
+                              itemType:(PBItemType)itemType
+                           checkedType:(PBItemCheckedType)checkedType
                          hasDisclosure:(BOOL)hasDisclosure
                           selectAction:(void(^)(id cell))selectActionBlock
                           deleteAction:(void(^)(id cell))deleteActionBlock;

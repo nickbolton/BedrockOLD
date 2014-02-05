@@ -464,7 +464,7 @@ static NSInteger const kPBListDefaultTag = 105;
              forCellReuseIdentifier:item.cellID];
         }
 
-        if (item.itemType == PBItemTypeSelectAll) {
+        if (item.checkedType == PBItemCheckedTypeAll) {
 
             self.selectAllItem = item;
             self.tableView.allowsMultipleSelection = YES;
@@ -737,18 +737,6 @@ static NSInteger const kPBListDefaultTag = 105;
 
         } break;
 
-        case PBItemTypeSelectAll:
-        case PBItemTypeChecked: {
-
-            if (cellID == nil) {
-                cellID = kPBListCellID;
-            }
-
-            cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-            [self configureCheckedCell:(id)cell withItem:item];
-
-        } break;
-
         default: {
 
             if (cellID == nil) {
@@ -798,7 +786,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
     if (self.tableView.allowsMultipleSelection == NO) {
 
-        if (item.itemType != PBItemTypeChecked && item.itemType != PBItemTypeSelectAll) {
+        if (item.checkedType == PBItemCheckedTypeNone) {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
     }
