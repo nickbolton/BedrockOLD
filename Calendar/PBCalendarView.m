@@ -60,9 +60,16 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 }
 
 - (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
+
+    BOOL changed =
+    _selectedDateRange == nil ||
+    [_selectedDateRange isEqual:selectedDateRange] == NO;
+
     _selectedDateRange = selectedDateRange;
 
-    [self updateCellsSelectedDateRange];
+    if (changed) {
+        [self updateCellsSelectedDateRange];
+    }
 }
 
 - (void)setYearAndMonthFromDate:(NSDate *)date {
@@ -299,9 +306,9 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
 - (void)updateCellsSelectedDateRange {
 
-    for (PBCalendarDayCell *cell in self.collectionViewController.collectionView.visibleCells) {
+    [self enumerateDayCells:^(PBCalendarDayCell *cell, NSInteger index, BOOL *stop) {
         cell.selectedDateRange = self.selectedDateRange;
-    }
+    }];
 }
 
 - (PBCollectionItem *)spacerItem:(NSNumber *)day realDay:(NSNumber *)realDay {
@@ -517,8 +524,30 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
                 _dataSourceDirty = NO;
             });
 	    });
-    } else {
-        [self.collectionViewController reloadData];
+    }
+}
+
+- (void)enumerateDayCells:(void(^)(PBCalendarDayCell *cell, NSInteger index, BOOL *stop))block {
+
+    if (block == nil) return;
+
+    UICollectionView *collectionView = self.collectionViewController.collectionView;
+
+    NSArray *visiableIndexPaths = [collectionView indexPathsForVisibleItems];
+
+    for (NSIndexPath *indexPath in visiableIndexPaths) {
+
+        PBCalendarDayCell *cell = (id)[collectionView cellForItemAtIndexPath:indexPath];
+
+        if (cell != nil) {
+
+            BOOL stop = NO;
+            block(cell, indexPath.row, &stop);
+
+            if (stop) {
+                break;
+            }
+        }
     }
 }
 

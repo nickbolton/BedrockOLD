@@ -12,7 +12,8 @@
 #import "NSCalendar+Bedrock.h"
 
 static NSInteger const kPBCalendarSelectionViewControllerVisibleMonths = 5;
-static CGFloat kPBCalendarSelectionViewControllerItemHeight = 264.0f;
+static CGFloat kPBCalendarSelectionViewControllerItemHeightPerWeek = 36.0f;
+static CGFloat kPBCalendarSelectionViewControllerItemMonthLabelHeight = 38.5f;
 static CGFloat kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
 static CGFloat kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
 static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
@@ -26,6 +27,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     BOOL _rangeMode;
     BOOL _infiniteDisabled;
     BOOL _scrollAdvancing;
+    BOOL _setInitialContentOffset;
     NSInteger _scrollAdvancingMonthDirection;
     CGPoint _lastPanningLocation;
     NSTimeInterval _lastOutOfBoundsUpdate;
@@ -230,10 +232,17 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     UIBarButtonItem *currentMonthItem =
     [[UIBarButtonItem alloc]
-     initWithTitle:PBLoc(@"Jump to Today")
+     initWithTitle:PBLoc(@"Today")
      style:UIBarButtonItemStylePlain
      target:self
      action:@selector(jumpToCurrentMonth)];
+
+    UIBarButtonItem *currentSelectionItem =
+    [[UIBarButtonItem alloc]
+     initWithTitle:PBLoc(@"Selection")
+     style:UIBarButtonItemStylePlain
+     target:self
+     action:@selector(jumpToCurrentSelection)];
 
     NSMutableArray *items = [NSMutableArray array];
 
@@ -243,6 +252,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     [items addObject:spacer];
     [items addObject:currentMonthItem];
+    [items addObject:currentSelectionItem];
 
     self.toolbar.items = items;
     [self updateToolbarItems];
@@ -297,6 +307,10 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 }
 
 - (void)updateVisibleRect {
+    self.visibleRect = [self buildVisibleRect];
+}
+
+- (CGRect)buildVisibleRect {
 
     CGFloat navigationBarHeight =
     CGRectGetHeight(self.navbar.bounds);
@@ -304,13 +318,11 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     CGFloat toolbarHeight =
     CGRectGetHeight(self.toolbar.bounds);
 
-    self.visibleRect =
+    return
     CGRectMake(0.0f,
                navigationBarHeight,
                CGRectGetWidth(self.view.frame),
                CGRectGetHeight(self.view.frame) - navigationBarHeight - toolbarHeight);
-
-    NSLog(@"visibleRect: %@", NSStringFromCGRect(self.visibleRect));
 }
 
 - (void)setupDisplayLink {
@@ -335,8 +347,20 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self setupEndPointMarkerView];
     [self setupGestures];
     [self setupToolbar];
-    self.tableView.contentOffset = [self zeroContentOffset];
     self.tableView.showsVerticalScrollIndicator = NO;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    if (_setInitialContentOffset == NO && self.calendarViewsByIndexPath.count > 0) {
+        _setInitialContentOffset = YES;
+        self.tableView.contentOffset = [self zeroContentOffset];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -399,7 +423,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      } selectAction:nil
      deleteAction:nil];
 
-    item.rowHeight = kPBCalendarSelectionViewControllerItemHeight;
+    item.rowHeight = [self heightForMonthDate:monthDate];
+
     item.separatorInsets = self.separatorInsets;
 
     return item;
@@ -570,19 +595,19 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     if (_infiniteDisabled) return;
 
     CGFloat backThreshold =
-    kPBCalendarSelectionViewControllerItemHeight * (kPBCalendarSelectionViewControllerVisibleMonths - 2.5);
+    6 * kPBCalendarSelectionViewControllerItemHeightPerWeek * (kPBCalendarSelectionViewControllerVisibleMonths - 2.5);
     CGFloat frontThreshold =
-    kPBCalendarSelectionViewControllerItemHeight * 1.5;
+    6 * kPBCalendarSelectionViewControllerItemHeightPerWeek * 1.5;
 
     CGPoint currentOffset = scrollView.contentOffset;
     if (currentOffset.y < frontThreshold) {
 
         CGFloat distanceFromThreshold =
-        currentOffset.y - kPBCalendarSelectionViewControllerItemHeight/2.0f;
+        currentOffset.y - (6*kPBCalendarSelectionViewControllerItemHeightPerWeek)/2.0f;
 
         CGFloat offset =
-        kPBCalendarSelectionViewControllerItemHeight +
-        kPBCalendarSelectionViewControllerItemHeight/2.0f +
+        (6*kPBCalendarSelectionViewControllerItemHeightPerWeek) +
+        (6*kPBCalendarSelectionViewControllerItemHeightPerWeek)/2.0f +
         distanceFromThreshold;
 
         _infiniteDisabled = YES;
@@ -592,11 +617,11 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     } else if (currentOffset.y >= backThreshold) {
 
         CGFloat distanceFromThreshold =
-        currentOffset.y - kPBCalendarSelectionViewControllerItemHeight/2.0f;
+        currentOffset.y - (6*kPBCalendarSelectionViewControllerItemHeightPerWeek)/2.0f;
 
         CGFloat offset =
         backThreshold +
-        kPBCalendarSelectionViewControllerItemHeight -
+        (6*kPBCalendarSelectionViewControllerItemHeightPerWeek) -
         distanceFromThreshold;
 
         _infiniteDisabled = YES;
@@ -609,13 +634,60 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (CGPoint)zeroContentOffset {
 
-    CGFloat topSpaceInView =
-    kPBCalendarSelectionViewControllerItemHeight -
-    (CGRectGetHeight(self.view.frame) -
-     kPBCalendarSelectionViewControllerItemHeight) / 2.0f;
+    PBCalendarView *calendarView = [self centerCalendarView];
+
+    CGPoint center = calendarView.center;
+
+    CGPoint centerInTable =
+    [self.tableView
+     convertPoint:center
+     fromView:calendarView.superview];
+
+    CGFloat yOffset =
+    CGRectGetHeight(self.navbar.bounds);
+
+    CGRect visibleRect = [self buildVisibleRect];
+
+    NSDate *monthDate =
+    [NSDate
+     dateWithYear:calendarView.year
+     month:calendarView.month
+     day:1];
+
+    CGFloat monthHeight = [self heightForMonthDate:monthDate];
+
+    yOffset +=
+    (CGRectGetHeight(visibleRect) - monthHeight) / 2.0f;
 
     return
-    CGPointMake(0.0f, kPBCalendarSelectionViewControllerItemHeight + topSpaceInView);
+    CGPointMake(0.0f, centerInTable.y - yOffset);
+}
+
+- (PBCalendarView *)centerCalendarView {
+
+    __block PBCalendarView *result = nil;
+
+    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+
+        if (index == (kPBCalendarSelectionViewControllerVisibleMonths/2)) {
+            result = calendarView;
+            *stop = YES;
+        }
+    }];
+
+    return result;
+}
+
+- (CGFloat)heightForMonthDate:(NSDate *)monthDate {
+
+    NSRange weeks =
+    [monthDate
+     rangeOfUnit:NSWeekCalendarUnit
+     inUnit:NSCalendarUnitMonth];
+
+    return
+    kPBCalendarSelectionViewControllerItemMonthLabelHeight +
+    weeks.length * kPBCalendarSelectionViewControllerItemHeightPerWeek;
 }
 
 - (void)updateToolbarItems {
@@ -673,7 +745,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self updateVisibleCalendarSelection];
 }
 
-- (void)jumpToCurrentMonth {
+- (void)jumpToDate:(NSDate *)date {
 
     self.view.userInteractionEnabled = NO;
     _infiniteDisabled = YES;
@@ -681,9 +753,9 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     NSDateComponents *dateComponents =
     [NSDateComponents
      components:NSCalendarUnitYear|NSCalendarUnitMonth
-     fromDate:[NSDate date]];
+     fromDate:date];
 
-    NSDate *date =
+    NSDate *monthDate =
     [NSDate
      dateWithYear:dateComponents.year
      month:dateComponents.month
@@ -692,31 +764,34 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     NSDateComponents *monthComponents =
     [self.currentStartDate
      components:NSCalendarUnitMonth
-     toDate:date];
+     toDate:monthDate];
+
+    NSRange weeks =
+    [monthDate
+     rangeOfUnit:NSWeekCalendarUnit
+     inUnit:NSCalendarUnitMonth];
 
     if (monthComponents.month == 1) {
 
         CGPoint contentOffset = self.tableView.contentOffset;
-        contentOffset.y -= kPBCalendarSelectionViewControllerItemHeight;
+        contentOffset.y -= (weeks.length*kPBCalendarSelectionViewControllerItemHeightPerWeek);
 
-        NSLog(@"setting date: %@", date);
-
-        self.currentStartDate = date;
+        self.currentStartDate = monthDate;
         [self reloadData];
         self.tableView.contentOffset = contentOffset;
 
     } else if (monthComponents.month == -1) {
 
         CGPoint contentOffset = self.tableView.contentOffset;
-        contentOffset.y += kPBCalendarSelectionViewControllerItemHeight;
+        contentOffset.y += (weeks.length * kPBCalendarSelectionViewControllerItemHeightPerWeek);
 
-        self.currentStartDate = date;
+        self.currentStartDate = monthDate;
         [self reloadData];
         self.tableView.contentOffset = contentOffset;
 
     } else if (monthComponents.month != 0) {
 
-        self.currentStartDate = date;
+        self.currentStartDate = monthDate;
         [self reloadData];
     }
 
@@ -732,6 +807,14 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
          self.view.userInteractionEnabled = YES;
          _infiniteDisabled = NO;
      }];
+}
+
+- (void)jumpToCurrentMonth {
+    [self jumpToDate:[NSDate date]];
+}
+
+- (void)jumpToCurrentSelection {
+    [self jumpToDate:self.selectedDateRange.startDate];
 }
 
 - (void)addCalendarMonthDirection:(NSInteger)month offset:(CGFloat)offset {

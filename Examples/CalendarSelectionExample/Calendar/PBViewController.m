@@ -25,10 +25,10 @@
     [super viewDidLoad];
 
     NSDate *startDate =
-    [NSDate dateWithYear:2013 month:11 day:17];
+    [NSDate dateWithYear:2013 month:10 day:17];
 
     NSDate *endDate =
-    [NSDate dateWithYear:2013 month:11 day:23];
+    [NSDate dateWithYear:2013 month:10 day:23];
 
     self.selectedDateRange =
     [PBDateRange dateRangeWithStartDate:startDate endDate:endDate];

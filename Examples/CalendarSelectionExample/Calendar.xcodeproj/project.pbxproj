@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FE20A65B189D508A00BDFF0F /* UIViewController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */; };
 		FE22ED66189E6BB800223F74 /* NSDateComponents+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE22ED65189E6BB800223F74 /* NSDateComponents+Bedrock.m */; };
-		FE9D35BF188EB4BF007C4B63 /* PBCalendarSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE9D35BE188EB4BF007C4B63 /* PBCalendarSelectionViewController.m */; };
+		FEBBEE7118A3A5D8001E9083 /* PBCalendarSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */; };
 		FEEA9D45188C279E0001321A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D44188C279E0001321A /* Foundation.framework */; };
 		FEEA9D47188C279E0001321A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D46188C279E0001321A /* CoreGraphics.framework */; };
 		FEEA9D49188C279E0001321A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D48188C279E0001321A /* UIKit.framework */; };
@@ -82,7 +82,7 @@
 		FE22ED64189E6BB800223F74 /* NSDateComponents+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateComponents+Bedrock.h"; sourceTree = "<group>"; };
 		FE22ED65189E6BB800223F74 /* NSDateComponents+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateComponents+Bedrock.m"; sourceTree = "<group>"; };
 		FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarSelectionViewController.h; sourceTree = "<group>"; };
-		FE9D35BE188EB4BF007C4B63 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
+		FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
 		FEEA9D41188C279E0001321A /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEA9D44188C279E0001321A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FEEA9D46188C279E0001321A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -289,7 +289,7 @@
 				FEEA9D98188EAE050001321A /* PBCalendarView.h */,
 				FEEA9D99188EAE050001321A /* PBCalendarView.m */,
 				FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */,
-				FE9D35BE188EB4BF007C4B63 /* PBCalendarSelectionViewController.m */,
+				FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */,
 			);
 			name = Calendar;
 			path = ../../Calendar;
@@ -580,6 +580,7 @@
 				FEEA9DE9188EAE330001321A /* PBListCell.m in Sources */,
 				FEEA9E13188EAEB00001321A /* PBManagedObjectContextManager.m in Sources */,
 				FEEA9DBB188EAE290001321A /* UIButton+Bedrock.m in Sources */,
+				FEBBEE7118A3A5D8001E9083 /* PBCalendarSelectionViewController.m in Sources */,
 				FEEA9D9C188EAE050001321A /* PBCalendarDayCell.m in Sources */,
 				FEEA9E0E188EAEB00001321A /* NSObject+Bedrock.m in Sources */,
 				FEEA9E11188EAEB00001321A /* PBDateRange.m in Sources */,
@@ -605,7 +606,6 @@
 				FEEA9E0F188EAEB00001321A /* NSString+Bedrock.m in Sources */,
 				FEEA9DBF188EAE290001321A /* UIView+Bedrock.m in Sources */,
 				FEEA9DEF188EAE330001321A /* PBListViewDefaultCell.m in Sources */,
-				FE9D35BF188EB4BF007C4B63 /* PBCalendarSelectionViewController.m in Sources */,
 				FEEA9E12188EAEB00001321A /* PBDummyClass.m in Sources */,
 				FE20A65B189D508A00BDFF0F /* UIViewController+Bedrock.m in Sources */,
 				FEEA9E18188EAECE0001321A /* NSLayoutConstraint+Bedrock.m in Sources */,
