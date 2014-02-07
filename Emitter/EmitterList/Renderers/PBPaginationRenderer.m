@@ -100,13 +100,16 @@
 
                 [self configureFooterItemIfNecessary];
 
-                __weak typeof(self) this = self;
+                if (self.indicatorItem != nil) {
 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [this.listViewController
-                     appendItemsToDataSource:@[this.indicatorItem]
-                     inSection:this.section];
-                });
+                    __weak typeof(self) this = self;
+
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [this.listViewController
+                         appendItemsToDataSource:@[this.indicatorItem]
+                         inSection:this.section];
+                    });
+                }
             }
         }
     }
@@ -114,9 +117,9 @@
 
 - (void)appendPageItems:(NSArray *)items {
 
-    if (self.indicatorItem != nil) {
+    [self.listViewController.tableView beginUpdates];
 
-        [self.listViewController.tableView beginUpdates];
+    if (self.indicatorItem != nil) {
 
         if ([self.listViewController removeItemAtIndexPath:self.indicatorItem.indexPath]) {
 
@@ -124,20 +127,20 @@
              deleteRowsAtIndexPaths:@[self.indicatorItem.indexPath]
              withRowAnimation:UITableViewRowAnimationBottom];
         }
-
-        PBSectionItem *sectionItem =
-        [self.listViewController sectionItemAtSection:self.section];
-
-        PBListItem *lastItem = sectionItem.items.lastObject;
-
-        self.lastPageMaxIndexPath = lastItem.indexPath;
-
-        if (items.count > 0) {
-            [self.listViewController doAppendItems:items toSection:self.section];
-        }
-
-        [self.listViewController.tableView endUpdates];
     }
+
+    PBSectionItem *sectionItem =
+    [self.listViewController sectionItemAtSection:self.section];
+
+    PBListItem *lastItem = sectionItem.items.lastObject;
+
+    self.lastPageMaxIndexPath = lastItem.indexPath;
+
+    if (items.count > 0) {
+        [self.listViewController doAppendItems:items toSection:self.section];
+    }
+
+    [self.listViewController.tableView endUpdates];
 
     self.useLastPageMaxIndexPath = NO;
 }
@@ -168,7 +171,7 @@
 
     static NSString * const paginationFooterID = @"pagination-footer";
 
-    if (self.indicatorItem == nil) {
+    if (self.indicatorItem == nil && self.indicatorCellClass != Nil) {
 
         self.indicatorItem =
         [PBListItem
