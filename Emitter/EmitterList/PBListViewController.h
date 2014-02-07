@@ -52,6 +52,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) Class headerViewClass;
 @property (nonatomic) Class footerViewClass;
 @property (nonatomic) CGFloat listViewItemHeight;
+@property (nonatomic, strong) NSArray *renderers;
 
 - (id)initWithItems:(NSArray *)items;
 - (id)initWithNib;

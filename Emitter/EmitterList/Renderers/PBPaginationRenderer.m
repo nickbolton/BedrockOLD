@@ -14,13 +14,13 @@
 
 @interface PBPaginationRenderer()
 
-@property (nonatomic, copy, readwrite) BOOL(^triggerCallback)(void);
+@property (nonatomic, copy) BOOL(^triggerCallback)(void);
 @property (nonatomic, strong) PBListItem *footerItem;
-@property (nonatomic, readwrite) NSInteger endDistance;
-@property (nonatomic, readwrite) NSInteger section;
+@property (nonatomic) NSInteger endDistance;
+@property (nonatomic) NSInteger section;
 @property (nonatomic) NSInteger footerHeight;
 @property (nonatomic) Class footerViewClass;
-@property (nonatomic, readwrite) NSIndexPath *lastIndexPathUsedForPaginationCallback;
+@property (nonatomic, strong) NSIndexPath *lastIndexPathUsedForPaginationCallback;
 @property (nonatomic, weak) PBListViewController *listViewController;
 
 @end
@@ -51,8 +51,7 @@
             inCell:(UITableViewCell *)cell
       withListView:(PBListViewController *)listViewController {
 
-    if (self.footerItem != nil &&
-        indexPath.section == self.section &&
+    if (indexPath.section == self.section &&
         self.triggerCallback != nil &&
         indexPath.row > self.lastIndexPathUsedForPaginationCallback.row) {
 

@@ -71,7 +71,6 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic, copy) void(^deleteActionBlock)(id sender);
 @property (nonatomic, copy) void(^configureBlock)(id sender, PBListItem *item, id cell);
 @property (nonatomic, copy) void(^bindingBlock)(id sender, NSIndexPath *indexPath, PBListItem *item, id cell);
-@property (nonatomic, strong) NSArray *renderers;
 @property (nonatomic) PBItemType itemType;
 @property (nonatomic) PBItemCheckedType checkedType;
 @property (nonatomic) UITableViewCellSelectionStyle selectionStyle;

@@ -11,11 +11,6 @@
 
 @interface PBPaginationRenderer : NSObject <PBListItemRenderer>
 
-@property (nonatomic, readonly) BOOL(^triggerCallback)(void);
-@property (nonatomic, readonly) NSInteger endDistance;
-@property (nonatomic, readonly) NSInteger section;
-@property (nonatomic, readonly) NSIndexPath *lastIndexPathUsedForPaginationCallback;
-
 - (id)initWithTriggerCallback:(BOOL(^)(void))callback
             atDistanceFromEnd:(NSInteger)distance
                     inSection:(NSInteger)section

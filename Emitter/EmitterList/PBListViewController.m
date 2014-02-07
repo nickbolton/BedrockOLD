@@ -1075,7 +1075,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
         [defaultCell willDisplayCell];
     }
 
-    for (id <PBListItemRenderer> renderer in item.renderers) {
+    for (id <PBListItemRenderer> renderer in self.renderers) {
         [renderer
          renderItem:item
          atIndexPath:indexPath

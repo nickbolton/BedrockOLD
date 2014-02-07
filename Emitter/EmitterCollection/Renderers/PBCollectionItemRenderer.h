@@ -10,9 +10,9 @@
 
 @protocol PBCollectionItemRenderer <NSObject>
 
-- (void)renderItem:(PBCollectionViewController *)collectionViewController
-         indexPath:(NSIndexPath *)indexPath
-              item:(PBItem *)item
-              cell:(UITableViewCell *) cell;
+- (void)renderItem:(PBCollectionItem *)item
+       atIndexPath:(NSIndexPath *)indexPath
+            inCell:(UICollectionViewCell *)cell
+withCollectionView:(PBCollectionViewController *)collectionViewController;
 
 @end
