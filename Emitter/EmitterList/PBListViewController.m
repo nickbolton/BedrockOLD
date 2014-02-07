@@ -266,6 +266,16 @@ static NSInteger const kPBListDefaultTag = 105;
 
 #pragma mark - Getters and Setters
 
+- (void)setRenderers:(NSArray *)renderers {
+
+    for (id renderer in renderers) {
+        NSAssert([renderer conformsToProtocol:@protocol(PBListItemRenderer)],
+                 @"renderer doesn't conform to PBListItemRenderer");
+    }
+
+    _renderers = renderers;
+}
+
 - (void)setDataSource:(NSArray *)dataSource {
 
     if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]]) {
@@ -1065,12 +1075,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
             }
         }
 
+        defaultCell.item = item;
+        defaultCell.viewController = self;
+
         if (item.bindingBlock != nil) {
             item.bindingBlock(self, indexPath, item, cell);
         }
-
-        defaultCell.item = item;
-        defaultCell.viewController = self;
 
         [defaultCell willDisplayCell];
     }

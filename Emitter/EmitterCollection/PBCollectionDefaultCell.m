@@ -116,4 +116,10 @@
     }
 }
 
+- (void)willDisplayCell {
+}
+
+- (void)didEndDisplayingCell {
+}
+
 @end

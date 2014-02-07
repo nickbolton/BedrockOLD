@@ -11,6 +11,7 @@
 #import "PBCollectionItem.h"
 #import "PBSectionItem.h"
 #import "PBCollectionDefaultCell.h"
+#import "PBCollectionItemRenderer.h"
 
 NSString * const kPBCollectionViewCellKind = @"kPBCollectionViewCellKind";
 NSString * const kPBCollectionViewSupplimentaryKind = @"kPBCollectionViewSupplimentaryKind";
@@ -221,6 +222,16 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 }
 
 #pragma mark - Getters and Setters
+
+- (void)setRenderers:(NSArray *)renderers {
+
+    for (id renderer in renderers) {
+        NSAssert([renderer conformsToProtocol:@protocol(PBCollectionItemRenderer)],
+                 @"renderer doesn't conform to PBCollectionItemRenderer");
+    }
+
+    _renderers = renderers;
+}
 
 - (void)setDataSource:(NSArray *)dataSource {
 
@@ -551,15 +562,28 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
         item.itemConfigured = YES;
     }
 
-    NSAssert(item.bindingBlock != nil, @"No binding block!");
-
     if ([cell isKindOfClass:[PBCollectionDefaultCell class]]) {
-        ((PBCollectionDefaultCell *)cell).item = item;
-        ((PBCollectionDefaultCell *)cell).indexPath = indexPath;
-        ((PBCollectionDefaultCell *)cell).viewController = self;
+
+        PBCollectionDefaultCell *defaultCell = (id)cell;
+
+        defaultCell.item = item;
+        defaultCell.indexPath = indexPath;
+        defaultCell.viewController = self;
+
+        if (item.bindingBlock != nil) {
+            item.bindingBlock(self, indexPath, item, cell);
+        }
+
+        [defaultCell willDisplayCell];
     }
 
-    item.bindingBlock(self, indexPath, item, cell);
+    for (id <PBCollectionItemRenderer> renderer in self.renderers) {
+        [renderer
+         renderItem:item
+         atIndexPath:indexPath
+         inCell:cell
+         withCollectionView:self];
+    }
 
     return cell;
 }
@@ -601,10 +625,13 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
         }
 
     if ([cell isKindOfClass:[PBCollectionDefaultCell class]]) {
-        ((PBCollectionDefaultCell *)cell).item = item;
-        ((PBCollectionDefaultCell *)cell).indexPath = indexPath;
-        ((PBCollectionDefaultCell *)cell).viewController = self;
-        ((PBCollectionDefaultCell *)cell).backgroundImageView.image = item.backgroundImage;
+
+        PBCollectionDefaultCell *defaultCell = (id)cell;
+
+        defaultCell.item = item;
+        defaultCell.indexPath = indexPath;
+        defaultCell.viewController = self;
+        defaultCell.backgroundImageView.image = item.backgroundImage;
     }
 
     if (item.bindingBlock != nil) {
@@ -615,6 +642,15 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 }
 
 #pragma mark - UICollectionViewDelegate
+
+- (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    if ([cell isKindOfClass:[PBCollectionDefaultCell class]]) {
+
+        PBCollectionDefaultCell *defaultCell = (id)cell;
+        [defaultCell didEndDisplayingCell];
+    }
+}
 
 - (void)collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath {

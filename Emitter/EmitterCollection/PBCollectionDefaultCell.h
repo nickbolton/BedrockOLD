@@ -21,5 +21,7 @@
 @property (nonatomic) BOOL cellConfigured;
 
 - (void)updateForSelectedState;
+- (void)willDisplayCell;
+- (void)didEndDisplayingCell;
 
 @end

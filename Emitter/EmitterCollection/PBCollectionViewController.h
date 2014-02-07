@@ -30,6 +30,7 @@ extern NSString * const kPBCollectionViewDecorationKind;
 
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, strong) UIColor *collectionBackgroundColor;
+@property (nonatomic, strong) NSArray *renderers;
 
 + (Class)collectionViewLayoutClass;
 
