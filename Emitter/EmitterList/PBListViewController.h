@@ -49,7 +49,6 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic) PBListViewAutoSelectionType autoSelectionType;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
-@property (nonatomic) BOOL showRoundedGroups;
 @property (nonatomic) Class headerViewClass;
 @property (nonatomic) Class footerViewClass;
 @property (nonatomic) CGFloat listViewItemHeight;
@@ -82,12 +81,6 @@ extern NSString * const kPBListActionCellID;
 - (void)appendItemsToDataSource:(NSArray *)items;
 - (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;
 - (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
-
-- (void)appendPageItems:(NSArray *)items;
-- (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
-                        atDistanceFromEnd:(NSInteger)distance
-                                inSection:(NSInteger)section
-                      footerViewCellClass:(Class)footerViewClass
-                             footerHeight:(CGFloat)footerHeight;
+- (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

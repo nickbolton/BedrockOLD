@@ -11,6 +11,7 @@
 #import "PBListCell.h"
 #import "PBTitleCell.h"
 #import "PBSectionItem.h"
+#import "PBListItemRenderer.h"
 
 NSString * const kPBListCellID = @"default-cell-id";
 NSString * const kPBListSpacerCellID = @"spacer-cell-id";
@@ -31,11 +32,6 @@ static NSInteger const kPBListDefaultTag = 105;
 @property (nonatomic, strong) PBListItem *selectAllItem;
 @property (nonatomic, strong) NSArray *selectedRowIndexes;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
-@property (nonatomic, copy) BOOL(^paginationTriggerCallback)(void);
-@property (nonatomic) PBListItem *paginationFooterItem;
-@property (nonatomic) NSInteger paginationEndDistance;
-@property (nonatomic) NSInteger paginationSection;
-@property (nonatomic) NSIndexPath *lastIndexPathUsedForPaginationCallback;
 
 @end
 
@@ -333,37 +329,6 @@ static NSInteger const kPBListDefaultTag = 105;
     self.listViewItemHeight = self.listViewItemHeight;
 }
 
-- (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
-                        atDistanceFromEnd:(NSInteger)distance
-                                inSection:(NSInteger)section
-                      footerViewCellClass:(Class)footerViewClass
-                             footerHeight:(CGFloat)footerHeight {
-
-    static NSString * const paginationFooterID = @"pagination-footer";
-
-    NSAssert(self.dataSource.count == 1,
-             @"pagination is only supported on single section table views");
-
-    self.paginationEndDistance = distance;
-    self.paginationTriggerCallback = callback;
-
-    self.paginationFooterItem =
-    [PBListItem
-     customClassItemWithUserContext:nil
-     cellID:paginationFooterID
-     cellClass:footerViewClass
-     configure:nil
-     binding:nil
-     selectAction:nil
-     deleteAction:nil];
-
-    [self.tableView
-     registerClass:footerViewClass
-     forCellReuseIdentifier:paginationFooterID];
-
-    self.paginationFooterItem.rowHeight = footerHeight;
-}
-
 - (void)appendItemsToDataSource:(NSArray *)items {
     [self appendItemsToDataSource:items inSection:0];
 }
@@ -387,7 +352,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
     NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
 
-    [sectionItems addObjectsFromArray:addedItems];
+    for (PBListItem *item in addedItems) {
+        item.sectionItem = sectionItem;
+        [sectionItems addObject:item];
+    }
 
     sectionItem.items = sectionItems;
 
@@ -426,6 +394,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
         if (item != nil) {
 
+            item.sectionItem = nil;
             NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
             [sectionItems removeObjectAtIndex:indexPath.row];
             sectionItem.items = sectionItems;
@@ -458,25 +427,6 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 
     [self.tableView endUpdates];
-}
-
-- (void)appendPageItems:(NSArray *)items {
-
-    if (self.paginationFooterItem != nil) {
-
-        [self.tableView beginUpdates];
-
-        if ([self removeItemAtIndexPath:self.paginationFooterItem.indexPath]) {
-
-            [self.tableView
-             deleteRowsAtIndexPaths:@[self.paginationFooterItem.indexPath]
-             withRowAnimation:UITableViewRowAnimationBottom];
-        }
-
-        [self doAppendItems:items toSection:self.paginationSection];
-        
-        [self.tableView endUpdates];
-    }
 }
 
 #pragma mark - Actions
@@ -635,6 +585,8 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem {
 
     for (PBListItem *item in sectionItem.items) {
+
+        item.sectionItem = sectionItem;
 
         if (item.cellNib != nil) {
 
@@ -829,42 +781,6 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
-#pragma mark - Pagination
-
-- (void)handlePaginationIfNecessaryAtIndexPath:(NSIndexPath *)indexPath {
-
-    if (self.paginationFooterItem != nil &&
-        indexPath.section == self.paginationSection &&
-        self.paginationTriggerCallback != nil &&
-        indexPath.row > self.lastIndexPathUsedForPaginationCallback.row) {
-
-        PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
-
-        NSInteger triggerThreshold =
-        sectionItem.items.count - 1 - self.paginationEndDistance;
-
-        if (sectionItem != nil && indexPath.row >= triggerThreshold) {
-
-            NSIndexPath *lastIndexPath =
-            [NSIndexPath
-             indexPathForRow:sectionItem.items.count
-             inSection:indexPath.section];
-
-            self.lastIndexPathUsedForPaginationCallback = lastIndexPath;
-
-            if (self.paginationTriggerCallback()) {
-
-                __weak typeof(self) this = self;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [this
-                     appendItemsToDataSource:@[this.paginationFooterItem]
-                     inSection:this.paginationSection];
-                });
-            }
-        }
-    }
-}
-
 #pragma mark - Keyboard Handling
 
 - (void)keyboardWillShow:(NSNotification *)notification {
@@ -978,28 +894,6 @@ static NSInteger const kPBListDefaultTag = 105;
             
         } break;
     }
-
-    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
-
-        PBListViewDefaultCell *defaultCell = (id)cell;
-
-        if (item.configureBlock != nil) {
-
-            if (defaultCell.cellConfigured == NO) {
-                item.configureBlock(self, item, cell);
-                defaultCell.cellConfigured = YES;
-            }
-        }
-
-        if (item.bindingBlock != nil) {
-            item.bindingBlock(self, indexPath, item, cell);
-        }
-
-        defaultCell.item = item;
-        defaultCell.viewController = self;
-    }
-
-    [self handlePaginationIfNecessaryAtIndexPath:indexPath];
 
     return cell;
 }
@@ -1157,58 +1051,36 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    PBListItem *item = [self itemAtIndexPath:indexPath];
+
     if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
 
         PBListViewDefaultCell *defaultCell = (id)cell;
+
+        if (item.configureBlock != nil) {
+
+            if (defaultCell.cellConfigured == NO) {
+                item.configureBlock(self, item, cell);
+                defaultCell.cellConfigured = YES;
+            }
+        }
+
+        if (item.bindingBlock != nil) {
+            item.bindingBlock(self, indexPath, item, cell);
+        }
+
+        defaultCell.item = item;
+        defaultCell.viewController = self;
+
         [defaultCell willDisplayCell];
     }
 
-    if (self.showRoundedGroups) {
-        
-        PBListItem *item = [self itemAtIndexPath:indexPath];
-
-        if (item != nil && tableView.style == UITableViewStyleGrouped && [cell respondsToSelector:@selector(tintColor)]) {
-            if (tableView == self.tableView) {
-                CGFloat cornerRadius = 4.f;
-                cell.backgroundColor = UIColor.clearColor;
-                CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-                CGMutablePathRef pathRef = CGPathCreateMutable();
-                CGRect bounds = CGRectInset(cell.bounds, 10, 0);
-                BOOL addLine = NO;
-                if (indexPath.row == 0 && indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
-                    CGPathAddRoundedRect(pathRef, nil, bounds, cornerRadius, cornerRadius);
-                } else if (indexPath.row == 0) {
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds));
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetMidX(bounds), CGRectGetMinY(bounds), cornerRadius);
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds));
-                    addLine = YES;
-                } else if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds));
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds), CGRectGetMidX(bounds), CGRectGetMaxY(bounds), cornerRadius);
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds));
-                } else {
-                    CGPathAddRect(pathRef, nil, bounds);
-                    addLine = YES;
-                }
-                layer.path = pathRef;
-                CFRelease(pathRef);
-                layer.fillColor = item.backgroundColor.CGColor;
-
-                if (addLine == YES) {
-                    CALayer *lineLayer = [[CALayer alloc] init];
-                    CGFloat lineHeight = (1.f / [UIScreen mainScreen].scale);
-                    lineLayer.frame = CGRectMake(CGRectGetMinX(bounds)+10, bounds.size.height-lineHeight, bounds.size.width-10, lineHeight);
-                    lineLayer.backgroundColor = tableView.separatorColor.CGColor;
-                    [layer addSublayer:lineLayer];
-                }
-                UIView *testView = [[UIView alloc] initWithFrame:bounds];
-                [testView.layer insertSublayer:layer atIndex:0];
-                testView.backgroundColor = UIColor.clearColor;
-                cell.backgroundView = testView;
-            }
-        }
+    for (id <PBListItemRenderer> renderer in item.renderers) {
+        [renderer
+         renderItem:item
+         atIndexPath:indexPath
+         inCell:cell
+         withListView:self];
     }
 }
 
