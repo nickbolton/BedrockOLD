@@ -34,6 +34,7 @@ static NSInteger const kPBListDefaultTag = 105;
 @property (nonatomic, copy) BOOL(^paginationTriggerCallback)(void);
 @property (nonatomic) PBListItem *paginationFooterItem;
 @property (nonatomic) NSInteger paginationEndDistance;
+@property (nonatomic) NSInteger paginationSection;
 @property (nonatomic) NSIndexPath *lastIndexPathUsedForPaginationCallback;
 
 @end
@@ -334,6 +335,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
                         atDistanceFromEnd:(NSInteger)distance
+                                inSection:(NSInteger)section
                       footerViewCellClass:(Class)footerViewClass
                              footerHeight:(CGFloat)footerHeight {
 
@@ -363,10 +365,10 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)appendItemsToDataSource:(NSArray *)items {
-    [self appendItemsToDataSource:items toSection:0];
+    [self appendItemsToDataSource:items inSection:0];
 }
 
-- (void)appendItemsToDataSource:(NSArray *)addedItems toSection:(NSInteger)section {
+- (void)appendItemsToDataSource:(NSArray *)addedItems inSection:(NSInteger)section {
 
     if (section >= self.dataSource.count) {
         return;
@@ -471,7 +473,7 @@ static NSInteger const kPBListDefaultTag = 105;
              withRowAnimation:UITableViewRowAnimationBottom];
         }
 
-        [self doAppendItems:items toSection:0];
+        [self doAppendItems:items toSection:self.paginationSection];
         
         [self.tableView endUpdates];
     }
@@ -832,7 +834,7 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)handlePaginationIfNecessaryAtIndexPath:(NSIndexPath *)indexPath {
 
     if (self.paginationFooterItem != nil &&
-        indexPath.section == 0 &&
+        indexPath.section == self.paginationSection &&
         self.paginationTriggerCallback != nil &&
         indexPath.row > self.lastIndexPathUsedForPaginationCallback.row) {
 
@@ -854,7 +856,9 @@ static NSInteger const kPBListDefaultTag = 105;
 
                 __weak typeof(self) this = self;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [this appendItemsToDataSource:@[this.paginationFooterItem]];
+                    [this
+                     appendItemsToDataSource:@[this.paginationFooterItem]
+                     inSection:this.paginationSection];
                 });
             }
         }

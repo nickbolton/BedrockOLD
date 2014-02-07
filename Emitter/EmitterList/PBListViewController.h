@@ -80,12 +80,13 @@ extern NSString * const kPBListActionCellID;
 - (void)updateListViewItemHeight;
 
 - (void)appendItemsToDataSource:(NSArray *)items;
-- (void)appendItemsToDataSource:(NSArray *)items toSection:(NSInteger)section;
+- (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;
 - (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
 
 - (void)appendPageItems:(NSArray *)items;
 - (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
                         atDistanceFromEnd:(NSInteger)distance
+                                inSection:(NSInteger)section
                       footerViewCellClass:(Class)footerViewClass
                              footerHeight:(CGFloat)footerHeight;
 
