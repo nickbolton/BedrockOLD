@@ -169,6 +169,12 @@
     }
 }
 
+- (void)willDisplayCell {
+}
+
+- (void)didEndDisplayingCell {
+}
+
 - (void) layoutSubviews {
     [super layoutSubviews];
 

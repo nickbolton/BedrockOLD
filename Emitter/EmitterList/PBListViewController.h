@@ -68,6 +68,8 @@ extern NSString * const kPBListActionCellID;
 - (void)setupNavigationBar;
 - (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
                     withAnimation:(UITableViewRowAnimation)animation;
+- (void)reloadTableRowAtIndexPaths:(NSArray *)indexPathArray
+                     withAnimation:(UITableViewRowAnimation)animation;
 - (void)reloadTableRow:(NSUInteger)row;
 - (void)reloadTableRow:(NSUInteger)row
          withAnimation:(UITableViewRowAnimation)animation;
@@ -76,5 +78,15 @@ extern NSString * const kPBListActionCellID;
 - (void)dismissKeyboard;
 - (IBAction)cancelPressed:(id)sender;
 - (void)updateListViewItemHeight;
+
+- (void)appendItemsToDataSource:(NSArray *)items;
+- (void)appendItemsToDataSource:(NSArray *)items toSection:(NSInteger)section;
+- (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
+
+- (void)appendPageItems:(NSArray *)items;
+- (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
+                        atDistanceFromEnd:(NSInteger)distance
+                      footerViewCellClass:(Class)footerViewClass
+                             footerHeight:(CGFloat)footerHeight;
 
 @end

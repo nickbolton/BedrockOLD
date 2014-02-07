@@ -31,6 +31,10 @@ static NSInteger const kPBListDefaultTag = 105;
 @property (nonatomic, strong) PBListItem *selectAllItem;
 @property (nonatomic, strong) NSArray *selectedRowIndexes;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
+@property (nonatomic, copy) BOOL(^paginationTriggerCallback)(void);
+@property (nonatomic) PBListItem *paginationFooterItem;
+@property (nonatomic) NSInteger paginationEndDistance;
+@property (nonatomic) NSIndexPath *lastIndexPathUsedForPaginationCallback;
 
 @end
 
@@ -328,6 +332,151 @@ static NSInteger const kPBListDefaultTag = 105;
     self.listViewItemHeight = self.listViewItemHeight;
 }
 
+- (void)registerPaginationTriggerCallback:(BOOL(^)(void))callback
+                        atDistanceFromEnd:(NSInteger)distance
+                      footerViewCellClass:(Class)footerViewClass
+                             footerHeight:(CGFloat)footerHeight {
+
+    static NSString * const paginationFooterID = @"pagination-footer";
+
+    NSAssert(self.dataSource.count == 1,
+             @"pagination is only supported on single section table views");
+
+    self.paginationEndDistance = distance;
+    self.paginationTriggerCallback = callback;
+
+    self.paginationFooterItem =
+    [PBListItem
+     customClassItemWithUserContext:nil
+     cellID:paginationFooterID
+     cellClass:footerViewClass
+     configure:nil
+     binding:nil
+     selectAction:nil
+     deleteAction:nil];
+
+    [self.tableView
+     registerClass:footerViewClass
+     forCellReuseIdentifier:paginationFooterID];
+
+    self.paginationFooterItem.rowHeight = footerHeight;
+}
+
+- (void)appendItemsToDataSource:(NSArray *)items {
+    [self appendItemsToDataSource:items toSection:0];
+}
+
+- (void)appendItemsToDataSource:(NSArray *)addedItems toSection:(NSInteger)section {
+
+    if (section >= self.dataSource.count) {
+        return;
+    }
+
+    [self.tableView beginUpdates];
+    [self doAppendItems:addedItems toSection:section];
+    [self.tableView endUpdates];
+}
+
+- (void)doAppendItems:(NSArray *)addedItems toSection:(NSInteger)section {
+
+    PBSectionItem *sectionItem = self.dataSource[section];
+
+    NSInteger startIndex = sectionItem.items.count;
+
+    NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
+
+    [sectionItems addObjectsFromArray:addedItems];
+
+    sectionItem.items = sectionItems;
+
+    if (self.providedDataSource.count > 0) {
+
+        NSMutableArray *providedDataSource =
+        [self.providedDataSource mutableCopy];
+
+        [providedDataSource addObjectsFromArray:addedItems];
+        self.providedDataSource = providedDataSource;
+    }
+
+    NSMutableArray *indexPaths = [NSMutableArray array];
+
+    for (NSInteger index = startIndex; index < startIndex + addedItems.count; index++) {
+
+        [indexPaths
+         addObject:
+         [NSIndexPath
+          indexPathForRow:index
+          inSection:section]];
+    }
+
+    [self.tableView
+     insertRowsAtIndexPaths:indexPaths
+     withRowAnimation:UITableViewRowAnimationBottom];
+}
+
+- (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+    if (sectionItem != nil) {
+
+        PBListItem *item = [self itemAtIndexPath:indexPath];
+
+        if (item != nil) {
+
+            NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
+            [sectionItems removeObjectAtIndex:indexPath.row];
+            sectionItem.items = sectionItems;
+
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
+- (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray {
+
+    [self.tableView beginUpdates];
+
+    NSMutableArray *removedIndexPaths = [NSMutableArray array];
+
+    for (NSIndexPath *indexPath in indexPathArray) {
+
+        if ([self removeItemAtIndexPath:indexPath]) {
+            [removedIndexPaths addObject:indexPath];
+        }
+    }
+
+    if (removedIndexPaths.count > 0) {
+
+        [self.tableView
+         deleteRowsAtIndexPaths:removedIndexPaths
+         withRowAnimation:UITableViewRowAnimationFade];
+    }
+
+    [self.tableView endUpdates];
+}
+
+- (void)appendPageItems:(NSArray *)items {
+
+    if (self.paginationFooterItem != nil) {
+
+        [self.tableView beginUpdates];
+
+        if ([self removeItemAtIndexPath:self.paginationFooterItem.indexPath]) {
+
+            [self.tableView
+             deleteRowsAtIndexPaths:@[self.paginationFooterItem.indexPath]
+             withRowAnimation:UITableViewRowAnimationBottom];
+        }
+
+        [self doAppendItems:items toSection:0];
+        
+        [self.tableView endUpdates];
+    }
+}
+
 #pragma mark - Actions
 
 - (IBAction)cancelPressed:(id)sender {
@@ -454,6 +603,13 @@ static NSInteger const kPBListDefaultTag = 105;
          reloadRowsAtIndexPaths:@[indexPath]
          withRowAnimation:animation];
     }
+}
+
+- (void)reloadTableRowAtIndexPaths:(NSArray *)indexPathArray
+                     withAnimation:(UITableViewRowAnimation)animation {
+    [self.tableView
+     reloadRowsAtIndexPaths:indexPathArray
+     withRowAnimation:animation];
 }
 
 - (NSArray *)buildDataSource {
@@ -671,6 +827,40 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
+#pragma mark - Pagination
+
+- (void)handlePaginationIfNecessaryAtIndexPath:(NSIndexPath *)indexPath {
+
+    if (self.paginationFooterItem != nil &&
+        indexPath.section == 0 &&
+        self.paginationTriggerCallback != nil &&
+        indexPath.row > self.lastIndexPathUsedForPaginationCallback.row) {
+
+        PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+        NSInteger triggerThreshold =
+        sectionItem.items.count - 1 - self.paginationEndDistance;
+
+        if (sectionItem != nil && indexPath.row >= triggerThreshold) {
+
+            NSIndexPath *lastIndexPath =
+            [NSIndexPath
+             indexPathForRow:sectionItem.items.count
+             inSection:indexPath.section];
+
+            self.lastIndexPathUsedForPaginationCallback = lastIndexPath;
+
+            if (self.paginationTriggerCallback()) {
+
+                __weak typeof(self) this = self;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [this appendItemsToDataSource:@[this.paginationFooterItem]];
+                });
+            }
+        }
+    }
+}
+
 #pragma mark - Keyboard Handling
 
 - (void)keyboardWillShow:(NSNotification *)notification {
@@ -804,6 +994,8 @@ static NSInteger const kPBListDefaultTag = 105;
         defaultCell.item = item;
         defaultCell.viewController = self;
     }
+
+    [self handlePaginationIfNecessaryAtIndexPath:indexPath];
 
     return cell;
 }
@@ -961,6 +1153,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
+
+        PBListViewDefaultCell *defaultCell = (id)cell;
+        [defaultCell willDisplayCell];
+    }
+
     if (self.showRoundedGroups) {
         
         PBListItem *item = [self itemAtIndexPath:indexPath];
@@ -1007,6 +1205,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
                 cell.backgroundView = testView;
             }
         }
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
+
+        PBListViewDefaultCell *defaultCell = (id)cell;
+        [defaultCell didEndDisplayingCell];
     }
 }
 
