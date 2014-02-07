@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class PBCollectionViewController;
+@class PBSectionItem;
 
 @interface PBCollectionItem : NSObject
 
@@ -37,6 +38,7 @@
 @property (nonatomic, copy) void(^selectActionBlock)(id sender);
 @property (nonatomic, copy) void(^configureBlock)(id sender, PBCollectionItem *item, id cell);
 @property (nonatomic, copy) void(^bindingBlock)(id sender, NSIndexPath *indexPath, PBCollectionItem *item, id cell);
+@property (nonatomic, weak) PBSectionItem *sectionItem;
 
 // properties passed directly to UICollectionViewLayoutAttributes
 

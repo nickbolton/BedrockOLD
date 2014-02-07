@@ -15,11 +15,14 @@
 #import "PBListViewControllerItem.h"
 #import "PBListCell.h"
 #import "PBListViewDefaultCell.h"
+#import "PBListItemRenderer.h"
+#import "PBPaginationRenderer.h"
 
 #import "PBCollectionViewController.h"
 #import "PBCollectionItem.h"
 #import "PBCollectionDefaultCell.h"
 #import "PBCollectionLayout.h"
 #import "PBCollectionSupplimentaryImageItem.h"
+#import "PBCollectionItemRenderer.h"
 
 #endif

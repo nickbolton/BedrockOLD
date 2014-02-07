@@ -49,10 +49,10 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic) PBListViewAutoSelectionType autoSelectionType;
 @property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
-@property (nonatomic) BOOL showRoundedGroups;
 @property (nonatomic) Class headerViewClass;
 @property (nonatomic) Class footerViewClass;
 @property (nonatomic) CGFloat listViewItemHeight;
+@property (nonatomic, strong) NSArray *renderers;
 
 - (id)initWithItems:(NSArray *)items;
 - (id)initWithNib;
@@ -68,6 +68,8 @@ extern NSString * const kPBListActionCellID;
 - (void)setupNavigationBar;
 - (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
                     withAnimation:(UITableViewRowAnimation)animation;
+- (void)reloadTableRowAtIndexPaths:(NSArray *)indexPathArray
+                     withAnimation:(UITableViewRowAnimation)animation;
 - (void)reloadTableRow:(NSUInteger)row;
 - (void)reloadTableRow:(NSUInteger)row
          withAnimation:(UITableViewRowAnimation)animation;
@@ -76,5 +78,10 @@ extern NSString * const kPBListActionCellID;
 - (void)dismissKeyboard;
 - (IBAction)cancelPressed:(id)sender;
 - (void)updateListViewItemHeight;
+
+- (void)appendItemsToDataSource:(NSArray *)items;
+- (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;
+- (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
+- (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

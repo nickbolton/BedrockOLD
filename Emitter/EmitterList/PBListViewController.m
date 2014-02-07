@@ -11,6 +11,7 @@
 #import "PBListCell.h"
 #import "PBTitleCell.h"
 #import "PBSectionItem.h"
+#import "PBListItemRenderer.h"
 
 NSString * const kPBListCellID = @"default-cell-id";
 NSString * const kPBListSpacerCellID = @"spacer-cell-id";
@@ -265,6 +266,16 @@ static NSInteger const kPBListDefaultTag = 105;
 
 #pragma mark - Getters and Setters
 
+- (void)setRenderers:(NSArray *)renderers {
+
+    for (id renderer in renderers) {
+        NSAssert([renderer conformsToProtocol:@protocol(PBListItemRenderer)],
+                 @"renderer doesn't conform to PBListItemRenderer");
+    }
+
+    _renderers = renderers;
+}
+
 - (void)setDataSource:(NSArray *)dataSource {
 
     if ([dataSource.firstObject isKindOfClass:[PBSectionItem class]]) {
@@ -326,6 +337,106 @@ static NSInteger const kPBListDefaultTag = 105;
     // PBListViewController, then they'll have to set an actual value.
 
     self.listViewItemHeight = self.listViewItemHeight;
+}
+
+- (void)appendItemsToDataSource:(NSArray *)items {
+    [self appendItemsToDataSource:items inSection:0];
+}
+
+- (void)appendItemsToDataSource:(NSArray *)addedItems inSection:(NSInteger)section {
+
+    if (section >= self.dataSource.count) {
+        return;
+    }
+
+    [self.tableView beginUpdates];
+    [self doAppendItems:addedItems toSection:section];
+    [self.tableView endUpdates];
+}
+
+- (void)doAppendItems:(NSArray *)addedItems toSection:(NSInteger)section {
+
+    PBSectionItem *sectionItem = self.dataSource[section];
+
+    NSInteger startIndex = sectionItem.items.count;
+
+    NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
+
+    for (PBListItem *item in addedItems) {
+        item.sectionItem = sectionItem;
+        [sectionItems addObject:item];
+    }
+
+    sectionItem.items = sectionItems;
+
+    if (self.providedDataSource.count > 0) {
+
+        NSMutableArray *providedDataSource =
+        [self.providedDataSource mutableCopy];
+
+        [providedDataSource addObjectsFromArray:addedItems];
+        self.providedDataSource = providedDataSource;
+    }
+
+    NSMutableArray *indexPaths = [NSMutableArray array];
+
+    for (NSInteger index = startIndex; index < startIndex + addedItems.count; index++) {
+
+        [indexPaths
+         addObject:
+         [NSIndexPath
+          indexPathForRow:index
+          inSection:section]];
+    }
+
+    [self.tableView
+     insertRowsAtIndexPaths:indexPaths
+     withRowAnimation:UITableViewRowAnimationBottom];
+}
+
+- (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+    if (sectionItem != nil) {
+
+        PBListItem *item = [self itemAtIndexPath:indexPath];
+
+        if (item != nil) {
+
+            item.sectionItem = nil;
+            NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
+            [sectionItems removeObjectAtIndex:indexPath.row];
+            sectionItem.items = sectionItems;
+
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
+- (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray {
+
+    [self.tableView beginUpdates];
+
+    NSMutableArray *removedIndexPaths = [NSMutableArray array];
+
+    for (NSIndexPath *indexPath in indexPathArray) {
+
+        if ([self removeItemAtIndexPath:indexPath]) {
+            [removedIndexPaths addObject:indexPath];
+        }
+    }
+
+    if (removedIndexPaths.count > 0) {
+
+        [self.tableView
+         deleteRowsAtIndexPaths:removedIndexPaths
+         withRowAnimation:UITableViewRowAnimationFade];
+    }
+
+    [self.tableView endUpdates];
 }
 
 #pragma mark - Actions
@@ -456,6 +567,13 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
+- (void)reloadTableRowAtIndexPaths:(NSArray *)indexPathArray
+                     withAnimation:(UITableViewRowAnimation)animation {
+    [self.tableView
+     reloadRowsAtIndexPaths:indexPathArray
+     withRowAnimation:animation];
+}
+
 - (NSArray *)buildDataSource {
     [self doesNotRecognizeSelector:_cmd];
     return nil;
@@ -477,6 +595,8 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem {
 
     for (PBListItem *item in sectionItem.items) {
+
+        item.sectionItem = sectionItem;
 
         if (item.cellNib != nil) {
 
@@ -785,26 +905,6 @@ static NSInteger const kPBListDefaultTag = 105;
         } break;
     }
 
-    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
-
-        PBListViewDefaultCell *defaultCell = (id)cell;
-
-        if (item.configureBlock != nil) {
-
-            if (defaultCell.cellConfigured == NO) {
-                item.configureBlock(self, item, cell);
-                defaultCell.cellConfigured = YES;
-            }
-        }
-
-        if (item.bindingBlock != nil) {
-            item.bindingBlock(self, indexPath, item, cell);
-        }
-
-        defaultCell.item = item;
-        defaultCell.viewController = self;
-    }
-
     return cell;
 }
 
@@ -961,52 +1061,45 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (self.showRoundedGroups) {
-        
-        PBListItem *item = [self itemAtIndexPath:indexPath];
+    PBListItem *item = [self itemAtIndexPath:indexPath];
 
-        if (item != nil && tableView.style == UITableViewStyleGrouped && [cell respondsToSelector:@selector(tintColor)]) {
-            if (tableView == self.tableView) {
-                CGFloat cornerRadius = 4.f;
-                cell.backgroundColor = UIColor.clearColor;
-                CAShapeLayer *layer = [[CAShapeLayer alloc] init];
-                CGMutablePathRef pathRef = CGPathCreateMutable();
-                CGRect bounds = CGRectInset(cell.bounds, 10, 0);
-                BOOL addLine = NO;
-                if (indexPath.row == 0 && indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
-                    CGPathAddRoundedRect(pathRef, nil, bounds, cornerRadius, cornerRadius);
-                } else if (indexPath.row == 0) {
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds));
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds), CGRectGetMidX(bounds), CGRectGetMinY(bounds), cornerRadius);
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds));
-                    addLine = YES;
-                } else if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section]-1) {
-                    CGPathMoveToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMinY(bounds));
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMinX(bounds), CGRectGetMaxY(bounds), CGRectGetMidX(bounds), CGRectGetMaxY(bounds), cornerRadius);
-                    CGPathAddArcToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds), CGRectGetMaxX(bounds), CGRectGetMidY(bounds), cornerRadius);
-                    CGPathAddLineToPoint(pathRef, nil, CGRectGetMaxX(bounds), CGRectGetMinY(bounds));
-                } else {
-                    CGPathAddRect(pathRef, nil, bounds);
-                    addLine = YES;
-                }
-                layer.path = pathRef;
-                CFRelease(pathRef);
-                layer.fillColor = item.backgroundColor.CGColor;
+    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
 
-                if (addLine == YES) {
-                    CALayer *lineLayer = [[CALayer alloc] init];
-                    CGFloat lineHeight = (1.f / [UIScreen mainScreen].scale);
-                    lineLayer.frame = CGRectMake(CGRectGetMinX(bounds)+10, bounds.size.height-lineHeight, bounds.size.width-10, lineHeight);
-                    lineLayer.backgroundColor = tableView.separatorColor.CGColor;
-                    [layer addSublayer:lineLayer];
-                }
-                UIView *testView = [[UIView alloc] initWithFrame:bounds];
-                [testView.layer insertSublayer:layer atIndex:0];
-                testView.backgroundColor = UIColor.clearColor;
-                cell.backgroundView = testView;
+        PBListViewDefaultCell *defaultCell = (id)cell;
+
+        if (item.configureBlock != nil) {
+
+            if (defaultCell.cellConfigured == NO) {
+                item.configureBlock(self, item, cell);
+                defaultCell.cellConfigured = YES;
             }
         }
+
+        defaultCell.item = item;
+        defaultCell.viewController = self;
+
+        if (item.bindingBlock != nil) {
+            item.bindingBlock(self, indexPath, item, cell);
+        }
+
+        [defaultCell willDisplayCell];
+    }
+
+    for (id <PBListItemRenderer> renderer in self.renderers) {
+        [renderer
+         renderItem:item
+         atIndexPath:indexPath
+         inCell:cell
+         withListView:self];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
+
+        PBListViewDefaultCell *defaultCell = (id)cell;
+        [defaultCell didEndDisplayingCell];
     }
 }
 

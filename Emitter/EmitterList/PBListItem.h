@@ -30,6 +30,7 @@ extern CGFloat const kPBListActionRowHeight;
 
 @class PBListViewController;
 @class PBListViewDefaultCell;
+@class PBSectionItem;
 
 @interface PBListItem : NSObject
 
@@ -74,6 +75,7 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic) PBItemCheckedType checkedType;
 @property (nonatomic) UITableViewCellSelectionStyle selectionStyle;
 @property (nonatomic) NSTextAlignment titleAlignment;
+@property (nonatomic, weak) PBSectionItem *sectionItem;
 
 + (instancetype)spacerItemWithHeight:(CGFloat)height;
 
