@@ -432,7 +432,6 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 }
 
 - (NSArray *)buildDataSource {
-    [self doesNotRecognizeSelector:_cmd];
     return nil;
 }
 

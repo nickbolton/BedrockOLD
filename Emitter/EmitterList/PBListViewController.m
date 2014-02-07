@@ -583,7 +583,6 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (NSArray *)buildDataSource {
-    [self doesNotRecognizeSelector:_cmd];
     return nil;
 }
 
