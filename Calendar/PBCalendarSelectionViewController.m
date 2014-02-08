@@ -8,7 +8,7 @@
 
 #import "PBCalendarSelectionViewController.h"
 #import "Bedrock.h"
-#import "PBCalendarView.h"
+#import "PBMonthView.h"
 #import "NSCalendar+Bedrock.h"
 
 static NSInteger const kPBCalendarSelectionViewControllerVisibleMonths = 5;
@@ -38,8 +38,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 @property (nonatomic, strong) UIBarButtonItem *rangeToggleItem;
 @property (nonatomic, strong) UIToolbar *toolbar;
 @property (nonatomic, strong) UINavigationBar *navbar;
-@property (nonatomic, strong) NSMutableDictionary *calendarViews;
-@property (nonatomic, strong) NSMutableDictionary *calendarViewsByIndexPath;
+@property (nonatomic, strong) NSMutableDictionary *monthViews;
+@property (nonatomic, strong) NSMutableDictionary *monthViewsByIndexPath;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
@@ -132,8 +132,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 }
 
 - (void)_commonInit {
-    self.calendarViews = [NSMutableDictionary dictionary];
-    self.calendarViewsByIndexPath = [NSMutableDictionary dictionary];
+    self.monthViews = [NSMutableDictionary dictionary];
+    self.monthViewsByIndexPath = [NSMutableDictionary dictionary];
 }
 
 #pragma mark - Setup
@@ -357,7 +357,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    if (_setInitialContentOffset == NO && self.calendarViewsByIndexPath.count > 0) {
+    if (_setInitialContentOffset == NO && self.monthViewsByIndexPath.count > 0) {
         _setInitialContentOffset = YES;
         self.tableView.contentOffset = [self zeroContentOffset];
     }
@@ -374,7 +374,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 #pragma mark - Data Source
 
-- (void)pruneCalendarViews {
+- (void)pruneMonthViews {
 }
 
 - (PBListItem *)itemForMonthDate:(NSDate *)monthDate {
@@ -388,35 +388,34 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
          NSDate *monthDate = item.userContext;
 
-         PBCalendarView *calendarView =
-         self.calendarViews[monthDate];
+         PBMonthView *monthView = self.monthViews[monthDate];
 
-         NSAssert(calendarView != nil,
-                  @"no calendarView for monthDate: %@", monthDate);
+         NSAssert(monthView != nil,
+                  @"no monthView for monthDate: %@", monthDate);
 
-         [calendarView removeFromSuperview];
+         [monthView removeFromSuperview];
 
-         [cell.contentView addSubview:calendarView];
+         [cell.contentView addSubview:monthView];
 
-         [NSLayoutConstraint expandToSuperview:calendarView];
+         [NSLayoutConstraint expandToSuperview:monthView];
 
      } binding:^(id viewController, NSIndexPath *indexPath, PBListItem *item, PBListCell *cell) {
 
          NSDate *monthDate = item.userContext;
 
-         PBCalendarView *calendarView =
+         PBMonthView *monthView =
          (id)[cell.contentView viewWithTag:kPBCalendarSelectionViewControllerCalendarTag];
 
-         calendarView.selectedDateRange = self.selectedDateRange;
+         monthView.selectedDateRange = self.selectedDateRange;
 
-         self.calendarViewsByIndexPath[indexPath] = calendarView;
+         self.monthViewsByIndexPath[indexPath] = monthView;
 
          NSDateComponents *dateComponents =
          [NSDateComponents
           components:NSCalendarUnitYear|NSCalendarUnitMonth
           fromDate:monthDate];
 
-         [calendarView
+         [monthView
           setYear:dateComponents.year
           month:dateComponents.month];
 
@@ -452,7 +451,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
             monthDate = [monthDate dateByAddingComponents:monthComponents];
 
-            [self createCalendarViewForMonthDateIfNecessary:monthDate];
+            [self createMonthViewForMonthDateIfNecessary:monthDate];
 
             PBListItem *addedItem =
             [self itemForMonthDate:monthDate];
@@ -468,7 +467,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
             monthDate = [monthDate dateByAddingComponents:monthComponents];
 
-            [self createCalendarViewForMonthDateIfNecessary:monthDate];
+            [self createMonthViewForMonthDateIfNecessary:monthDate];
 
             PBListItem *addedItem =
             [self itemForMonthDate:monthDate];
@@ -486,26 +485,26 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     return items;
 }
 
-- (void)createCalendarViewForMonthDateIfNecessary:(NSDate *)monthDate {
+- (void)createMonthViewForMonthDateIfNecessary:(NSDate *)monthDate {
 
-    PBCalendarView *calendarView = self.calendarViews[monthDate];
+    PBMonthView *monthView = self.monthViews[monthDate];
 
-    if (calendarView == nil) {
+    if (monthView == nil) {
 
-        calendarView = [[PBCalendarView alloc] init];
-        calendarView.translatesAutoresizingMaskIntoConstraints = NO;
-        calendarView.tag = kPBCalendarSelectionViewControllerCalendarTag;
+        monthView = [[PBMonthView alloc] init];
+        monthView.translatesAutoresizingMaskIntoConstraints = NO;
+        monthView.tag = kPBCalendarSelectionViewControllerCalendarTag;
 
         NSDateComponents *components =
         [NSDateComponents
          components:NSCalendarUnitYear|NSCalendarUnitMonth
          fromDate:monthDate];
 
-        [calendarView
+        [monthView
          setYear:components.year
          month:components.month];
 
-        self.calendarViews[monthDate] = calendarView;
+        self.monthViews[monthDate] = monthView;
     }
 }
 
@@ -525,7 +524,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     for (NSInteger i = -1; i < kPBCalendarSelectionViewControllerVisibleMonths + 1; i++) {
 
-        [self createCalendarViewForMonthDateIfNecessary:monthDate];
+        [self createMonthViewForMonthDateIfNecessary:monthDate];
         monthDate = [monthDate dateByAddingComponents:monthComponents];
     }
 
@@ -634,14 +633,14 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (CGPoint)zeroContentOffset {
 
-    PBCalendarView *calendarView = [self centerCalendarView];
+    PBMonthView *monthView = [self centerMonthView];
 
-    CGPoint center = calendarView.center;
+    CGPoint center = monthView.center;
 
     CGPoint centerInTable =
     [self.tableView
      convertPoint:center
-     fromView:calendarView.superview];
+     fromView:monthView.superview];
 
     CGFloat yOffset =
     CGRectGetHeight(self.navbar.bounds);
@@ -650,8 +649,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     NSDate *monthDate =
     [NSDate
-     dateWithYear:calendarView.year
-     month:calendarView.month
+     dateWithYear:monthView.year
+     month:monthView.month
      day:1];
 
     CGFloat monthHeight = [self heightForMonthDate:monthDate];
@@ -663,14 +662,14 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     CGPointMake(0.0f, centerInTable.y - yOffset);
 }
 
-- (PBCalendarView *)centerCalendarView {
+- (PBMonthView *)centerMonthView {
 
-    __block PBCalendarView *result = nil;
+    __block PBMonthView *result = nil;
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+    [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
 
         if (index == (kPBCalendarSelectionViewControllerVisibleMonths/2)) {
-            result = calendarView;
+            result = monthView;
             *stop = YES;
         }
     }];
@@ -838,19 +837,19 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     _scrollAdvancing = NO;
 }
 
-- (PBCalendarView *)calendarViewAtPoint:(CGPoint)point {
+- (PBMonthView *)monthViewAtPoint:(CGPoint)point {
 
-    __block PBCalendarView *result = nil;
+    __block PBMonthView *result = nil;
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+    [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
 
         CGRect rectInContainer =
         [self.view
-         convertRect:calendarView.bounds
-         fromView:calendarView];
+         convertRect:monthView.bounds
+         fromView:monthView];
 
         if (CGRectContainsPoint(rectInContainer, point)) {
-            result = calendarView;
+            result = monthView;
             *stop = YES;
         }
     }];
@@ -860,15 +859,15 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (NSDate *)nearestDateAtPoint:(CGPoint)point {
 
-    PBCalendarView *calendarView = [self calendarViewAtPoint:point];
+    PBMonthView *monthView = [self monthViewAtPoint:point];
 
-    CGPoint pointInCalendarView =
-    [calendarView
+    CGPoint pointInMonthView =
+    [monthView
      convertPoint:point
      fromView:self.view];
 
     NSDateComponents *dateComponents =
-    [calendarView nearestDateComponentsAtPoint:pointInCalendarView];
+    [monthView nearestDateComponentsAtPoint:pointInMonthView];
 
     if (dateComponents != nil) {
 
@@ -884,15 +883,15 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (NSDate *)dateAtPoint:(CGPoint)point {
 
-    PBCalendarView *calendarView = [self calendarViewAtPoint:point];
+    PBMonthView *monthView = [self monthViewAtPoint:point];
 
-    CGPoint pointInCalendarView =
-    [calendarView
+    CGPoint pointInMonthView =
+    [monthView
      convertPoint:point
      fromView:self.view];
 
     NSDateComponents *dateComponents =
-    [calendarView dateComponentsAtPoint:pointInCalendarView];
+    [monthView dateComponentsAtPoint:pointInMonthView];
 
     if (dateComponents != nil) {
 
@@ -906,7 +905,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     return nil;
 }
 
-- (void)enumerateCalendarViews:(void(^)(PBCalendarView *calendarView, NSInteger index, BOOL *stop))block {
+- (void)enumerateMonthViews:(void(^)(PBMonthView *monthView, NSInteger index, BOOL *stop))block {
 
     if (block == nil) return;
 
@@ -914,12 +913,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     for (NSIndexPath *indexPath in visiableIndexPaths) {
 
-        PBCalendarView *calendarView = self.calendarViewsByIndexPath[indexPath];
+        PBMonthView *monthView = self.monthViewsByIndexPath[indexPath];
 
-        if (calendarView != nil) {
+        if (monthView != nil) {
 
             BOOL stop = NO;
-            block(calendarView, indexPath.row, &stop);
+            block(monthView, indexPath.row, &stop);
 
             if (stop) {
                 break;
@@ -930,8 +929,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)updateVisibleCalendarSelection {
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-        calendarView.selectedDateRange = self.selectedDateRange;
+    [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
+        monthView.selectedDateRange = self.selectedDateRange;
     }];
 }
 
@@ -964,13 +963,13 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)updateFloatingStartPointMarker:(CGPoint)point {
 
-    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
+    CGPoint pointInMonthView = [self endPointMarkingInCalendar];
 
-    if (pointInCalendarView.y < MAXFLOAT) {
+    if (pointInMonthView.y < MAXFLOAT) {
         
         self.endPointMarkerView.hidden = NO;
 
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
+        self.endPointMarkerTopSpace.constant = pointInMonthView.y;
 
         self.endPointMarkerLeadingSpace.constant =
         point.x - kPBCalendarSelectionViewEndPointRadius;
@@ -981,12 +980,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)updateFloatingEndPointMarker:(CGPoint)point {
 
-    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
+    CGPoint pointInMonthView = [self endPointMarkingInCalendar];
 
-    if (pointInCalendarView.y < MAXFLOAT) {
+    if (pointInMonthView.y < MAXFLOAT) {
 
         self.endPointMarkerView.hidden = NO;
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
+        self.endPointMarkerTopSpace.constant = pointInMonthView.y;
 
         self.endPointMarkerLeadingSpace.constant =
         point.x - kPBCalendarSelectionViewEndPointRadius;
@@ -999,12 +998,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     __block CGPoint markerViewFinalPoint = CGPointZero;
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+    [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
 
         NSDate *monthStartDate =
         [NSDate
-         dateWithYear:calendarView.year
-         month:calendarView.month
+         dateWithYear:monthView.year
+         month:monthView.month
          day:1];
 
         NSRange days =
@@ -1014,8 +1013,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         NSDate *monthEndDate =
         [NSDate
-         dateWithYear:calendarView.year
-         month:calendarView.month
+         dateWithYear:monthView.year
+         month:monthView.month
          day:days.length];
 
         PBDateRange *dateRange =
@@ -1028,8 +1027,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
                 markerViewFinalPoint =
                 [self.view
-                 convertPoint:[calendarView pointForStartingMarkerView]
-                 fromView:calendarView];
+                 convertPoint:[monthView pointForStartingMarkerView]
+                 fromView:monthView];
 
             }
         } else if (self.draggingEndDate != nil) {
@@ -1037,8 +1036,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
                 markerViewFinalPoint =
                 [self.view
-                 convertPoint:[calendarView pointForEndingMarkerView]
-                 fromView:calendarView];
+                 convertPoint:[monthView pointForEndingMarkerView]
+                 fromView:monthView];
             }
         }
         
@@ -1187,12 +1186,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)endPointMarkersHidden:(BOOL)hidden {
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+    [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
 
         if (self.draggingStartDate != nil) {
-            calendarView.hideStartingPointMarker = hidden;
+            monthView.hideStartingPointMarker = hidden;
         } else {
-            calendarView.hideEndingPointMarker = hidden;
+            monthView.hideEndingPointMarker = hidden;
         }
     }];
 }
@@ -1275,8 +1274,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
              endDate:startDate];
         }
 
-        [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-            calendarView.selectedDateRange = self.selectedDateRange;
+        [self enumerateMonthViews:^(PBMonthView *monthView, NSInteger index, BOOL *stop) {
+            monthView.selectedDateRange = self.selectedDateRange;
         }];
     }
 }

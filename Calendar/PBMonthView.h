@@ -1,5 +1,5 @@
 //
-//  PBCalendarView.h
+//  PBMonthView.h
 //  Calendar
 //
 //  Created by Nick Bolton on 1/19/14.
@@ -10,7 +10,7 @@
 
 @class PBDateRange;
 
-@interface PBCalendarView : UIView
+@interface PBMonthView : UIView
 
 @property (nonatomic, readonly) NSInteger year;
 @property (nonatomic, readonly) NSInteger month;

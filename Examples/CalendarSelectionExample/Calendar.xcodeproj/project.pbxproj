@@ -27,7 +27,7 @@
 		FEEA9D71188C279F0001321A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FEEA9D6F188C279F0001321A /* InfoPlist.strings */; };
 		FEEA9D73188C279F0001321A /* CalendarTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9D72188C279F0001321A /* CalendarTests.m */; };
 		FEEA9D9C188EAE050001321A /* PBCalendarDayCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9D97188EAE050001321A /* PBCalendarDayCell.m */; };
-		FEEA9D9D188EAE050001321A /* PBCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9D99188EAE050001321A /* PBCalendarView.m */; };
+		FEEA9D9D188EAE050001321A /* PBMonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9D99188EAE050001321A /* PBMonthView.m */; };
 		FEEA9DB9188EAE290001321A /* NSCalendar+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9DA2188EAE290001321A /* NSCalendar+Bedrock.m */; };
 		FEEA9DBA188EAE290001321A /* UIAlertView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9DA4188EAE290001321A /* UIAlertView+Bedrock.m */; };
 		FEEA9DBB188EAE290001321A /* UIButton+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEA9DA6188EAE290001321A /* UIButton+Bedrock.m */; };
@@ -113,8 +113,8 @@
 		FEEA9D72188C279F0001321A /* CalendarTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalendarTests.m; sourceTree = "<group>"; };
 		FEEA9D96188EAE050001321A /* PBCalendarDayCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarDayCell.h; sourceTree = "<group>"; };
 		FEEA9D97188EAE050001321A /* PBCalendarDayCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarDayCell.m; sourceTree = "<group>"; };
-		FEEA9D98188EAE050001321A /* PBCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarView.h; sourceTree = "<group>"; };
-		FEEA9D99188EAE050001321A /* PBCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarView.m; sourceTree = "<group>"; };
+		FEEA9D98188EAE050001321A /* PBMonthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBMonthView.h; sourceTree = "<group>"; };
+		FEEA9D99188EAE050001321A /* PBMonthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBMonthView.m; sourceTree = "<group>"; };
 		FEEA9DA1188EAE290001321A /* NSCalendar+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+Bedrock.h"; sourceTree = "<group>"; };
 		FEEA9DA2188EAE290001321A /* NSCalendar+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+Bedrock.m"; sourceTree = "<group>"; };
 		FEEA9DA3188EAE290001321A /* UIAlertView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Bedrock.h"; sourceTree = "<group>"; };
@@ -315,8 +315,8 @@
 			children = (
 				FEEA9D96188EAE050001321A /* PBCalendarDayCell.h */,
 				FEEA9D97188EAE050001321A /* PBCalendarDayCell.m */,
-				FEEA9D98188EAE050001321A /* PBCalendarView.h */,
-				FEEA9D99188EAE050001321A /* PBCalendarView.m */,
+				FEEA9D98188EAE050001321A /* PBMonthView.h */,
+				FEEA9D99188EAE050001321A /* PBMonthView.m */,
 				FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */,
 				FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */,
 			);
@@ -646,7 +646,7 @@
 				FEEA9D51188C279E0001321A /* main.m in Sources */,
 				FEEA9DBA188EAE290001321A /* UIAlertView+Bedrock.m in Sources */,
 				FEEA9DF0188EAE330001321A /* PBSectionItem.m in Sources */,
-				FEEA9D9D188EAE050001321A /* PBCalendarView.m in Sources */,
+				FEEA9D9D188EAE050001321A /* PBMonthView.m in Sources */,
 				FEEA9DC3188EAE290001321A /* UIBezierView.m in Sources */,
 				FEEA9DC0188EAE290001321A /* PBActionDelegate.m in Sources */,
 				FEEA9DBD188EAE290001321A /* UIImage+Bedrock.m in Sources */,

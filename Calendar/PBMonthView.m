@@ -1,12 +1,12 @@
 //
-//  PBCalendarView.m
+//  PBMonthView.m
 //  Calendar
 //
 //  Created by Nick Bolton on 1/19/14.
 //  Copyright (c) 2014 Pixelbleed. All rights reserved.
 //
 
-#import "PBCalendarView.h"
+#import "PBMonthView.h"
 #import "Emitter.h"
 #import "Bedrock.h"
 #import "PBCalendarDayCell.h"
@@ -16,7 +16,7 @@ static CGFloat const kPBCalendarViewItemHeightPadding = 4.0f;
 static CGFloat const kPBCalendarViewWidthLeadingPadding = 16.0f;
 static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
-@interface PBCalendarView() {
+@interface PBMonthView() {
 
     BOOL _dataSourceDirty;
 }
@@ -29,7 +29,7 @@ static CGFloat const kPBCalendarViewWidthTrailingPadding = 17.0f;
 
 @end
 
-@implementation PBCalendarView
+@implementation PBMonthView
 
 #pragma mark - Public
 
