@@ -14,7 +14,6 @@
 		FE22ED66189E6BB800223F74 /* NSDateComponents+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE22ED65189E6BB800223F74 /* NSDateComponents+Bedrock.m */; };
 		FEA4661218A519BC001CCACC /* PBGroupedTableRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FEA4660E18A519BC001CCACC /* PBGroupedTableRenderer.m */; };
 		FEA4661318A519BC001CCACC /* PBPaginationRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FEA4661118A519BC001CCACC /* PBPaginationRenderer.m */; };
-		FEB0392918A8F22A00F88BF7 /* PBDelayedBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FEB0392818A8F22A00F88BF7 /* PBDelayedBarButtonItem.m */; };
 		FEEA9D45188C279E0001321A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D44188C279E0001321A /* Foundation.framework */; };
 		FEEA9D47188C279E0001321A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D46188C279E0001321A /* CoreGraphics.framework */; };
 		FEEA9D49188C279E0001321A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEEA9D48188C279E0001321A /* UIKit.framework */; };
@@ -98,8 +97,6 @@
 		FEA4661018A519BC001CCACC /* PBPaginationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBPaginationRenderer.h; sourceTree = "<group>"; };
 		FEA4661118A519BC001CCACC /* PBPaginationRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBPaginationRenderer.m; sourceTree = "<group>"; };
 		FEA4661518A519C4001CCACC /* PBCollectionItemRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItemRenderer.h; sourceTree = "<group>"; };
-		FEB0392718A8F22A00F88BF7 /* PBDelayedBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDelayedBarButtonItem.h; sourceTree = "<group>"; };
-		FEB0392818A8F22A00F88BF7 /* PBDelayedBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDelayedBarButtonItem.m; sourceTree = "<group>"; };
 		FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
 		FEEA9D41188C279E0001321A /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEA9D44188C279E0001321A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -383,8 +380,6 @@
 				FEEA9DB6188EAE290001321A /* UIBezierButton.m */,
 				FEEA9DB7188EAE290001321A /* UIBezierView.h */,
 				FEEA9DB8188EAE290001321A /* UIBezierView.m */,
-				FEB0392718A8F22A00F88BF7 /* PBDelayedBarButtonItem.h */,
-				FEB0392818A8F22A00F88BF7 /* PBDelayedBarButtonItem.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -629,7 +624,6 @@
 				FEEA9D55188C279E0001321A /* PBAppDelegate.m in Sources */,
 				FEEA9DED188EAE330001321A /* PBListViewControllerCell.m in Sources */,
 				FEEA9DBC188EAE290001321A /* UIColor+Bedrock.m in Sources */,
-				FEB0392918A8F22A00F88BF7 /* PBDelayedBarButtonItem.m in Sources */,
 				FEEA9DE6188EAE330001321A /* PBCollectionLayout.m in Sources */,
 				FEEA9E0B188EAEB00001321A /* NSArray+Bedrock.m in Sources */,
 				FEEA9DE5188EAE330001321A /* PBCollectionItem.m in Sources */,
