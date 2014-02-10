@@ -366,12 +366,30 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     }];
 
     if (_animatingCurrentMonth == NO) {
-        self.currentMonthItem.enabled = currentMonthItemEnabled;
+
+        if (self.currentMonthItem.enabled != currentMonthItemEnabled) {
+            self.currentMonthItem.enabled = currentMonthItemEnabled;
+        }
     }
 
     if (_animatingCurrentSelection == NO) {
         self.currentSelectionItem.enabled = currentSelectionItemEnabled;
     }
+
+//    NSDateComponents *monthComponents =
+//    [[NSDate date] components:NSCalendarUnitYear|NSCalendarUnitMonth];
+//
+//    NSDate *currentMonthDate =
+//    [NSDate
+//     dateWithYear:monthComponents.year
+//     month:monthComponents.month
+//     day:1];
+//
+//    [self.visibleMonthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+//
+//        if ([currentMonthDate isEqualToDate:monthView.month]) {
+//        }
+//    }];
 }
 
 - (void)toggleRangeMode {
@@ -450,7 +468,8 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     NSArray *visibleMonthViews =
     [self.calendarView
      monthViewsBoundByRect:rect
-     inView:self.view];
+     inView:self.view
+     completelyVisible:YES];
 
     BOOL visibleMonthsChanged =
     [visibleMonthViews isEqualToArray:self.visibleMonthViews] == NO;
@@ -477,9 +496,9 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         self.currentMonthLabel.text = [dateFormatter stringFromDate:currentMonth];
 
         self.currentMonth = currentMonth;
+    }
 
-        [self updateToolbarItems];
-    } else if (visibleMonthsChanged) {
+    if (visibleMonthsChanged) {
         [self updateToolbarItems];
     }
 }

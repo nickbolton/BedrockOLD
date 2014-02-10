@@ -153,7 +153,9 @@
 	return monthView;
 }
 
-- (NSArray *)monthViewsBoundByRect:(CGRect)rect inView:(UIView *)view {
+- (NSArray *)monthViewsBoundByRect:(CGRect)rect
+                            inView:(UIView *)view
+                 completelyVisible:(BOOL)completelyVisible {
 
     NSMutableArray *result = [NSMutableArray array];
 
@@ -164,8 +166,19 @@
 
     [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
 
-        if (CGRectIntersectsRect(monthView.frame, rectInScrollView)) {
-            [result addObject:monthView];
+        if (completelyVisible) {
+
+            CGRect intersection = CGRectIntersection(monthView.frame, rectInScrollView);
+
+            if (CGRectEqualToRect(monthView.frame, intersection)) {
+                [result addObject:monthView];
+            }
+
+        } else {
+
+            if (CGRectIntersectsRect(monthView.frame, rectInScrollView)) {
+                [result addObject:monthView];
+            }
         }
     }];
 
