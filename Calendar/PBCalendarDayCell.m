@@ -314,9 +314,8 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 
 - (void)updateSelectedRangeState {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
-
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+    
     NSDate *monthDate =
     [NSDate
      dateWithYear:self.year

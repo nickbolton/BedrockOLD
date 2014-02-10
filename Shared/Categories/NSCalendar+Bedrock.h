@@ -10,7 +10,14 @@
 
 @interface NSCalendar (Bedrock)
 
++ (NSCalendar *)calendarForCurrentThread;
++ (NSCalendar *)calendarForThread:(NSThread *)thread;
+
 - (NSInteger)daysWithinEraFromDate:(NSDate *)startDate
                             toDate:(NSDate *)endDate;
+
++ (NSInteger)numberOfDaysInWeek;
++ (NSInteger)firstWeekday;
++ (void)setFirstWeekday:(NSInteger)weekDay;
 
 @end

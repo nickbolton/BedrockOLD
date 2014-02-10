@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Pixelbleed. All rights reserved.
 //
 
-#import "Emitter.h"
+#import <UIKit/UIKit.h>
 
 @class PBDateRange;
 
@@ -20,31 +20,26 @@
 
 @end
 
-@interface PBCalendarSelectionViewController : PBListViewController
+@interface PBCalendarSelectionViewController : UIViewController
 
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                          withSelectedDateRange:(PBDateRange *)dateRange
                                     completion:(void(^)(void))completionBlock;
 
 + (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
                                       delegate:(id <PBCalendarSelectionDelegate>)delegate
                                   modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
                               withSelectedDate:(NSDate *)date
                                     completion:(void(^)(void))completionBlock;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-                   modeSwitchOn:(BOOL)modeSwitchOn
-              firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
+                   modeSwitchOn:(BOOL)modeSwitchOn;
 - (id)initWithSelectedDate:(NSDate *)date
-              modeSwitchOn:(BOOL)modeSwitchOn
-         firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
+              modeSwitchOn:(BOOL)modeSwitchOn;
 
-@property (nonatomic) UIEdgeInsets separatorInsets;
 @property (nonatomic, readonly) BOOL modeSwitchOn;
-@property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
+@property (nonatomic) id <PBCalendarSelectionDelegate> calendarDelegate;
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "NSDate+Bedrock.h"
-#import "PBCalendarManager.h"
 #import <objc/runtime.h>
 
 static char kPBMidnightObjectKey;
@@ -80,7 +79,8 @@ static char kPBEndOfDayObjectKey;
                    hours:(NSInteger)hours
                  minutes:(NSInteger)minutes {
 
-    NSCalendar *cal = [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *cal = [NSCalendar calendarForCurrentThread];
+
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setYear:year];
     [dateComponents setMonth:month];
@@ -99,7 +99,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSInteger)valueForCalendarUnit:(NSCalendarUnit)calendarUnit {
-    NSCalendar *cal = [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *cal = [NSCalendar calendarForCurrentThread];
     NSDateComponents *dateComponents =
     [cal components:calendarUnit fromDate:self];
 
@@ -166,17 +166,14 @@ static char kPBEndOfDayObjectKey;
 
 - (NSDateComponents *)components:(NSCalendarUnit)components {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
-
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
     return [calendar components:components fromDate:self];
 }
 
 - (NSDateComponents *)components:(NSCalendarUnit)components
                           toDate:(NSDate *)date {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
 
     return
     [calendar
@@ -184,6 +181,52 @@ static char kPBEndOfDayObjectKey;
      fromDate:self
      toDate:date
      options:0];
+}
+
+- (NSDate *)firstDayOfMonth {
+	NSDate *firstDay = objc_getAssociatedObject(self, @"firstDayOfMonth");
+
+	if (firstDay == nil) {
+
+        NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+
+		NSDateComponents *components = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self];
+		firstDay = [calendar dateFromComponents:components];
+		objc_setAssociatedObject(self, @"firstDayOfMonth", firstDay, OBJC_ASSOCIATION_COPY_NONATOMIC);
+	}
+
+	return firstDay;
+}
+
+- (NSDate *)lastDayOfMonth {
+	NSDate *lastDay = objc_getAssociatedObject(self, @"lastDayOfMonth");
+
+	if (lastDay == nil) {
+
+        NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+
+		NSDateComponents *components = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self];
+		[components setDay:[calendar rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit forDate:self].length];
+		lastDay = [calendar dateFromComponents:components];
+		objc_setAssociatedObject(self, @"lastDayOfMonth", lastDay, OBJC_ASSOCIATION_COPY_NONATOMIC);
+	}
+
+	return lastDay;
+}
+
+- (NSInteger)weekday {
+
+	NSNumber *weekday = objc_getAssociatedObject(self, @"weekday");
+
+	if (weekday == nil) {
+
+        NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+
+		weekday = [NSNumber numberWithInteger:[calendar components:NSWeekdayCalendarUnit fromDate:self].weekday];
+		objc_setAssociatedObject(self, @"weekday", weekday, OBJC_ASSOCIATION_COPY_NONATOMIC);
+	}
+
+	return [weekday integerValue];
 }
 
 - (BOOL)isWithinRange:(PBDateRange *)dateRange {
@@ -194,7 +237,7 @@ static char kPBEndOfDayObjectKey;
 
 - (BOOL)isMidnight {
     NSDateComponents *dateComponents =
-    [[[PBCalendarManager sharedInstance] calendarForCurrentThread]
+    [[NSCalendar calendarForCurrentThread]
      components:NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:self];
     
     return (dateComponents.hour + dateComponents.minute + dateComponents.second) == 0;
@@ -239,7 +282,7 @@ static char kPBEndOfDayObjectKey;
 
 - (PBDateRange *)nextMonth {
     NSDateComponents *dateComponents;
-    NSCalendar *cal = [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *cal = [NSCalendar calendarForCurrentThread];
     dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setMonth:1];
     
@@ -254,7 +297,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)endOfDay {
-    return [self endOfDay:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return [self endOfDay:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)endOfDay:(NSCalendar *)cal {
@@ -270,7 +313,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSInteger)dayOfTheWeek {
-    return [self dayOfTheWeek:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return [self dayOfTheWeek:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSInteger)dayOfTheWeek:(NSCalendar *)cal {
@@ -279,7 +322,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSInteger)dayOfTheMonth {
-    return [self dayOfTheMonth:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return [self dayOfTheMonth:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSInteger)dayOfTheMonth:(NSCalendar *)cal {
@@ -288,7 +331,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSInteger)dayOfTheYear {
-    return [self dayOfTheMonth:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return [self dayOfTheMonth:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSInteger)dayOfTheYear:(NSCalendar *)cal {
@@ -296,8 +339,10 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)dateByAddingWeeks:(NSInteger)weeks {
-    return [self dateByAddingWeeks:weeks
-                           withCal:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return
+    [self
+     dateByAddingWeeks:weeks
+     withCal:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)dateByAddingWeeks:(NSInteger)weeks withCal:(NSCalendar *)cal {
@@ -308,8 +353,10 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)dateByAddingDays:(NSInteger)days {
-    return [self dateByAddingDays:days 
-                          withCal:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return
+    [self
+     dateByAddingDays:days
+     withCal:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)dateByAddingDays:(NSInteger)days withCal:(NSCalendar *)cal {
@@ -320,8 +367,10 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)dateByAddingSeconds:(NSTimeInterval)seconds {
-    return [self dateByAddingSeconds:seconds 
-                             withCal:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return
+    [self
+     dateByAddingSeconds:seconds
+     withCal:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)dateByAddingSeconds:(NSTimeInterval)seconds withCal:(NSCalendar *)cal {
@@ -333,8 +382,7 @@ static char kPBEndOfDayObjectKey;
 
 - (NSDate *)dateByAddingComponents:(NSDateComponents *)components {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
 
     return
     [calendar
@@ -345,8 +393,7 @@ static char kPBEndOfDayObjectKey;
 
 - (NSRange)rangeOfUnit:(NSCalendarUnit)smaller inUnit:(NSCalendarUnit)larger {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
 
     return
     [calendar
@@ -356,12 +403,14 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (PBDateRange *)dateIntervalForTimePeriod:(TimePeriod)timePeriod {    
-    return [self dateIntervalForTimePeriod:timePeriod 
-                                   withCal:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return
+    [self
+     dateIntervalForTimePeriod:timePeriod
+     withCal:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)midnight {
-    return [self midnight:[[PBCalendarManager sharedInstance] calendarForCurrentThread]];
+    return [self midnight:[NSCalendar calendarForCurrentThread]];
 }
 
 - (NSDate *)midnight:(NSCalendar *)cal {

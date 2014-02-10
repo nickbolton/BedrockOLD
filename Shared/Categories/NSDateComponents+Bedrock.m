@@ -13,8 +13,7 @@
 + (NSDateComponents *)components:(NSCalendarUnit)components
                         fromDate:(NSDate *)date {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
 
     return
     [calendar

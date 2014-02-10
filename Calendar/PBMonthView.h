@@ -8,24 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-@class PBDateRange;
+@class PBCalendarView;
+
+#define TUMonthLabelFont [UIFont boldSystemFontOfSize:16.0]
+#define TUMonthBoundaryLineColor [UIColor darkGrayColor]
 
 @interface PBMonthView : UIView
 
-@property (nonatomic, readonly) NSInteger year;
-@property (nonatomic, readonly) NSInteger month;
-@property (nonatomic, strong) PBDateRange *selectedDateRange;
-@property (nonatomic) BOOL hideStartingPointMarker;
-@property (nonatomic) BOOL hideEndingPointMarker;
+@property (nonatomic, weak) PBCalendarView *calendarView;
+@property (nonatomic, strong) NSDate *month;
 
-- (void)setYear:(NSInteger)year month:(NSInteger)month;
-- (void)setYearAndMonthFromDate:(NSDate *)date;
+- (CGFloat)topOffset;
++ (CGFloat)topOffsetForWidth:(CGFloat)width month:(NSDate *)month;
++ (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 
-- (NSDateComponents *)dateComponentsAtPoint:(CGPoint)point;
-- (NSDateComponents *)nearestDateComponentsAtPoint:(CGPoint)point;
-- (void)updateView;
-
-- (CGPoint)pointForStartingMarkerView;
-- (CGPoint)pointForEndingMarkerView;
+- (NSDateComponents *)dayAtPoint:(CGPoint)point;
 
 @end
