@@ -117,7 +117,7 @@ static NSInteger kPBMonthViewCount = 0;
 
         _todayAttributes =
         @{
-          NSFontAttributeName : self.dayFont,
+          NSFontAttributeName : self.todayFont,
           NSForegroundColorAttributeName : [UIColor blackColor],
           NSParagraphStyleAttributeName : paragraphStyle,
           };
@@ -157,7 +157,7 @@ static NSInteger kPBMonthViewCount = 0;
 
         _selectedTodayAttributes =
         @{
-          NSFontAttributeName : self.dayFont,
+          NSFontAttributeName : self.todayFont,
           NSForegroundColorAttributeName : [UIColor whiteColor],
           NSParagraphStyleAttributeName : paragraphStyle,
           };
@@ -467,7 +467,12 @@ static NSInteger kPBMonthViewCount = 0;
         NSDictionary *textAttributes;
 
 		BOOL isToday = month.year == today.year && month.month == today.month && day.day == today.day;
-		BOOL isSelected = [self.calendarView.selectedDay isEqual:day];
+
+        NSDateComponents *selectedDayComponents =
+        [self.calendarView.selectedDateRange.startDate
+         components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+
+		BOOL isSelected = [selectedDayComponents isEqual:day];
 
 		if (isToday) {
             if (isSelected) {

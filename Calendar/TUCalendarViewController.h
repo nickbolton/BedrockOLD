@@ -21,7 +21,7 @@
 
 @interface TUCalendarViewController : UIViewController
 
-@property (nonatomic) id <PBCalendarSelectionDelegate> calendarDelegate;
+@property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
                    modeSwitchOn:(BOOL)modeSwitchOn;

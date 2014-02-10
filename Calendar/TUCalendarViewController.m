@@ -206,11 +206,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 	self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.view addSubview:_calendarView];
 
-    NSDateComponents *components =
-    [self.initialSelectedDateRange.startDate
-     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
-
-    self.calendarView.selectedDay = components;
+    self.calendarView.selectedDateRange = self.initialSelectedDateRange;
 }
 
 - (void)setupCurrentMonthLabel {
@@ -271,31 +267,17 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 #pragma mark - Getters and Setters
 
 - (PBDateRange *)selectedDateRange {
-
-    NSDate *startDate =
-    [[NSCalendar calendarForCurrentThread]
-     dateFromComponents:self.calendarView.selectedDay];
-
-    NSDate *endDate =
-    [[NSCalendar calendarForCurrentThread]
-     dateFromComponents:self.calendarView.selectedDay];
-
-    PBDateRange *dateRange =
-    [PBDateRange
-     dateRangeWithStartDate:startDate
-     endDate:endDate];
-
-    return dateRange;
+    return self.calendarView.selectedDateRange;
 }
 
 #pragma mark - Actions
 
 - (void)cancelPressed:(id)sender {
-    [self.calendarDelegate calendarSelectionViewControllerCancelled:self];
+    [self.delegate calendarSelectionViewControllerCancelled:self];
 }
 
 - (void)donePressed:(id)sender {
-    [self.calendarDelegate calendarSelectionViewController:self didSelectedRange:self.selectedDateRange];
+    [self.delegate calendarSelectionViewController:self didSelectedRange:self.selectedDateRange];
 }
 
 - (void)showToday:(id)sender {
@@ -378,10 +360,6 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
             currentMonthItemEnabled = NO;
         }
     }];
-
-    if (currentSelectionItemEnabled) {
-        NSLog(@"ZZZ");
-    }
 
     if (_animatingCurrentMonth == NO) {
         self.currentMonthItem.enabled = currentMonthItemEnabled;
@@ -548,6 +526,12 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         _lastScrollPosition = scrollPosition;
         _lastScrollTime = now;
     }
+}
+
+- (void)calendarViewSelected:(PBCalendarView *)calendarView
+      selectedRangeDidChange:(PBDateRange *)dateRange {
+
+    [self updateToolbarItems];
 }
 
 @end

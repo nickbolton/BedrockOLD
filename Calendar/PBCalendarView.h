@@ -8,9 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+@class PBCalendarView;
+
+@protocol PBCalendarViewDelegate <UIScrollViewDelegate>
+
+@optional
+- (void)calendarViewSelected:(PBCalendarView *)calendarView
+      selectedRangeDidChange:(PBDateRange *)dateRange;
+
+@end
+
 @interface PBCalendarView : UIScrollView
 
-@property (nonatomic, strong) NSDateComponents *selectedDay;
+@property (nonatomic, strong) PBDateRange *selectedDateRange;
 
 - (void)setSelectedDay:(NSDateComponents *)selectedDay animated:(BOOL)animated;
 

@@ -56,12 +56,25 @@
 
 #pragma mark - Properties
 
-- (void)setSelectedDay:(NSDateComponents *)selectedDay {
-	[self setSelectedDay:selectedDay animated:NO];
+- (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
+    _selectedDateRange = selectedDateRange;
+
+    NSDateComponents *components =
+    [selectedDateRange.startDate
+     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+
+    [self setSelectedDay:components animated:NO];
 }
 
 - (void)setSelectedDay:(NSDateComponents *)selectedDay animated:(BOOL)animated {
-	_selectedDay = selectedDay;
+
+    NSDate *date =
+    [NSDate
+     dateWithYear:selectedDay.year
+     month:selectedDay.month
+     day:selectedDay.day];
+
+    _selectedDateRange = [PBDateRange dateRangeWithStartDate:date endDate:date];
 
 	NSTimeInterval duration = 0.0;
 	if (animated) {
@@ -302,6 +315,13 @@
 
 			if (selectedDay != nil) {
 				[self setSelectedDay:selectedDay animated:YES];
+            
+                if ([self.delegate respondsToSelector:@selector(calendarViewSelected:selectedRangeDidChange:)]) {
+
+                    [(id <PBCalendarViewDelegate>)self.delegate
+                     calendarViewSelected:self
+                     selectedRangeDidChange:self.selectedDateRange];
+                }
 
 				*stop = YES;
 			}

@@ -51,7 +51,7 @@
      initWithSelectedDateRange:self.selectedDateRange
      modeSwitchOn:YES];
 
-    viewController.calendarDelegate = self;
+    viewController.delegate = self;
 
 //    [[TUCalendarViewController alloc]
 //     initWithSelectedDateRange:self.selectedDateRange
