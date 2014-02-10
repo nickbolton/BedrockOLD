@@ -13,13 +13,11 @@ static CGFloat const kPBMonthViewSeparatorLeftInset = 15.0f;
 static CGFloat const kPBMonthViewItemWidth = 44.0f;
 static CGFloat const kPBMonthViewItemHeight = 36.0f;
 static CGFloat const kPBMonthViewTopSpace = 42.0f;
-static CGFloat const kPBMonthViewBottomSpace = -17.5f;
+static CGFloat const kPBMonthViewBottomSpace = -3.0f;
 static CGFloat const kPBMonthViewWidthLeadingPadding = 2.5f;
 static CGFloat const kPBMonthViewWidthTrailingPadding = 2.5f;
 static CGFloat const kPBMonthViewEndPointRadius = 16.0f;
 static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
-
-static NSInteger kPBMonthViewCount = 0;
 
 @interface PBMonthView () {
 }

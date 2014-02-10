@@ -9,6 +9,7 @@
 #import "TUCalendarViewController.h"
 #import "PBCalendarView.h"
 #import "PBMonthView.h"
+#import "PBRunningAverageValue.h"
 
 static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
 static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
@@ -39,6 +40,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 @property (nonatomic, strong) UILabel *currentMonthLabel;
 @property (nonatomic, strong) NSDate *currentMonth;
 @property (nonatomic, strong) NSArray *visibleMonthViews;
+@property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
 
 @end
 
@@ -52,6 +54,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         self.initialSelectedDateRange =
         [PBDateRange dateRangeWithStartDate:date endDate:date];
         self.modeSwitchOn = modeSwitchOn;
+        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
     }
     return self;
 }
@@ -66,6 +69,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 
         _rangeMode =
         [dateRange.endDate.midnight isGreaterThan:dateRange.startDate];
+        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
     }
     return self;
 }
@@ -490,6 +494,9 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         self.currentMonth = nil;
         _lastScrollPosition = scrollView.contentOffset.y;
         _lastScrollTime = [NSDate timeIntervalSinceReferenceDate];
+        [self.averageScrollSpeed clearRunningValues];
+    } else {
+        [self hideCurrentMonthContainer];
     }
 }
 
@@ -510,16 +517,25 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         CGFloat deltaY = scrollPosition - _lastScrollPosition;
         CGFloat speed = ABS(deltaY / deltaT);
 
-//        NSLog(@"speed: %f", speed);
+        if (speed < 50000.0f ) {
 
-        if (self.currentMonthContainer.alpha == 0.0f) {
-            if (speed > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
-                [self showCurrentMonthContainer];
-            }
-        } else {
-            if (speed < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
-                [self hideCurrentMonthContainer];
-                _decelerating = NO;
+            self.averageScrollSpeed.value = speed;
+
+//            NSLog(@"speed: %f", speed);
+//            NSLog(@"averageScrollSpeed: %f", self.averageScrollSpeed.value);
+
+            if (self.currentMonthContainer.alpha == 0.0f) {
+
+                if (self.averageScrollSpeed.value > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
+                    [self showCurrentMonthContainer];
+                }
+
+            } else {
+
+                if (self.averageScrollSpeed.value < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
+                    [self hideCurrentMonthContainer];
+                    _decelerating = NO;
+                }
             }
         }
 
