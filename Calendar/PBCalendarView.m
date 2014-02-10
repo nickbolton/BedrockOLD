@@ -140,6 +140,25 @@
 	return monthView;
 }
 
+- (NSArray *)monthViewsBoundByRect:(CGRect)rect inView:(UIView *)view {
+
+    NSMutableArray *result = [NSMutableArray array];
+
+    CGRect rectInScrollView =
+    [self
+     convertRect:rect
+     fromView:view];
+
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+
+        if (CGRectIntersectsRect(monthView.frame, rectInScrollView)) {
+            [result addObject:monthView];
+        }
+    }];
+
+    return result;
+}
+
 #pragma mark - Scroll Adjustments
 
 - (void)_recenterIfNecessary
@@ -246,8 +265,7 @@
 	[self scrollToMonth:month animated:NO];
 }
 
-- (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated
-{
+- (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated {
 	CGPoint offset = self.contentOffset;
 	PBMonthView *referenceMonthView = [self.monthViews lastObject];
 

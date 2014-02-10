@@ -17,5 +17,6 @@
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;
 - (NSDate *)currentMonth;
+- (NSArray *)monthViewsBoundByRect:(CGRect)rect inView:(UIView *)view;
 
 @end
