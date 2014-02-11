@@ -14,7 +14,7 @@
 static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
 static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
 static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
-static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 2000.0f;
+static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 1.4f;
 static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold = 300.0f;
 
 @interface TUCalendarViewController () <UIScrollViewDelegate> {
@@ -25,6 +25,10 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     BOOL _decelerating;
     BOOL _animatingCurrentMonth;
     BOOL _animatingCurrentSelection;
+    BOOL _monthIndicatorVisible;
+    BOOL _monthIndicatorHiding;
+    NSTimeInterval _monthIndicatorStopTime;
+    NSTimeInterval _lastMonthIndicatorTrigger;
 }
 
 @property (nonatomic, strong) UIToolbar *toolbar;
@@ -36,10 +40,11 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 @property (nonatomic, strong) UIBarButtonItem *currentSelectionItem;
 @property (nonatomic, readonly) PBDateRange *selectedDateRange;
 @property (nonatomic, strong) PBDateRange *initialSelectedDateRange;
-@property (nonatomic, strong) UIView *currentMonthContainer;
-@property (nonatomic, strong) UILabel *currentMonthLabel;
+@property (nonatomic, strong) UIView *monthIndicatorContainer;
+@property (nonatomic, strong) UILabel *monthIndicatorLabel;
 @property (nonatomic, strong) NSDate *currentMonth;
 @property (nonatomic, strong) NSArray *visibleMonthViews;
+@property (nonatomic) CGRect visibleRect;
 @property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
 
 @end
@@ -213,40 +218,41 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     self.calendarView.selectedDateRange = self.initialSelectedDateRange;
 }
 
-- (void)setupCurrentMonthLabel {
+- (void)setupmonthIndicatorLabel {
 
-    self.currentMonthContainer = [[UIView alloc] init];
-    self.currentMonthContainer.translatesAutoresizingMaskIntoConstraints = NO;
-    self.currentMonthContainer.alpha = 0.0f;
+    self.monthIndicatorContainer = [[UIView alloc] init];
+    self.monthIndicatorContainer.translatesAutoresizingMaskIntoConstraints = NO;
+    self.monthIndicatorContainer.alpha = 0.0f;
+    _monthIndicatorVisible = NO;
 
-    [self.view addSubview:self.currentMonthContainer];
+    [self.view addSubview:self.monthIndicatorContainer];
 
     [NSLayoutConstraint
-     alignToTop:self.currentMonthContainer
+     alignToTop:self.monthIndicatorContainer
      withPadding:kPBCalendarSelectionViewControllerNavigationBarHeight];
 
-    [NSLayoutConstraint expandWidthToSuperview:self.currentMonthContainer];
+    [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorContainer];
     [NSLayoutConstraint
      addHeightConstraint:40.0f
-     toView:self.currentMonthContainer];
+     toView:self.monthIndicatorContainer];
 
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
     backgroundView.backgroundColor = self.view.tintColor;
     backgroundView.alpha = kPBCalendarSelectionViewCurrentMonthAlpha;
 
-    [self.currentMonthContainer addSubview:backgroundView];
+    [self.monthIndicatorContainer addSubview:backgroundView];
     [NSLayoutConstraint expandToSuperview:backgroundView];
 
-    self.currentMonthLabel = [[UILabel alloc] init];
-    self.currentMonthLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.currentMonthLabel.textColor = [UIColor blackColor];
-    self.currentMonthLabel.textAlignment = NSTextAlignmentCenter;
-    self.currentMonthLabel.font =
+    self.monthIndicatorLabel = [[UILabel alloc] init];
+    self.monthIndicatorLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.monthIndicatorLabel.textColor = [UIColor blackColor];
+    self.monthIndicatorLabel.textAlignment = NSTextAlignmentCenter;
+    self.monthIndicatorLabel.font =
     [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
 
-    [self.currentMonthContainer addSubview:self.currentMonthLabel];
-    [NSLayoutConstraint expandToSuperview:self.currentMonthLabel];
+    [self.monthIndicatorContainer addSubview:self.monthIndicatorLabel];
+    [NSLayoutConstraint expandToSuperview:self.monthIndicatorLabel];
 }
 
 #pragma mark - View Lifecycle
@@ -256,7 +262,26 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 	[self setupCalendarView];
     [self setupNavigationBar];
     [self setupToolbar];
-    [self setupCurrentMonthLabel];    
+    [self setupmonthIndicatorLabel];
+
+    CGFloat height =
+    CGRectGetHeight(self.view.frame) -
+    kPBCalendarSelectionViewControllerNavigationBarHeight -
+    kPBCalendarSelectionViewControllerToolbarHeight;
+
+    self.visibleRect =
+    CGRectMake(0.0f,
+               kPBCalendarSelectionViewControllerNavigationBarHeight,
+               CGRectGetWidth(self.view.frame),
+               height);
+
+    self.calendarView.visibleBounds = self.visibleRect;
+
+    self.calendarView.contentMargins =
+    UIEdgeInsetsMake(kPBCalendarSelectionViewControllerNavigationBarHeight,
+                     0.0f,
+                     kPBCalendarSelectionViewControllerToolbarHeight,
+                     0.0f);
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -287,7 +312,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 - (void)showToday:(id)sender {
 
     _animatingCurrentMonth = YES;
-    self.currentMonthItem.enabled = NO;
+//    self.currentMonthItem.enabled = NO;
 
 	[self.calendarView scrollToMonth:[NSDate date] animated:YES];
 
@@ -368,7 +393,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     if (_animatingCurrentMonth == NO) {
 
         if (self.currentMonthItem.enabled != currentMonthItemEnabled) {
-            self.currentMonthItem.enabled = currentMonthItemEnabled;
+//            self.currentMonthItem.enabled = currentMonthItemEnabled;
         }
     }
 
@@ -432,23 +457,30 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 //    [self updateVisibleCalendarSelection];
 }
 
-- (void)showCurrentMonthContainer {
+- (void)showMonthIndicatorContainer {
 
-    self.currentMonthContainer.alpha = 0.0f;
+    self.monthIndicatorContainer.alpha = 0.0f;
 
     [UIView
      animateWithDuration:.3f
      animations:^{
-         self.currentMonthContainer.alpha = 1.0f;
+         self.monthIndicatorContainer.alpha = 1.0f;
+     } completion:^(BOOL finished) {
+         _monthIndicatorVisible = YES;
      }];
 }
 
-- (void)hideCurrentMonthContainer {
+- (void)hideMonthIndicatorContainer {
+
+    _monthIndicatorHiding = YES;
 
     [UIView
      animateWithDuration:.3f
      animations:^{
-         self.currentMonthContainer.alpha = 0.0f;
+         self.monthIndicatorContainer.alpha = 0.0f;
+     } completion:^(BOOL finished) {
+         _monthIndicatorHiding = NO;
+         _monthIndicatorVisible = NO;
      }];
 }
 
@@ -493,7 +525,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = dateFormat;
 
-        self.currentMonthLabel.text = [dateFormatter stringFromDate:currentMonth];
+        self.monthIndicatorLabel.text = [dateFormatter stringFromDate:currentMonth];
 
         self.currentMonth = currentMonth;
     }
@@ -505,8 +537,21 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 
 #pragma mark - UIScrollViewDelegate Conformance
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 
+    NSTimeInterval beginDraggingTime = [NSDate timeIntervalSinceReferenceDate];
+
+    NSTimeInterval delayInSeconds = .3f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+
+        if (_lastMonthIndicatorTrigger < beginDraggingTime) {
+            [self hideMonthIndicatorContainer];
+        }
+    });
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     _decelerating = decelerate;
 
     if (decelerate) {
@@ -515,12 +560,50 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         _lastScrollTime = [NSDate timeIntervalSinceReferenceDate];
         [self.averageScrollSpeed clearRunningValues];
     } else {
-        [self hideCurrentMonthContainer];
+        [self hideMonthIndicatorContainer];
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    _decelerating = NO;
     [self updateCurrentMonth];
+    [self hideMonthIndicatorContainer];
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView
+                     withVelocity:(CGPoint)velocity
+              targetContentOffset:(inout CGPoint *)targetContentOffset {
+
+    CGPoint point;
+
+    if ((_monthIndicatorVisible == NO || _monthIndicatorHiding) &&
+        ABS(velocity.y) > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
+
+        [self showMonthIndicatorContainer];
+        scrollView.decelerationRate = UIScrollViewDecelerationRateNormal * 2.0f;
+
+        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+
+        _lastMonthIndicatorTrigger = now;
+        _monthIndicatorStopTime = (3.0f * .8f) + now;
+    }
+
+    if (velocity.y != 0.0f && _monthIndicatorVisible) {
+        CGFloat targetY = scrollView.contentOffset.y + velocity.y * 600.0;
+        point = CGPointMake(0.0f, targetY);
+
+//        NSLog(@"contentOffset: %@", NSStringFromCGPoint(point));
+
+        // convert content offset to centered point in visible rect
+
+        point.y += kPBCalendarSelectionViewControllerNavigationBarHeight;
+        point.y += (CGRectGetHeight(self.visibleRect) / 2.0f);
+
+        *targetContentOffset =
+        [self.calendarView centeredContentOffsetAtPoint:point];
+
+//        NSLog(@"targetContentOffset: %@", NSStringFromCGPoint(*targetContentOffset));
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -540,22 +623,14 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 
             self.averageScrollSpeed.value = speed;
 
-//            NSLog(@"speed: %f", speed);
-//            NSLog(@"averageScrollSpeed: %f", self.averageScrollSpeed.value);
 
-            if (self.currentMonthContainer.alpha == 0.0f) {
+        }
 
-                if (self.averageScrollSpeed.value > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
-                    [self showCurrentMonthContainer];
-                }
-
-            } else {
-
-                if (self.averageScrollSpeed.value < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
-                    [self hideCurrentMonthContainer];
-                    _decelerating = NO;
-                }
-            }
+        if (now >= _monthIndicatorStopTime &&
+            self.averageScrollSpeed.value < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
+            [self hideMonthIndicatorContainer];
+        } else {
+            _lastMonthIndicatorTrigger = now;
         }
 
         _lastScrollPosition = scrollPosition;

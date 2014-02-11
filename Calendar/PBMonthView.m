@@ -285,10 +285,10 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	NSInteger weeks = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:month].length;
 	offset = dayHeight * weeks + kPBMonthViewTopSpace + kPBMonthViewBottomSpace;
 
-	NSInteger firstDayOffset = month.firstDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
-	if (firstDayOffset != 0) {
-		offset -= dayHeight;
-	}
+//	NSInteger firstDayOffset = month.firstDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
+//	if (firstDayOffset != 0) {
+//		offset -= dayHeight;
+//	}
 
 
 	return offset;

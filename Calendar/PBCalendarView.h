@@ -21,11 +21,16 @@
 @interface PBCalendarView : UIScrollView
 
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
+@property (nonatomic) CGRect visibleBounds;
+@property (nonatomic) UIEdgeInsets contentMargins;
 
 - (void)setSelectedDay:(NSDateComponents *)selectedDay animated:(BOOL)animated;
 
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;
+- (void)centerCurrentMonth;
+- (void)scrollToMonthAtPoint:(CGPoint)point;
+- (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point;
 - (NSDate *)currentMonth;
 - (NSArray *)monthViewsBoundByRect:(CGRect)rect
                             inView:(UIView *)view
