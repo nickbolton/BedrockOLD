@@ -395,5 +395,23 @@
     [leftView.superview addConstraint:constraint];
     return constraint;
 }
+    
+#if TARGET_OS_IPHONE
++ (NSLayoutConstraint *)alignBottomOfView:(UIView *)view1 toBaselineOfView:(UIView *)view2 withPadding:(CGFloat)padding {
+#else
++ (NSLayoutConstraint *)alignBottomOfView:(UIView *)view1 toBaselineOfView:(UIView *)view2 withPadding:(CGFloat)padding {
+#endif
+    NSLayoutConstraint *constraint =
+    [NSLayoutConstraint
+     constraintWithItem:view1
+     attribute:NSLayoutAttributeBottom
+     relatedBy:NSLayoutRelationEqual
+     toItem:view2
+     attribute:NSLayoutAttributeBaseline
+     multiplier:1.0f
+     constant:padding];
+    [view1.superview addConstraint:constraint];
+    return constraint;
+}
 
 @end
