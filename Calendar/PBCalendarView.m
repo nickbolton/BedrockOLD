@@ -129,7 +129,21 @@
 }
 
 - (NSDate *)nearestDateAtPoint:(CGPoint)point {
-    return [self dateAtPoint:point];
+
+    PBMonthView *monthView = [self monthViewAtPoint:point];
+
+    point =
+    [monthView
+     convertPoint:point
+     fromView:self];
+
+    NSDateComponents *components = [monthView nearestDayAtPoint:point];
+
+    return
+    [NSDate
+     dateWithYear:components.year
+     month:components.month
+     day:components.day];
 }
 
 - (CGPoint)endPointMarkingInCalendar:(BOOL)isStartDate {

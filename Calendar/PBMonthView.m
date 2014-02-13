@@ -349,6 +349,105 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	return dayComponents;
 }
 
+- (CGPoint)midpointOfRect:(CGRect)rect {
+
+    CGPoint midpoint;
+    midpoint.x = CGRectGetMidX(rect);
+    midpoint.y = CGRectGetMidY(rect);
+    return midpoint;
+}
+
+- (NSDateComponents *)nearestDayAtPoint:(CGPoint)point {
+
+    static CGFloat const padding = 5.0f;
+
+    NSMutableArray *days = [NSMutableArray array];
+    NSMutableArray *dayRects = [NSMutableArray array];
+
+    __block NSDateComponents *firstDay = nil;
+    __block NSDateComponents *lastDay = nil;
+    __block CGRect firstDayRect;
+    __block CGRect lastDayRect;
+
+	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
+
+        if (firstDay == nil) {
+            firstDay = [day copy];
+            firstDayRect = dayRect;
+        }
+
+        lastDay = [day copy];
+        lastDayRect = dayRect;
+
+        CGFloat xMargins = padding + (kPBMonthViewItemWidth - CGRectGetWidth(dayRect)) / 2.0f;
+        CGFloat yMargins = padding + (kPBMonthViewItemHeight - CGRectGetHeight(dayRect)) / 2.0f;
+
+        CGRect expandedRect = dayRect;
+        expandedRect.origin.x -= xMargins;
+        expandedRect.size.width += xMargins * 2.0f;
+        expandedRect.origin.y -= yMargins;
+        expandedRect.size.height += yMargins * 2.0f;
+
+		if (CGRectContainsPoint(expandedRect, point)) {
+
+            [days addObject:[day copy]];
+            [dayRects addObject:[NSValue valueWithCGRect:dayRect]];
+		}
+	}];
+
+    NSDateComponents *dayComponents = nil;
+
+    CGFloat minDistance = MAXFLOAT;
+
+    NSInteger index = 0;
+
+    for (NSValue *rectValue in dayRects) {
+
+        CGRect rect = rectValue.CGRectValue;
+        CGPoint midpoint = [self midpointOfRect:rect];
+
+        CGFloat xDelta = point.x - midpoint.x;
+        CGFloat yDelta = point.y - midpoint.y;
+
+        CGFloat distanceSquared = (xDelta * xDelta) + (yDelta * yDelta);
+
+        if (distanceSquared < minDistance) {
+            minDistance = distanceSquared;
+            dayComponents = days[index];
+        }
+
+        index++;
+    }
+
+    if (dayComponents == nil) {
+
+        CGPoint midpoint = [self midpointOfRect:firstDayRect];
+
+        CGFloat xDelta = point.x - midpoint.x;
+        CGFloat yDelta = point.y - midpoint.y;
+
+        CGFloat distanceToFirstDay = (xDelta * xDelta) + (yDelta * yDelta);
+
+        midpoint = [self midpointOfRect:lastDayRect];
+
+        xDelta = point.x - midpoint.x;
+        yDelta = point.y - midpoint.y;
+
+        CGFloat distanceToLastDay = (xDelta * xDelta) + (yDelta * yDelta);
+
+        if (distanceToFirstDay <= distanceToLastDay) {
+
+            dayComponents = firstDay;
+
+        } else {
+
+            dayComponents = lastDay;
+        }
+    }
+
+	return dayComponents;
+}
+
 #pragma mark - End Points
 
 - (CGPoint)pointForStartingMarkerView {
@@ -584,14 +683,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.size.width = CGRectGetWidth(fillRect) / 2.0f;
                 fillRect.size.width += margins;
 
-                if (day.day == 1) {
-
-                    CGFloat minX = CGRectGetMinX(fillRect);
-                    fillRect.origin.x = 0.0f;
-                    fillRect.size.width += minX;
-
-                } else if (day.day == self.daysInMonth) {
-
+                if (day.day == self.daysInMonth) {
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
                 }
 
@@ -611,10 +703,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
                     fillRect.size.width += minX;
-
-                } else if (day.day == self.daysInMonth) {
-
-                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
                 }
 
                 bezierPath = [UIBezierPath bezierPathWithRect:fillRect];
@@ -627,9 +715,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.origin.x -= margins;
                 fillRect.size.width += margins * 2.0f;
 
-                CGPoint midpoint;
-                midpoint.x = CGRectGetMidX(dayRect);
-                midpoint.y = CGRectGetMidY(dayRect);
+                CGPoint midpoint = [self midpointOfRect:dayRect];
 
                 if ([self isPoint:midpoint inColumn:0]) {
 

@@ -26,6 +26,8 @@
 + (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 
 - (NSDateComponents *)dayAtPoint:(CGPoint)point;
+- (NSDateComponents *)nearestDayAtPoint:(CGPoint)point;
+
 - (CGPoint)pointForStartingMarkerView;
 - (CGPoint)pointForEndingMarkerView;
 
