@@ -13,7 +13,6 @@
 
 @property (nonatomic, strong) NSMutableArray *monthViews;
 @property (nonatomic, strong) NSMutableSet *monthViewQueue;
-@property (nonatomic, strong) UITapGestureRecognizer *selectionRecognizer;
 
 @end
 
@@ -43,9 +42,6 @@
 		[self insertSubview:monthView atIndex:0];
 		[self.monthViews addObject:monthView];
 
-        self.selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_selectionTap:)];
-		[self addGestureRecognizer:self.selectionRecognizer];
-
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[self scrollToMonth:[NSDate date]];
 		});
@@ -57,24 +53,15 @@
 #pragma mark - Properties
 
 - (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
-    _selectedDateRange = selectedDateRange;
-
-    NSDateComponents *components =
-    [selectedDateRange.startDate
-     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
-
-    [self setSelectedDay:components animated:NO];
+    [self setSelectedDateRange:selectedDateRange animated:NO];
 }
 
-- (void)setSelectedDay:(NSDateComponents *)selectedDay animated:(BOOL)animated {
+- (void)setSelectedDateRange:(PBDateRange *)selectedDateRange animated:(BOOL)animated {
+    _selectedDateRange = selectedDateRange;
+    [self updateMonthViews:animated];
+}
 
-    NSDate *date =
-    [NSDate
-     dateWithYear:selectedDay.year
-     month:selectedDay.month
-     day:selectedDay.day];
-
-    _selectedDateRange = [PBDateRange dateRangeWithStartDate:date endDate:date];
+- (void)updateMonthViews:(BOOL)animated {
 
 	NSTimeInterval duration = 0.0;
 	if (animated) {
@@ -82,6 +69,8 @@
 	}
 
 	[self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+
+        monthView.endPointMarkersHidden = self.endPointMarkersHidden;
 
         [UIView
          transitionWithView:monthView
@@ -97,21 +86,8 @@
 - (PBMonthView *)currentMonthView {
 
     CGPoint midpoint = CGPointMake(CGRectGetMidX(self.visibleBounds), CGRectGetMidY(self.visibleBounds));
-
     midpoint.y += self.contentOffset.y;
-
-    __block PBMonthView *result = nil;
-
-    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
-
-        if (CGRectContainsPoint(monthView.frame, midpoint)) {
-
-            result = monthView;
-            *stop = YES;
-        }
-    }];
-
-    return result;
+    return [self monthViewAtPoint:midpoint];
 }
 
 - (NSDate *)currentMonth {
@@ -125,6 +101,88 @@
     }
 
     return date;
+}
+
+- (void)setEndPointMarkersHidden:(BOOL)endPointMarkersHidden {
+    _endPointMarkersHidden = endPointMarkersHidden;
+    [self updateMonthViews:NO];
+}
+
+#pragma mark - End Point
+
+- (NSDate *)dateAtPoint:(CGPoint)point {
+
+    PBMonthView *monthView = [self monthViewAtPoint:point];
+
+    point =
+    [monthView
+     convertPoint:point
+     fromView:self];
+
+    NSDateComponents *components = [monthView dayAtPoint:point];
+
+    return
+    [NSDate
+     dateWithYear:components.year
+     month:components.month
+     day:components.day];
+}
+
+- (NSDate *)nearestDateAtPoint:(CGPoint)point {
+    return [self dateAtPoint:point];
+}
+
+- (CGPoint)endPointMarkingInCalendar:(BOOL)isStartDate {
+
+    __block CGPoint markerViewFinalPoint = CGPointZero;
+
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+
+        NSDate *monthStartDate =
+        [NSDate
+         dateWithYear:monthView.monthComponents.year
+         month:monthView.monthComponents.month
+         day:1];
+
+        NSRange days =
+        [monthStartDate
+         rangeOfUnit:NSCalendarUnitDay
+         inUnit:NSCalendarUnitMonth];
+
+        NSDate *monthEndDate =
+        [NSDate
+         dateWithYear:monthView.monthComponents.year
+         month:monthView.monthComponents.month
+         day:days.length];
+
+        PBDateRange *dateRange =
+        [PBDateRange
+         dateRangeWithStartDate:monthStartDate
+         endDate:monthEndDate];
+
+        if (isStartDate) {
+
+            if ([dateRange dateWithinRange:self.selectedDateRange.startDate]) {
+
+                markerViewFinalPoint =
+                [self
+                 convertPoint:[monthView pointForStartingMarkerView]
+                 fromView:monthView];
+
+            }
+        } else {
+
+            if ([dateRange dateWithinRange:self.selectedDateRange.endDate.midnight]) {
+
+                markerViewFinalPoint =
+                [self
+                 convertPoint:[monthView pointForEndingMarkerView]
+                 fromView:monthView];
+            }
+        }
+    }];
+
+    return markerViewFinalPoint;
 }
 
 #pragma mark - Month View Management
@@ -315,6 +373,22 @@
     return CGPointMake(x, y);
 }
 
+- (PBMonthView *)monthViewAtPoint:(CGPoint)point {
+
+    __block PBMonthView *result = nil;
+
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+
+        if (CGRectContainsPoint(monthView.frame, point)) {
+
+            result = monthView;
+            *stop = YES;
+        }
+    }];
+    
+    return result;
+}
+
 - (NSDate *)monthAtPoint:(CGPoint)point {
 
     PBMonthView *currentMonthView = [self currentMonthView];
@@ -503,30 +577,6 @@
 
 	CGPoint offset = [self centeredContentOffsetForMonth:month];
 	[self setContentOffset:offset animated:animated];
-}
-
-#pragma mark - Actions
-
-- (IBAction)_selectionTap:(UITapGestureRecognizer *)sender {
-    
-	[self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
-		if (CGRectContainsPoint(monthView.frame, [sender locationInView:self])) {
-			NSDateComponents *selectedDay = [monthView dayAtPoint:[self convertPoint:[sender locationInView:self] toView:monthView]];
-
-			if (selectedDay != nil) {
-				[self setSelectedDay:selectedDay animated:YES];
-            
-                if ([self.delegate respondsToSelector:@selector(calendarViewSelected:selectedRangeDidChange:)]) {
-
-                    [(id <PBCalendarViewDelegate>)self.delegate
-                     calendarViewSelected:self
-                     selectedRangeDidChange:self.selectedDateRange];
-                }
-
-				*stop = YES;
-			}
-		}
-	}];
 }
 
 @end

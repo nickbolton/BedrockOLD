@@ -17,11 +17,16 @@
 
 @property (nonatomic, weak) PBCalendarView *calendarView;
 @property (nonatomic, strong) NSDate *month;
+@property (nonatomic, readonly) NSDateComponents *monthComponents;
+@property (nonatomic) BOOL endPointMarkersHidden;
+@property (nonatomic, readonly) NSInteger daysInMonth;
 
 - (CGFloat)topOffset;
 + (CGFloat)topOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 + (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 
 - (NSDateComponents *)dayAtPoint:(CGPoint)point;
+- (CGPoint)pointForStartingMarkerView;
+- (CGPoint)pointForEndingMarkerView;
 
 @end

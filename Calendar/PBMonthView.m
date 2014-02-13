@@ -38,6 +38,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @property (nonatomic, strong) NSDictionary *selectedTodayAttributes;
 @property (nonatomic, strong) UIColor *endPointBackgroundColor;
 @property (nonatomic, strong) UIColor *withinRangeBackgroundColor;
+@property (nonatomic, readwrite) NSDateComponents *monthComponents;
+@property (nonatomic, readwrite) NSInteger daysInMonth;
 
 @end
 
@@ -47,13 +49,19 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 - (void)setMonth:(NSDate *)month {
 
-    NSDateComponents *components =
+    self.monthComponents =
     [month components:NSCalendarUnitYear|NSCalendarUnitMonth];
+    self.monthComponents.day = 1;
+
+    self.daysInMonth =
+    [month
+     rangeOfUnit:NSCalendarUnitDay
+     inUnit:NSCalendarUnitMonth].length;
 
 	_month =
     [NSDate
-     dateWithYear:components.year
-     month:components.month
+     dateWithYear:self.monthComponents.year
+     month:self.monthComponents.month
      day:1];
 
     [self updateMonthTitle];
@@ -253,7 +261,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	return size;
 }
 
-
 #pragma mark - Geometry
 
 - (CGFloat)topOffset
@@ -342,7 +349,73 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	return dayComponents;
 }
 
-#pragma mark - 
+#pragma mark - End Points
+
+- (CGPoint)pointForStartingMarkerView {
+
+//    UICollectionView *collectionView =
+//    self.collectionViewController.collectionView;
+//
+//    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
+//
+//    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
+//
+//        if (cell.isStartingDay) {
+//
+//            result =
+//            [self
+//             convertPoint:cell.bounds.origin
+//             fromView:cell];
+//            break;
+//        }
+//    }
+//
+//    return  result;
+
+    return CGPointZero;
+}
+
+- (CGPoint)pointForEndingMarkerView {
+
+//    UICollectionView *collectionView =
+//    self.collectionViewController.collectionView;
+//
+//    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
+//
+//    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
+//
+//        if (cell.isEndingDay) {
+//
+//            result =
+//            [self
+//             convertPoint:cell.bounds.origin
+//             fromView:cell];
+//            break;
+//        }
+//    }
+//    
+//    return  result;
+
+    return CGPointZero;
+}
+
+- (BOOL)isStartingDay:(NSDateComponents *)day {
+
+    NSDateComponents *components =
+    [self.calendarView.selectedDateRange.startDate
+     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+    return [components isEqual:day];
+}
+
+- (BOOL)isEndingDay:(NSDateComponents *)day {
+
+    NSDateComponents *components =
+    [self.calendarView.selectedDateRange.endDate
+     components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+    return [components isEqual:day];
+}
+
+#pragma mark -
 
 - (void)updateMonthTitle {
 
@@ -377,6 +450,18 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
     [self _drawDivider];
     [self _drawMonthTitle];
 	[self _drawDays];
+}
+
+- (BOOL)isPoint:(CGPoint)point inColumn:(NSInteger)column {
+
+    CGFloat diameter = kPBMonthViewEndPointRadius * 2.0f;
+    CGFloat leftSpace = (kPBMonthViewItemWidth - diameter) / 2.0f;
+
+    CGRect dayRect;
+	dayRect.origin.x = column * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
+	dayRect.size = CGSizeMake(diameter, diameter);
+
+    return point.x >= CGRectGetMinX(dayRect) && point.x <= CGRectGetMaxX(dayRect);
 }
 
 - (void)_enumerateDays:(void(^)(NSDateComponents *day, CGRect dayRect, BOOL *stop))dayBlock
@@ -458,28 +543,125 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         NSDictionary *textAttributes;
 
 		BOOL isToday = month.year == today.year && month.month == today.month && day.day == today.day;
+        BOOL isStartingDay = [self isStartingDay:day];
+        BOOL isEndingDay = [self isEndingDay:day];
 
-        NSDateComponents *selectedDayComponents =
-        [self.calendarView.selectedDateRange.startDate
-         components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay];
+        BOOL showEndPoint = (isStartingDay || isEndingDay) && self.endPointMarkersHidden == NO;
 
-		BOOL isSelected = [selectedDayComponents isEqual:day];
+        BOOL withinRange = [self.calendarView.selectedDateRange componentsWithinRange:day];
 
 		if (isToday) {
-            if (isSelected) {
+            if (showEndPoint) {
                 textAttributes = self.selectedTodayAttributes;
             } else {
                 textAttributes = self.todayAttributes;
             }
         } else {
-            if (isSelected) {
+            if (showEndPoint) {
                 textAttributes = self.selectedDayAttributes;
             } else {
                 textAttributes = self.dayAttributes;
             }
         }
 
-        if (isSelected) {
+        if (withinRange &&
+            ((isStartingDay == NO && isEndingDay == NO) ||
+             (isStartingDay != isEndingDay))) {
+
+            UIBezierPath *bezierPath = nil;
+            CGRect fillRect = dayRect;
+
+            CGFloat margins =
+            (kPBMonthViewItemWidth - CGRectGetWidth(dayRect)) / 2.0f;
+
+            if (isStartingDay && isEndingDay) {
+
+                bezierPath = [UIBezierPath bezierPathWithOvalInRect:dayRect];
+
+            } else if (isStartingDay) {
+
+                fillRect.origin.x += CGRectGetWidth(fillRect) / 2.0f;
+                fillRect.size.width = CGRectGetWidth(fillRect) / 2.0f;
+                fillRect.size.width += margins;
+
+                if (day.day == 1) {
+
+                    CGFloat minX = CGRectGetMinX(fillRect);
+                    fillRect.origin.x = 0.0f;
+                    fillRect.size.width += minX;
+
+                } else if (day.day == self.daysInMonth) {
+
+                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+                }
+
+                bezierPath = [UIBezierPath bezierPathWithRect:fillRect];
+
+                UIBezierPath *rectPath = [UIBezierPath bezierPathWithOvalInRect:dayRect];
+                [bezierPath appendPath:rectPath];
+
+            } else if (isEndingDay) {
+
+                fillRect.origin.x -= margins;
+                fillRect.size.width = CGRectGetWidth(dayRect) / 2.0f;
+                fillRect.size.width += margins;
+
+                if (day.day == 1) {
+
+                    CGFloat minX = CGRectGetMinX(fillRect);
+                    fillRect.origin.x = 0.0f;
+                    fillRect.size.width += minX;
+
+                } else if (day.day == self.daysInMonth) {
+
+                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+                }
+
+                bezierPath = [UIBezierPath bezierPathWithRect:fillRect];
+
+                UIBezierPath *rectPath = [UIBezierPath bezierPathWithOvalInRect:dayRect];
+                [bezierPath appendPath:rectPath];
+
+            } else {
+
+                fillRect.origin.x -= margins;
+                fillRect.size.width += margins * 2.0f;
+
+                CGPoint midpoint;
+                midpoint.x = CGRectGetMidX(dayRect);
+                midpoint.y = CGRectGetMidY(dayRect);
+
+                if ([self isPoint:midpoint inColumn:0]) {
+
+                    fillRect.origin.x = 0.0f;
+                    fillRect.size.width += kPBMonthViewWidthLeadingPadding;
+
+                } else if ([self isPoint:midpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
+
+                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+
+                } else if (day.day == 1) {
+
+                    CGFloat minX = CGRectGetMinX(fillRect);
+                    fillRect.origin.x = 0.0f;
+                    fillRect.size.width += minX;
+
+                } else if (day.day == self.daysInMonth) {
+                    
+                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+                }
+            }
+
+            if (bezierPath != nil) {
+                CGContextAddPath(context, bezierPath.CGPath);
+                CGContextClip(context);
+            }
+
+            [self.withinRangeBackgroundColor setFill];
+            CGContextFillRect(context, fillRect);
+        }
+
+        if (showEndPoint) {
 
             CGPathRef path = CGPathCreateWithEllipseInRect(dayRect, NULL);
             CGContextAddPath(context, path);
