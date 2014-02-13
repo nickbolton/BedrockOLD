@@ -14,9 +14,10 @@
 - (id)initWithTriggerCallback:(BOOL(^)(void))callback
             atDistanceFromEnd:(NSInteger)distance
                     inSection:(NSInteger)section
-          footerViewCellClass:(Class)footerViewClass
-                 footerHeight:(CGFloat)footerHeight;
+           indicatorCellClass:(Class)indicatorCellClass
+          indicatorCellHeight:(CGFloat)indicatorCellHeight;
 
 - (void)appendPageItems:(NSArray *)items;
+- (void)cancelPage:(BOOL)resetToLastPage;
 
 @end

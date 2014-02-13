@@ -10,6 +10,8 @@
 
 @interface PBListViewController (Private)
 
+- (PBSectionItem *)sectionItemAtSection:(NSInteger)section;
+- (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)doAppendItems:(NSArray *)addedItems toSection:(NSInteger)section;
 
 @end

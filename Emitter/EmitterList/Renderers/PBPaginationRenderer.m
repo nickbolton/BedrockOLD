@@ -15,13 +15,17 @@
 @interface PBPaginationRenderer()
 
 @property (nonatomic, copy) BOOL(^triggerCallback)(void);
-@property (nonatomic, strong) PBListItem *footerItem;
+@property (nonatomic, strong) PBListItem *indicatorItem;
 @property (nonatomic) NSInteger endDistance;
 @property (nonatomic) NSInteger section;
-@property (nonatomic) NSInteger footerHeight;
-@property (nonatomic) Class footerViewClass;
-@property (nonatomic, strong) NSIndexPath *lastIndexPathUsedForPaginationCallback;
+@property (nonatomic) NSInteger indicatorCellHeight;
+@property (nonatomic) Class indicatorCellClass;
+@property (nonatomic) NSMutableArray *indexPathTriggerStack;
 @property (nonatomic, weak) PBListViewController *listViewController;
+@property (nonatomic, readonly) NSIndexPath *lastIndexPathUsed;
+
+@property (nonatomic) NSIndexPath *lastPageMaxIndexPath;
+@property (nonatomic) BOOL useLastPageMaxIndexPath;
 
 @end
 
@@ -30,8 +34,8 @@
 - (id)initWithTriggerCallback:(BOOL(^)(void))callback
             atDistanceFromEnd:(NSInteger)distance
                     inSection:(NSInteger)section
-          footerViewCellClass:(Class)footerViewClass
-                 footerHeight:(CGFloat)footerHeight {
+           indicatorCellClass:(Class)indicatorCellClass
+          indicatorCellHeight:(CGFloat)indicatorCellHeight {
 
     self = [super init];
 
@@ -39,21 +43,39 @@
         self.triggerCallback = callback;
         self.endDistance = distance;
         self.section = section;
-        self.footerHeight = footerHeight;
-        self.footerViewClass = footerViewClass;
+        self.indicatorCellHeight = indicatorCellHeight;
+        self.indicatorCellClass = indicatorCellClass;
+        self.indexPathTriggerStack = [NSMutableArray array];
     }
 
     return self;
 }
+
+
+#pragma mark - Getters and Setters
+
+- (NSIndexPath *)lastIndexPathUsed {
+    return [self.indexPathTriggerStack lastObject];
+}
+
+#pragma mark - Public
 
 - (void)renderItem:(PBListItem *)item
        atIndexPath:(NSIndexPath *)indexPath
             inCell:(UITableViewCell *)cell
       withListView:(PBListViewController *)listViewController {
 
+    NSIndexPath *triggerIndexPath = self.lastIndexPathUsed;
+    BOOL usingLastPageMaxIndexPath = NO;
+
+    if (self.useLastPageMaxIndexPath && self.lastPageMaxIndexPath != nil) {
+        triggerIndexPath = self.lastPageMaxIndexPath;
+        usingLastPageMaxIndexPath = YES;
+    }
+
     if (indexPath.section == self.section &&
         self.triggerCallback != nil &&
-        indexPath.row > self.lastIndexPathUsedForPaginationCallback.row) {
+        indexPath.row > triggerIndexPath.row) {
 
         self.listViewController = listViewController;
 
@@ -62,71 +84,110 @@
         NSInteger triggerThreshold =
         sectionItem.items.count - 1 - self.endDistance;
 
-        if (sectionItem != nil && indexPath.row >= triggerThreshold) {
+        if (sectionItem != nil &&
+            (indexPath.row >= triggerThreshold || usingLastPageMaxIndexPath)) {
+
+            self.useLastPageMaxIndexPath = NO;
 
             NSIndexPath *lastIndexPath =
             [NSIndexPath
              indexPathForRow:sectionItem.items.count
              inSection:indexPath.section];
 
-            self.lastIndexPathUsedForPaginationCallback = lastIndexPath;
+            [self.indexPathTriggerStack addObject:lastIndexPath];
 
             if (self.triggerCallback()) {
 
                 [self configureFooterItemIfNecessary];
 
-                __weak typeof(self) this = self;
+                if (self.indicatorItem != nil) {
 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [this.listViewController
-                     appendItemsToDataSource:@[this.footerItem]
-                     inSection:this.section];
-                });
+                    __weak typeof(self) this = self;
+
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [this.listViewController
+                         appendItemsToDataSource:@[this.indicatorItem]
+                         inSection:this.section];
+                    });
+                }
             }
         }
     }
 }
 
+- (void)appendPageItems:(NSArray *)items {
+
+    [self.listViewController.tableView beginUpdates];
+
+    if (self.indicatorItem != nil) {
+
+        if ([self.listViewController removeItemAtIndexPath:self.indicatorItem.indexPath]) {
+
+            [self.listViewController.tableView
+             deleteRowsAtIndexPaths:@[self.indicatorItem.indexPath]
+             withRowAnimation:UITableViewRowAnimationBottom];
+        }
+    }
+
+    PBSectionItem *sectionItem =
+    [self.listViewController sectionItemAtSection:self.section];
+
+    PBListItem *lastItem = sectionItem.items.lastObject;
+
+    self.lastPageMaxIndexPath = lastItem.indexPath;
+
+    if (items.count > 0) {
+        [self.listViewController doAppendItems:items toSection:self.section];
+    }
+
+    [self.listViewController.tableView endUpdates];
+
+    self.useLastPageMaxIndexPath = NO;
+}
+
+- (void)cancelPage:(BOOL)resetToLastPage {
+
+    if (self.indicatorItem != nil) {
+
+        [self.listViewController.tableView beginUpdates];
+
+        if ([self.listViewController removeItemAtIndexPath:self.indicatorItem.indexPath]) {
+
+            [self.listViewController.tableView
+             deleteRowsAtIndexPaths:@[self.indicatorItem.indexPath]
+             withRowAnimation:UITableViewRowAnimationBottom];
+        }
+
+        [self.listViewController.tableView endUpdates];
+    }
+
+    [self.indexPathTriggerStack removeLastObject];
+    self.useLastPageMaxIndexPath = resetToLastPage;
+}
+
+#pragma mark -
+
 - (void)configureFooterItemIfNecessary {
 
     static NSString * const paginationFooterID = @"pagination-footer";
 
-    if (self.footerItem == nil) {
+    if (self.indicatorItem == nil && self.indicatorCellClass != Nil) {
 
-        self.footerItem =
+        self.indicatorItem =
         [PBListItem
          customClassItemWithUserContext:nil
          cellID:paginationFooterID
-         cellClass:self.footerViewClass
+         cellClass:self.indicatorCellClass
          configure:nil
          binding:nil
          selectAction:nil
          deleteAction:nil];
 
         [self.listViewController.tableView
-         registerClass:self.footerViewClass
+         registerClass:self.indicatorCellClass
          forCellReuseIdentifier:paginationFooterID];
 
-        self.footerItem.rowHeight = self.footerHeight;
-    }
-}
-
-- (void)appendPageItems:(NSArray *)items {
-
-    if (self.footerItem != nil) {
-
-        [self.listViewController.tableView beginUpdates];
-
-        if ([self.listViewController removeItemAtIndexPath:self.footerItem.indexPath]) {
-
-            [self.listViewController.tableView
-             deleteRowsAtIndexPaths:@[self.footerItem.indexPath]
-             withRowAnimation:UITableViewRowAnimationBottom];
-        }
-
-        [self.listViewController doAppendItems:items toSection:self.section];
-
-        [self.listViewController.tableView endUpdates];
+        self.indicatorItem.rowHeight = self.indicatorCellHeight;
     }
 }
 
