@@ -7,7 +7,7 @@
 //
 
 #import "PBViewController.h"
-#import "TUCalendarViewController.h"
+#import "PBCalendarSelectionViewController.h"
 
 @interface PBViewController () <PBCalendarSelectionDelegate>
 
@@ -46,18 +46,12 @@
 
     [NSCalendar setFirstWeekday:1];
 
-    TUCalendarViewController *viewController =
-    [[TUCalendarViewController alloc]
+    PBCalendarSelectionViewController *viewController =
+    [[PBCalendarSelectionViewController alloc]
      initWithSelectedDateRange:self.selectedDateRange
      modeSwitchOn:YES];
 
     viewController.delegate = self;
-
-//    [[TUCalendarViewController alloc]
-//     initWithSelectedDateRange:self.selectedDateRange
-//     modeSwitchOn:YES];
-
-//    viewController.delegate = self;
 
     [self presentViewController:viewController animated:YES completion:nil];
 }
@@ -81,7 +75,7 @@
 
 #pragma mark - PBCalendarViewDelegate Conformance
 
-- (void)calendarSelectionViewController:(TUCalendarViewController *)viewController
+- (void)calendarSelectionViewController:(PBCalendarSelectionViewController *)viewController
                        didSelectedRange:(PBDateRange *)selectedRange {
 
     self.selectedDateRange = selectedRange;
@@ -89,7 +83,7 @@
     [viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)calendarSelectionViewControllerCancelled:(TUCalendarViewController *)viewController {
+- (void)calendarSelectionViewControllerCancelled:(PBCalendarSelectionViewController *)viewController {
     [viewController dismissViewControllerAnimated:YES completion:nil];
 }
 

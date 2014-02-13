@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FE1A99DF18A6607B00A1B424 /* PBCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1A99DE18A6607B00A1B424 /* PBCalendarView.m */; };
 		FE1A99E218A6641C00A1B424 /* NSCalendar+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1A99E118A6641C00A1B424 /* NSCalendar+Bedrock.m */; };
-		FE1A99E518A67B5900A1B424 /* TUCalendarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1A99E418A67B5900A1B424 /* TUCalendarViewController.m */; };
+		FE1A99E518A67B5900A1B424 /* PBCalendarSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1A99E418A67B5900A1B424 /* PBCalendarSelectionViewController.m */; };
 		FE20A65B189D508A00BDFF0F /* UIViewController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */; };
 		FE22ED66189E6BB800223F74 /* NSDateComponents+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE22ED65189E6BB800223F74 /* NSDateComponents+Bedrock.m */; };
 		FEA4661218A519BC001CCACC /* PBGroupedTableRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FEA4660E18A519BC001CCACC /* PBGroupedTableRenderer.m */; };
@@ -83,13 +83,12 @@
 		FE1A99DE18A6607B00A1B424 /* PBCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarView.m; sourceTree = "<group>"; };
 		FE1A99E018A6641C00A1B424 /* NSCalendar+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+Bedrock.h"; sourceTree = "<group>"; };
 		FE1A99E118A6641C00A1B424 /* NSCalendar+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+Bedrock.m"; sourceTree = "<group>"; };
-		FE1A99E318A67B5900A1B424 /* TUCalendarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUCalendarViewController.h; sourceTree = "<group>"; };
-		FE1A99E418A67B5900A1B424 /* TUCalendarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TUCalendarViewController.m; sourceTree = "<group>"; };
+		FE1A99E318A67B5900A1B424 /* PBCalendarSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarSelectionViewController.h; sourceTree = "<group>"; };
+		FE1A99E418A67B5900A1B424 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
 		FE20A659189D508A00BDFF0F /* UIViewController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Bedrock.h"; sourceTree = "<group>"; };
 		FE20A65A189D508A00BDFF0F /* UIViewController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Bedrock.m"; sourceTree = "<group>"; };
 		FE22ED64189E6BB800223F74 /* NSDateComponents+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateComponents+Bedrock.h"; sourceTree = "<group>"; };
 		FE22ED65189E6BB800223F74 /* NSDateComponents+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateComponents+Bedrock.m"; sourceTree = "<group>"; };
-		FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarSelectionViewController.h; sourceTree = "<group>"; };
 		FEA4660B18A519BC001CCACC /* PBListViewController_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewController_Private.h; sourceTree = "<group>"; };
 		FEA4660D18A519BC001CCACC /* PBGroupedTableRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGroupedTableRenderer.h; sourceTree = "<group>"; };
 		FEA4660E18A519BC001CCACC /* PBGroupedTableRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGroupedTableRenderer.m; sourceTree = "<group>"; };
@@ -97,7 +96,6 @@
 		FEA4661018A519BC001CCACC /* PBPaginationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBPaginationRenderer.h; sourceTree = "<group>"; };
 		FEA4661118A519BC001CCACC /* PBPaginationRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBPaginationRenderer.m; sourceTree = "<group>"; };
 		FEA4661518A519C4001CCACC /* PBCollectionItemRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItemRenderer.h; sourceTree = "<group>"; };
-		FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
 		FEEA9D41188C279E0001321A /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEEA9D44188C279E0001321A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FEEA9D46188C279E0001321A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -321,10 +319,8 @@
 				FEEA9D99188EAE050001321A /* PBMonthView.m */,
 				FE1A99DD18A6607B00A1B424 /* PBCalendarView.h */,
 				FE1A99DE18A6607B00A1B424 /* PBCalendarView.m */,
-				FE1A99E318A67B5900A1B424 /* TUCalendarViewController.h */,
-				FE1A99E418A67B5900A1B424 /* TUCalendarViewController.m */,
-				FE9D35BD188EB4BF007C4B63 /* PBCalendarSelectionViewController.h */,
-				FEBBEE7018A3A5D8001E9083 /* PBCalendarSelectionViewController.m */,
+				FE1A99E318A67B5900A1B424 /* PBCalendarSelectionViewController.h */,
+				FE1A99E418A67B5900A1B424 /* PBCalendarSelectionViewController.m */,
 			);
 			name = Calendar;
 			path = ../../Calendar;
@@ -634,7 +630,7 @@
 				FEEA9E14188EAEB00001321A /* PBRunningAverageValue.m in Sources */,
 				FEEA9DC2188EAE290001321A /* UIBezierButton.m in Sources */,
 				FEEA9D5E188C279E0001321A /* PBViewController.m in Sources */,
-				FE1A99E518A67B5900A1B424 /* TUCalendarViewController.m in Sources */,
+				FE1A99E518A67B5900A1B424 /* PBCalendarSelectionViewController.m in Sources */,
 				FE1A99E218A6641C00A1B424 /* NSCalendar+Bedrock.m in Sources */,
 				FE1A99DF18A6607B00A1B424 /* PBCalendarView.m in Sources */,
 				FEEA9DC1188EAE290001321A /* PBIAPHelper.m in Sources */,
