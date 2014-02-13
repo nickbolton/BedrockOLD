@@ -590,8 +590,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
          endDate:date];
 
         [self updateVisibleCalendarSelection];
-
-        NSLog(@"selectedDateRange: %@", self.selectedDateRange);
     }
 }
 
@@ -840,8 +838,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
               }
           }];
      }];
-
-    NSLog(@"selectedDateRange: %@", self.selectedDateRange);
 }
 
 #pragma mark - UIGestureRecognizerDelegate Conformance

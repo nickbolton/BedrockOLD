@@ -96,8 +96,7 @@
 
 - (PBMonthView *)currentMonthView {
 
-    CGRect frame = self.frame;
-    CGPoint midpoint = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
+    CGPoint midpoint = CGPointMake(CGRectGetMidX(self.visibleBounds), CGRectGetMidY(self.visibleBounds));
 
     midpoint.y += self.contentOffset.y;
 
@@ -321,26 +320,29 @@
     PBMonthView *currentMonthView = [self currentMonthView];
 
     NSDate *targetMonth = currentMonthView.month;
-    CGFloat yPosition = currentMonthView.center.y;
+    CGFloat yPosition = CGRectGetMinY(currentMonthView.frame);
     NSDateComponents *monthMovement = [[NSDateComponents alloc] init];
-    CGFloat yOffset;
 
-    if (yPosition <= point.y) {
+    if (CGRectContainsPoint(currentMonthView.frame, point)) {
+
+        // point is inside current month
+
+    } else if (yPosition <= point.y) {
 
         // forwards
 
         monthMovement.month = 1;
 
-        while (yPosition < point.y) {
+        while (yPosition <= point.y) {
 
             NSDate *newMonth = [targetMonth dateByAddingComponents:monthMovement];
 
-            yOffset =
-            ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:targetMonth] / 2.0f) +
-            ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:newMonth] / 2.0f);
+            yPosition +=
+            [PBMonthView verticalOffsetForWidth:self.frame.size.width month:targetMonth];
 
-            targetMonth = newMonth;
-            yPosition += yOffset;
+            if (yPosition <= point.y) {
+                targetMonth = newMonth;
+            }
         }
 
     } else {
@@ -349,18 +351,19 @@
 
         monthMovement.month = -1;
 
-        while (yPosition > point.y) {
+        while (yPosition >= point.y) {
 
             NSDate *newMonth = [targetMonth dateByAddingComponents:monthMovement];
 
-            yOffset =
-            ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:targetMonth] / 2.0f) +
-            ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:newMonth] / 2.0f);
-            
-            targetMonth = newMonth;
-            yPosition -= yOffset;
+            yPosition -=
+            [PBMonthView verticalOffsetForWidth:self.frame.size.width month:newMonth];
+
+            if (yPosition >= point.y) {
+                targetMonth = newMonth;
+            }
         }
     }
+
     return targetMonth;
 }
 
@@ -370,35 +373,107 @@
     [self scrollToMonth:targetMonth animated:YES];
 }
 
+- (void)dumpCurrentCalendarView {
+
+    NSDateComponents *monthMovement = [[NSDateComponents alloc] init];
+    NSMutableArray *monthViewData = [NSMutableArray array];
+
+    PBMonthView *firstMonth = self.monthViews.firstObject;
+
+    NSDate *month = firstMonth.month;
+    CGFloat yPos = CGRectGetMinY(firstMonth.frame);
+    monthMovement.month = -1;
+
+    while (yPos >= -2000) {
+
+        month = [month dateByAddingComponents:monthMovement];
+
+        yPos -=
+        [PBMonthView verticalOffsetForWidth:self.frame.size.width month:month];
+
+        if (yPos >= -2000) {
+
+            NSString *monthData =
+            [NSString
+             stringWithFormat:@"%f - %@",
+             yPos,
+             month];
+
+            [monthViewData addObject:monthData];
+        }
+    }
+
+    monthViewData =
+    [[[monthViewData reverseObjectEnumerator] allObjects] mutableCopy];
+
+    for (PBMonthView *monthView in self.monthViews) {
+
+        month = monthView.month;
+
+        yPos = CGRectGetMinY(monthView.frame);
+
+        NSString *monthData =
+        [NSString
+         stringWithFormat:@"%f - %@",
+         yPos,
+         month];
+
+        [monthViewData addObject:monthData];
+    }
+
+    yPos +=
+    [PBMonthView verticalOffsetForWidth:self.frame.size.width month:month];
+
+    monthMovement.month = 1;
+
+    while (yPos <= self.contentSize.height+2000) {
+        month = [month dateByAddingComponents:monthMovement];
+
+        NSString *monthData =
+        [NSString
+         stringWithFormat:@"%f - %@",
+         yPos,
+         month];
+
+        [monthViewData addObject:monthData];
+
+        yPos +=
+        [PBMonthView verticalOffsetForWidth:self.frame.size.width month:month];
+    }
+
+    NSMutableString *string = [NSMutableString string];
+    [string appendString:@"\nmonthViewData:\n"];
+
+    for (NSString *data in monthViewData) {
+        [string appendString:data];
+        [string appendString:@"\n"];
+    }
+
+    NSLog(@"%@", string);
+}
+
 - (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point {
+
+//    [self dumpCurrentCalendarView];
 
     NSDate *targetMonth = [self monthAtPoint:point];
 
-    NSLog(@"targetMonth: %@", targetMonth);
-    CGPoint contentOffset = [self centeredContentOffsetForMonth:targetMonth];
-
-    NSDateComponents *monthMovement = [[NSDateComponents alloc] init];
-    monthMovement.month = -1;
-    NSDate *previousMonth = [targetMonth dateByAddingComponents:monthMovement];
-
-//    contentOffset.y -= self.contentMargins.top;
-//    contentOffset.y -= ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:previousMonth] / 2.0f);
-
-    return contentOffset;
+    CGPoint centeredContentOffset = [self centeredContentOffsetForMonth:targetMonth];
+    return centeredContentOffset;
 }
 
 - (CGPoint)centeredContentOffsetForMonth:(NSDate *)month {
 
-    CGPoint offset = self.contentOffset;
 	PBMonthView *referenceMonthView = [self.monthViews lastObject];
+
+    CGPoint contentOffset = self.contentOffset;
+
+//    [self dumpCurrentCalendarView];
 
     CGPoint boundsCenter = [self centerOfVisibleRect];
     CGPoint center = [self centerOfMonthViewInContainer:referenceMonthView];
 
-    NSLog(@"last center: %@", NSStringFromCGPoint(center));
-    NSLog(@"bounds center: %@", NSStringFromCGPoint(boundsCenter));
-
-    offset.y += center.y - boundsCenter.y;
+    contentOffset.y += center.y - boundsCenter.y;
 
 	NSDate *lastMonth = referenceMonthView.month;
 	NSComparisonResult comparison;
@@ -406,27 +481,26 @@
 
 		NSDateComponents *monthMovement = [[NSDateComponents alloc] init];
 		monthMovement.month = (comparison == NSOrderedAscending) ? 1 : -1;
-		NSDate *newMonth = [[NSCalendar calendarForCurrentThread] dateByAddingComponents:monthMovement toDate:lastMonth options:0];
+		NSDate *newMonth = [lastMonth dateByAddingComponents:monthMovement];
 
         CGFloat yOffset =
         ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:lastMonth] / 2.0f) +
         ([PBMonthView verticalOffsetForWidth:self.frame.size.width month:newMonth] / 2.0f);
 
 		if (comparison == NSOrderedAscending) {
-			offset.y += yOffset;
+			contentOffset.y += yOffset;
 		} else {
-			offset.y -= yOffset;
+			contentOffset.y -= yOffset;
 		}
         
 		lastMonth = newMonth;
     }
 
-    NSLog(@"centered offset: %@", NSStringFromCGPoint(offset));
-
-    return offset;
+    return contentOffset;
 }
 
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated {
+
 	CGPoint offset = [self centeredContentOffsetForMonth:month];
 	[self setContentOffset:offset animated:animated];
 }

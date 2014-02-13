@@ -31,6 +31,7 @@
 - (void)centerCurrentMonth;
 - (void)scrollToMonthAtPoint:(CGPoint)point;
 - (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point;
+- (NSDate *)monthAtPoint:(CGPoint)point;
 - (NSDate *)currentMonth;
 - (NSArray *)monthViewsBoundByRect:(CGRect)rect
                             inView:(UIView *)view

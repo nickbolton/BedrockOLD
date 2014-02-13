@@ -11,6 +11,14 @@
 #import "PBMonthView.h"
 #import "PBRunningAverageValue.h"
 
+typedef NS_ENUM(NSInteger, PBCalendarViewMonthIndicatorState) {
+
+    PBCalendarViewMonthIndicatorStateHidden = 0,
+    PBCalendarViewMonthIndicatorStateShowing,
+    PBCalendarViewMonthIndicatorStateHiding,
+    PBCalendarViewMonthIndicatorStateVisible,
+};
+
 static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
 static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
 static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
@@ -25,8 +33,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     BOOL _decelerating;
     BOOL _animatingCurrentMonth;
     BOOL _animatingCurrentSelection;
-    BOOL _monthIndicatorVisible;
-    BOOL _monthIndicatorHiding;
+    PBCalendarViewMonthIndicatorState _monthIndicatorState;
     NSTimeInterval _monthIndicatorStopTime;
     NSTimeInterval _lastMonthIndicatorTrigger;
 }
@@ -218,12 +225,12 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
     self.calendarView.selectedDateRange = self.initialSelectedDateRange;
 }
 
-- (void)setupmonthIndicatorLabel {
+- (void)setupMonthIndicatorLabel {
 
     self.monthIndicatorContainer = [[UIView alloc] init];
     self.monthIndicatorContainer.translatesAutoresizingMaskIntoConstraints = NO;
     self.monthIndicatorContainer.alpha = 0.0f;
-    _monthIndicatorVisible = NO;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
 
     [self.view addSubview:self.monthIndicatorContainer];
 
@@ -262,7 +269,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 	[self setupCalendarView];
     [self setupNavigationBar];
     [self setupToolbar];
-    [self setupmonthIndicatorLabel];
+    [self setupMonthIndicatorLabel];
 
     CGFloat height =
     CGRectGetHeight(self.view.frame) -
@@ -457,31 +464,68 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 //    [self updateVisibleCalendarSelection];
 }
 
+- (BOOL)willMonthIndicatorBeVisible {
+    return
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateShowing ||
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateVisible;
+}
+
+- (BOOL)willMonthIndicatorBeHidden {
+    return
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHiding ||
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHidden;
+}
+
 - (void)showMonthIndicatorContainer {
 
     self.monthIndicatorContainer.alpha = 0.0f;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateShowing;
 
     [UIView
      animateWithDuration:.3f
      animations:^{
          self.monthIndicatorContainer.alpha = 1.0f;
      } completion:^(BOOL finished) {
-         _monthIndicatorVisible = YES;
+         _monthIndicatorState = PBCalendarViewMonthIndicatorStateVisible;
      }];
 }
 
 - (void)hideMonthIndicatorContainer {
 
-    _monthIndicatorHiding = YES;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHiding;
 
     [UIView
      animateWithDuration:.3f
      animations:^{
          self.monthIndicatorContainer.alpha = 0.0f;
      } completion:^(BOOL finished) {
-         _monthIndicatorHiding = NO;
-         _monthIndicatorVisible = NO;
+         _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
      }];
+}
+
+- (void)ensureMonthIndicatorHides {
+
+    if ([self willMonthIndicatorBeVisible]) {
+
+        static CGFloat const epsilon = .0001f;
+        static CGFloat const threshold = .3f;
+
+        __weak typeof(self) this = self;
+
+        NSTimeInterval delayInSeconds = threshold;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void){
+
+            NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+            NSTimeInterval timeDelta = now - _lastScrollTime;
+
+            if (timeDelta > (threshold-epsilon)) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [this hideMonthIndicatorContainer];
+                });
+            }
+        });
+    }
 }
 
 - (void)updateCurrentMonth {
@@ -574,9 +618,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
                      withVelocity:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset {
 
-    CGPoint point;
-
-    if ((_monthIndicatorVisible == NO || _monthIndicatorHiding) &&
+    if ([self willMonthIndicatorBeHidden] &&
         ABS(velocity.y) > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
 
         [self showMonthIndicatorContainer];
@@ -588,22 +630,17 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         _monthIndicatorStopTime = (3.0f * .8f) + now;
     }
 
-    if (velocity.y != 0.0f && _monthIndicatorVisible) {
-        CGFloat targetY = scrollView.contentOffset.y + velocity.y * 600.0;
-        point = CGPointMake(0.0f, targetY);
-
-//        NSLog(@"contentOffset: %@", NSStringFromCGPoint(point));
-
-        // convert content offset to centered point in visible rect
-
-        point.y += kPBCalendarSelectionViewControllerNavigationBarHeight;
-        point.y += (CGRectGetHeight(self.visibleRect) / 2.0f);
-
-        *targetContentOffset =
-        [self.calendarView centeredContentOffsetAtPoint:point];
-
+//    if (velocity.y != 0.0f && [self willMonthIndicatorBeVisible]) {
+//
+//        CGPoint point = *targetContentOffset;
+//        point.y += kPBCalendarSelectionViewControllerNavigationBarHeight;
+//        point.y += (CGRectGetHeight(self.visibleRect) / 2.0f);
+//
+//        *targetContentOffset =
+//        [self.calendarView centeredContentOffsetAtPoint:point];
+//
 //        NSLog(@"targetContentOffset: %@", NSStringFromCGPoint(*targetContentOffset));
-    }
+//    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -622,8 +659,6 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         if (speed < 50000.0f ) {
 
             self.averageScrollSpeed.value = speed;
-
-
         }
 
         if (now >= _monthIndicatorStopTime &&
@@ -636,6 +671,8 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
         _lastScrollPosition = scrollPosition;
         _lastScrollTime = now;
     }
+
+    [self ensureMonthIndicatorHides];
 }
 
 - (void)calendarViewSelected:(PBCalendarView *)calendarView

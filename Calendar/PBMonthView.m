@@ -13,7 +13,7 @@ static CGFloat const kPBMonthViewSeparatorLeftInset = 15.0f;
 static CGFloat const kPBMonthViewItemWidth = 44.0f;
 static CGFloat const kPBMonthViewItemHeight = 36.0f;
 static CGFloat const kPBMonthViewTopSpace = 42.0f;
-static CGFloat const kPBMonthViewBottomSpace = -3.0f;
+static CGFloat const kPBMonthViewBottomSpace = 7.5f;
 static CGFloat const kPBMonthViewWidthLeadingPadding = 2.5f;
 static CGFloat const kPBMonthViewWidthTrailingPadding = 2.5f;
 static CGFloat const kPBMonthViewEndPointRadius = 16.0f;
@@ -243,13 +243,12 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-	CGFloat dayHeight = roundf((size.width - kPBMonthViewItemWidth) / [NSCalendar numberOfDaysInWeek]);
 	NSInteger weeks =
     [self.month
      rangeOfUnit:NSWeekCalendarUnit
      inUnit:NSMonthCalendarUnit].length;
 
-	size.height = dayHeight * weeks + kPBMonthViewTopSpace + kPBMonthViewBottomSpace;
+	size.height = kPBMonthViewItemHeight * weeks + kPBMonthViewTopSpace + kPBMonthViewBottomSpace;
 
 	return size;
 }
@@ -276,20 +275,14 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	return offset;
 }
 
-+ (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month
-{
-	CGFloat offset = 0.0;
++ (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month {
 
+	NSInteger weeks =
+    [month
+     rangeOfUnit:NSWeekCalendarUnit
+     inUnit:NSMonthCalendarUnit].length;
 
-	CGFloat dayHeight = roundf((width - kPBMonthViewItemWidth) / [NSCalendar numberOfDaysInWeek]);
-	NSInteger weeks = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:month].length;
-	offset = dayHeight * weeks + kPBMonthViewTopSpace + kPBMonthViewBottomSpace;
-
-//	NSInteger firstDayOffset = month.firstDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
-//	if (firstDayOffset != 0) {
-//		offset -= dayHeight;
-//	}
-
+	CGFloat offset = kPBMonthViewItemHeight * weeks + kPBMonthViewTopSpace + kPBMonthViewBottomSpace;
 
 	return offset;
 }
