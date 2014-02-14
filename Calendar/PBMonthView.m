@@ -697,15 +697,15 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                     fillRect.origin.x = 0.0f;
                     fillRect.size.width += kPBMonthViewWidthLeadingPadding;
 
-                } else if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
-
-                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
-
                 } else if (day.day == 1) {
 
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
                     fillRect.size.width += minX;
+                    
+                } else if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
+
+                    fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
 
                 } else if (day.day == self.daysInMonth) {
                     
