@@ -648,6 +648,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
             CGFloat margins =
             (kPBMonthViewItemWidth - CGRectGetWidth(dayRect)) / 2.0f;
 
+            CGPoint dayRectMidpoint = [self midpointOfRect:dayRect];
+
             if (isStartingDay && isEndingDay) {
 
                 bezierPath = [UIBezierPath bezierPathWithOvalInRect:dayRect];
@@ -658,7 +660,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.size.width = CGRectGetWidth(fillRect) / 2.0f;
                 fillRect.size.width += margins;
 
-                if (day.day == self.daysInMonth) {
+                if (day.day == self.daysInMonth || [self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
                 }
 
@@ -673,9 +675,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.size.width = CGRectGetWidth(dayRect) / 2.0f;
                 fillRect.size.width += margins;
 
-                CGPoint midpoint = [self midpointOfRect:dayRect];
-
-                if (day.day == 1 || [self isPoint:midpoint inColumn:0]) {
+                if (day.day == 1 || [self isPoint:dayRectMidpoint inColumn:0]) {
 
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
@@ -692,14 +692,12 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.origin.x -= margins;
                 fillRect.size.width += margins * 2.0f;
 
-                CGPoint midpoint = [self midpointOfRect:dayRect];
-
-                if ([self isPoint:midpoint inColumn:0]) {
+                if ([self isPoint:dayRectMidpoint inColumn:0]) {
 
                     fillRect.origin.x = 0.0f;
                     fillRect.size.width += kPBMonthViewWidthLeadingPadding;
 
-                } else if ([self isPoint:midpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
+                } else if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
 
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
 
