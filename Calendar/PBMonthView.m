@@ -702,7 +702,11 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
                     fillRect.size.width += minX;
-                    
+
+                    if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
+                        fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+                    }
+
                 } else if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
 
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
