@@ -70,7 +70,8 @@
 
 	[self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
 
-        monthView.endPointMarkersHidden = self.endPointMarkersHidden;
+        monthView.startPointHidden = self.startPointHidden;
+        monthView.endPointHidden = self.endPointHidden;
 
         [UIView
          transitionWithView:monthView
@@ -101,11 +102,6 @@
     }
 
     return date;
-}
-
-- (void)setEndPointMarkersHidden:(BOOL)endPointMarkersHidden {
-    _endPointMarkersHidden = endPointMarkersHidden;
-    [self updateMonthViews:NO];
 }
 
 #pragma mark - End Point

@@ -40,6 +40,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @property (nonatomic, strong) UIColor *withinRangeBackgroundColor;
 @property (nonatomic, readwrite) NSDateComponents *monthComponents;
 @property (nonatomic, readwrite) NSInteger daysInMonth;
+@property (nonatomic) CGRect startingMarkerRect;
+@property (nonatomic) CGRect endingMarkerRect;
 
 @end
 
@@ -451,51 +453,11 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 #pragma mark - End Points
 
 - (CGPoint)pointForStartingMarkerView {
-
-//    UICollectionView *collectionView =
-//    self.collectionViewController.collectionView;
-//
-//    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
-//
-//    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
-//
-//        if (cell.isStartingDay) {
-//
-//            result =
-//            [self
-//             convertPoint:cell.bounds.origin
-//             fromView:cell];
-//            break;
-//        }
-//    }
-//
-//    return  result;
-
-    return CGPointZero;
+    return self.startingMarkerRect.origin;
 }
 
 - (CGPoint)pointForEndingMarkerView {
-
-//    UICollectionView *collectionView =
-//    self.collectionViewController.collectionView;
-//
-//    CGPoint result = CGPointMake(MAXFLOAT, MAXFLOAT);
-//
-//    for (PBCalendarDayCell *cell in collectionView.visibleCells) {
-//
-//        if (cell.isEndingDay) {
-//
-//            result =
-//            [self
-//             convertPoint:cell.bounds.origin
-//             fromView:cell];
-//            break;
-//        }
-//    }
-//    
-//    return  result;
-
-    return CGPointZero;
+    return self.endingMarkerRect.origin;
 }
 
 - (BOOL)isStartingDay:(NSDateComponents *)day {
@@ -635,6 +597,9 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	NSDateComponents *today = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:[NSDate date]];
 	NSDateComponents *month = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self.month];
 
+    self.startingMarkerRect = CGRectZero;
+    self.endingMarkerRect = CGRectZero;
+
 	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
 		CGContextSaveGState(context);
 
@@ -645,7 +610,17 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         BOOL isStartingDay = [self isStartingDay:day];
         BOOL isEndingDay = [self isEndingDay:day];
 
-        BOOL showEndPoint = (isStartingDay || isEndingDay) && self.endPointMarkersHidden == NO;
+        if (isStartingDay) {
+            self.startingMarkerRect = dayRect;
+        }
+
+        if (isEndingDay) {
+            self.endingMarkerRect = dayRect;
+        }
+
+        BOOL showEndPoint =
+        (isStartingDay && self.startPointHidden == NO) ||
+        (isEndingDay && self.endPointHidden == NO);
 
         BOOL withinRange = [self.calendarView.selectedDateRange componentsWithinRange:day];
 
@@ -698,7 +673,9 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 fillRect.size.width = CGRectGetWidth(dayRect) / 2.0f;
                 fillRect.size.width += margins;
 
-                if (day.day == 1) {
+                CGPoint midpoint = [self midpointOfRect:dayRect];
+
+                if (day.day == 1 || [self isPoint:midpoint inColumn:0]) {
 
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
@@ -747,12 +724,20 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
             CGContextFillRect(context, fillRect);
         }
 
-        if (showEndPoint) {
+        if (isStartingDay || isEndingDay) {
+
+            UIColor *fillColor = self.endPointBackgroundColor;
+
+            if ((isStartingDay && self.startPointHidden) ||
+                (isEndingDay && self.endPointHidden)) {
+                
+                fillColor = self.withinRangeBackgroundColor;
+            }
 
             CGPathRef path = CGPathCreateWithEllipseInRect(dayRect, NULL);
             CGContextAddPath(context, path);
             CGContextClip(context);
-            [self.endPointBackgroundColor setFill];
+            [fillColor setFill];
             CGContextFillRect(context, dayRect);
         }
 

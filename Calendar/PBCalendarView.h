@@ -23,7 +23,8 @@
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
 @property (nonatomic) CGRect visibleBounds;
 @property (nonatomic) UIEdgeInsets contentMargins;
-@property (nonatomic) BOOL endPointMarkersHidden;
+@property (nonatomic) BOOL startPointHidden;
+@property (nonatomic) BOOL endPointHidden;
 
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;
@@ -38,5 +39,6 @@
 - (NSArray *)monthViewsBoundByRect:(CGRect)rect
                             inView:(UIView *)view
                  completelyVisible:(BOOL)completelyVisible;
+- (void)updateMonthViews:(BOOL)animated;
 
 @end

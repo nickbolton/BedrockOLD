@@ -18,7 +18,8 @@
 @property (nonatomic, weak) PBCalendarView *calendarView;
 @property (nonatomic, strong) NSDate *month;
 @property (nonatomic, readonly) NSDateComponents *monthComponents;
-@property (nonatomic) BOOL endPointMarkersHidden;
+@property (nonatomic) BOOL startPointHidden;
+@property (nonatomic) BOOL endPointHidden;
 @property (nonatomic, readonly) NSInteger daysInMonth;
 
 - (CGFloat)topOffset;

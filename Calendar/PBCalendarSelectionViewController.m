@@ -37,6 +37,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     BOOL _decelerating;
     BOOL _animatingCurrentMonth;
     BOOL _animatingCurrentSelection;
+    BOOL _isDragging;
     PBCalendarViewMonthIndicatorState _monthIndicatorState;
     NSTimeInterval _monthIndicatorStopTime;
     NSTimeInterval _lastMonthIndicatorTrigger;
@@ -65,9 +66,11 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic) CADisplayLink *displayLink;
 @property (nonatomic, strong) UIView *endPointMarkerView;
+@property (nonatomic, strong) UILabel *endPointLabel;
 @property (nonatomic, strong) NSLayoutConstraint *endPointMarkerLeadingSpace;
 @property (nonatomic, strong) NSLayoutConstraint *endPointMarkerTopSpace;
-@property (nonatomic) BOOL hideEndPointMarkers;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLabelLeadingSpace;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLabelTopSpace;
 
 @end
 
@@ -318,7 +321,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     self.endPointMarkerView = [[UIView alloc] init];
     self.endPointMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.endPointMarkerView.alpha = .5f;
+    self.endPointMarkerView.alpha = .9f;
+    self.endPointMarkerView.clipsToBounds = YES;
 
     [self.view addSubview:self.endPointMarkerView];
 
@@ -337,6 +341,22 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     self.endPointMarkerView.backgroundColor = [UIColor colorWithRGBHex:0x3060FA];
     self.endPointMarkerView.hidden = YES;
+
+    self.endPointLabel = [[UILabel alloc] init];
+    self.endPointLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.endPointLabel.textAlignment = NSTextAlignmentCenter;
+    self.endPointLabel.textColor = [UIColor whiteColor];
+
+    [self.endPointMarkerView addSubview:self.endPointLabel];
+
+    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointLabel];
+    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointLabel];
+
+    self.endPointLabelTopSpace =
+    [NSLayoutConstraint alignToTop:self.endPointLabel withPadding:-1.0f];
+
+    self.endPointLabelLeadingSpace =
+    [NSLayoutConstraint alignToLeft:self.endPointLabel withPadding:0.0f];
 }
 
 #pragma mark - View Lifecycle
@@ -344,12 +364,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupDisplayLink];
-    [self setupEndPointMarkerView];
     [self setupGestures];
 	[self setupCalendarView];
     [self setupNavigationBar];
     [self setupToolbar];
     [self setupMonthIndicatorLabel];
+    [self setupEndPointMarkerView];
 
     CGFloat height =
     CGRectGetHeight(self.view.frame) -
@@ -686,37 +706,68 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         return [self.calendarView endPointMarkingInCalendar:NO];
     }
 
-    return CGPointMake(-1000, -1000);
+    return CGPointMake(MAXFLOAT, MAXFLOAT);
 }
 
-- (void)updateFloatingStartPointMarker:(CGPoint)point {
+- (void)updateEndPointLabel:(NSDate *)date {
+
+    if ([date.midnight isEqualToDate:[[NSDate date] midnight]]) {
+        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
+        self.endPointLabelTopSpace.constant = .5f;
+    } else {
+        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+        self.endPointLabelTopSpace.constant = -1.0f;
+    }
+
+    NSDateComponents *day = [date components:NSCalendarUnitDay];
+
+    self.endPointLabel.text = [NSString stringWithFormat:@"%d", day.day];
+}
+
+- (void)updateFloatingStartPointMarker:(CGPoint)point forDate:(NSDate *)date {
 
     CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
 
     if (pointInCalendarView.y < MAXFLOAT) {
 
+        CGPoint pointInView =
+        [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
+
         self.endPointMarkerView.hidden = NO;
 
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
+        self.endPointMarkerTopSpace.constant = pointInView.y;
 
         self.endPointMarkerLeadingSpace.constant =
         point.x - kPBCalendarSelectionViewEndPointRadius;
+
+        self.endPointLabelLeadingSpace.constant =
+        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+
+        [self updateEndPointLabel:date];
 
         [self.endPointMarkerView layoutIfNeeded];
     }
 }
 
-- (void)updateFloatingEndPointMarker:(CGPoint)point {
+- (void)updateFloatingEndPointMarker:(CGPoint)point forDate:(NSDate *)date {
 
     CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
 
     if (pointInCalendarView.y < MAXFLOAT) {
 
+        CGPoint pointInView =
+        [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
+
         self.endPointMarkerView.hidden = NO;
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
+        self.endPointMarkerTopSpace.constant = pointInView.y;
 
         self.endPointMarkerLeadingSpace.constant =
         point.x - kPBCalendarSelectionViewEndPointRadius;
+
+        self.endPointLabelLeadingSpace.constant =
+        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+
+        [self updateEndPointLabel:date];
 
         [self.endPointMarkerView layoutIfNeeded];
     }
@@ -768,6 +819,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 
+    _isDragging = YES;
+
     NSTimeInterval beginDraggingTime = [NSDate timeIntervalSinceReferenceDate];
 
     NSTimeInterval delayInSeconds = .3f;
@@ -782,6 +835,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     _decelerating = decelerate;
+
+    _isDragging = NO;
 
     if (decelerate) {
         self.currentMonth = nil;
@@ -870,6 +925,10 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture {
 
+    if (self.draggingStartDate != nil || self.draggingEndDate != nil || _isDragging) {
+        return;
+    }
+
     if (gesture.state == UIGestureRecognizerStateEnded) {
 
         CGPoint location = [gesture locationInView:self.view];
@@ -889,7 +948,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     CGPoint location = [gesture locationInView:self.view];
 
-    NSDate *date = [self dateAtPoint:location];
+    NSDate *date = [self nearestDateAtPoint:location];
 
     PBDateRange *dateRange = [self dateRangeforDate:date];
 
@@ -902,7 +961,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     CGPoint location = [gesture locationInView:self.view];
 
-    NSDate *date = [self dateAtPoint:location];
+    NSDate *date = [self nearestDateAtPoint:location];
 
     if (date != nil) {
 
@@ -962,8 +1021,15 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
             self.calendarView.scrollEnabled = NO;
             self.displayLink.paused = NO;
-            self.hideEndPointMarkers = YES;
-            self.calendarView.endPointMarkersHidden = YES;
+            self.calendarView.startPointHidden = self.draggingStartDate != nil;
+
+            if (_rangeMode) {
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+            } else {
+                self.calendarView.endPointHidden = self.draggingStartDate != nil;
+            }
+
+            [self.calendarView updateMonthViews:YES];
         }
     }
 }
@@ -992,16 +1058,18 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
                 self.draggingStartDate = date;
             } else if ([date isGreaterThan:endDate]) {
 
-                self.calendarView.endPointMarkersHidden = NO;
                 self.draggingStartDate = nil;
                 self.draggingEndDate = date;
-                self.calendarView.endPointMarkersHidden = YES;
+
+                self.calendarView.startPointHidden = self.draggingStartDate != nil;
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+                [self.calendarView updateMonthViews:YES];
 
                 startDate = endDate;
                 endDate = date;
             }
 
-            [self updateFloatingStartPointMarker:_lastPanningLocation];
+            [self updateFloatingStartPointMarker:_lastPanningLocation forDate:date];
 
         } else {
 
@@ -1012,20 +1080,22 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
                 endDate = startDate;
                 startDate = date;
 
-                self.calendarView.endPointMarkersHidden = NO;
                 self.draggingEndDate = nil;
                 self.draggingStartDate = date;
-                self.calendarView.endPointMarkersHidden = YES;
+
+                self.calendarView.startPointHidden = self.draggingStartDate != nil;
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+                [self.calendarView updateMonthViews:YES];
             }
 
-            [self updateFloatingEndPointMarker:_lastPanningLocation];
+            [self updateFloatingEndPointMarker:_lastPanningLocation forDate:date];
         }
 
     } else {
 
         startDate = date;
 
-        [self updateFloatingStartPointMarker:_lastPanningLocation];
+        [self updateFloatingStartPointMarker:_lastPanningLocation forDate:date];
     }
 
     if ([startDate isEqualToDate:self.selectedDateRange.startDate] == NO ||
@@ -1087,63 +1157,46 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     self.calendarView.scrollEnabled = YES;
     self.displayLink.paused = YES;
-    self.hideEndPointMarkers = NO;
+
+    if (self.draggingStartDate == nil && self.draggingEndDate == nil) return;
 
     CGPoint markerViewFinalPoint = [self endPointMarkingInCalendar];
 
+    markerViewFinalPoint =
+    [self.view
+     convertPoint:markerViewFinalPoint
+     fromView:self.calendarView];
+
     [self.endPointMarkerView setNeedsLayout];
 
-    NSTimeInterval t = .15f;
-
-    CGPoint velocity = [gesture velocityInView:gesture.view];
-    CGFloat xPos = self.endPointMarkerLeadingSpace.constant + velocity.x * t / 4.0f;
-    CGFloat yPos = self.endPointMarkerTopSpace.constant + velocity.y * t / 4.0f;
-
     [UIView
-     animateWithDuration:t
+     animateWithDuration:.3
      animations:^{
 
-         self.endPointMarkerTopSpace.constant = yPos;
-         self.endPointMarkerLeadingSpace.constant = xPos;
+         self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
+         self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x;
+         self.endPointLabelLeadingSpace.constant = 0.0f;
 
          [self.endPointMarkerView layoutIfNeeded];
 
      } completion:^(BOOL finished) {
 
-         [self.endPointMarkerView setNeedsLayout];
+         self.endPointMarkerView.hidden = YES;
 
-         [UIView
-          animateWithDuration:.15f
-          delay:0.0f
-          usingSpringWithDamping:.7f
-          initialSpringVelocity:15.0f
-          options:0
-          animations:^{
+         if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
+             return;
+         }
 
-              self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
-              self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x + 4.0f;
-              
-              [self.endPointMarkerView layoutIfNeeded];
-              
-          } completion:^(BOOL finished) {
-              
-              self.endPointMarkerView.hidden = YES;
-              
-              if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
-                  return;
-              }
-              
-              self.calendarView.endPointMarkersHidden = NO;
-              
-              if (_rangeMode &&
-                  self.modeSwitchOn &&
-                  [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
-                  [self toggleRangeMode];
-              }
-          }];
+         self.calendarView.startPointHidden = NO;
+         self.calendarView.endPointHidden = NO;
+         [self.calendarView updateMonthViews:NO];
+
+         if (_rangeMode &&
+             self.modeSwitchOn &&
+             [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
+             [self toggleRangeMode];
+         }
      }];
-    
-    NSLog(@"selectedDateRange: %@", self.selectedDateRange);
 }
 
 #pragma mark - UIGestureRecognizerDelegate Conformance
