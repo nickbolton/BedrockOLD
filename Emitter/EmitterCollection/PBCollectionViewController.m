@@ -323,6 +323,35 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+#pragma mark - Public
+
+- (void)updateLayout:(PBCollectionLayout *)layout
+         completion:(void(^)(void))completionBlock {
+
+    NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
+             @"layout not a subclass of %@", NSStringFromClass([PBCollectionLayout class]));
+
+    self.collectionLayout = layout;
+
+    [self.collectionView
+     setCollectionViewLayout:layout
+     animated:YES
+     completion:^(BOOL finished) {
+         if (completionBlock != nil) {
+             completionBlock();
+         }
+     }];
+}
+
+- (void)updateLayout:(PBCollectionLayout *)layout {
+
+    NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
+             @"layout not a subclass of %@", NSStringFromClass([PBCollectionLayout class]));
+
+    self.collectionLayout = layout;
+    self.collectionView.collectionViewLayout = layout;
+}
+
 #pragma mark -
 
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section {
