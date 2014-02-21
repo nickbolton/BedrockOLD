@@ -43,6 +43,7 @@ extern NSString * const kPBCollectionViewDecorationKind;
 - (NSArray *)buildDataSource;
 - (void)reloadDataSource;
 - (void)reloadData;
+- (void)reloadDataOnBackgroundThread;
 - (void)setupNavigationBar;
 - (void)reloadCollectionItem:(PBCollectionItem *)item;
 - (void)reloadCollectionItemAtIndexPath:(NSIndexPath *)indexPath;

@@ -20,4 +20,8 @@
 
 + (PBSectionItem *)sectionItemWithItems:(NSArray *)items;
 
+- (void)addItems:(NSArray *)items;
+- (void)removeItems:(NSArray *)items;
+- (void)replaceItem:(id)oldItem withItem:(id)item;
+
 @end

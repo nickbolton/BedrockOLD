@@ -536,6 +536,33 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+- (void)reloadDataOnBackgroundThread {
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+
+        [self reloadDataSource];
+
+        for (PBSectionItem *sectionItem in self.dataSource) {
+            [self clearSectionConfigured:sectionItem];
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            [self.collectionView reloadData];
+
+            [self setSelectionDisabled:YES forItemIndexes:self.selectedItemIndexes];
+
+            for (NSIndexPath *indexPath in self.selectedItemIndexes) {
+
+                [self.collectionView
+                 selectItemAtIndexPath:indexPath
+                 animated:NO
+                 scrollPosition:UICollectionViewScrollPositionNone];
+            }
+        });
+    });
+}
+
 - (void)setSelectionDisabled:(BOOL)selectionDisabled
               forItemIndexes:(NSArray *)itemIndexes {
 
