@@ -60,6 +60,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     return [PBCollectionLayout class];
 }
 
++ (Class)collectionViewClass {
+    return [UICollectionView class];
+}
+
 #pragma mark - Setup
 
 - (void)setupNotifications {
@@ -120,7 +124,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     if (self.collectionView == nil) {
         self.collectionView =
-        [[UICollectionView alloc]
+        [[[self.class collectionViewClass] alloc]
          initWithFrame:CGRectZero
          collectionViewLayout:self.collectionLayout];
         self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;

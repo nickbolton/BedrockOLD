@@ -34,6 +34,7 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, strong) NSArray *renderers;
 
 + (Class)collectionViewLayoutClass;
++ (Class)collectionViewClass;
 
 - (id)initWithNib;
 - (id)initWithItems:(NSArray *)items;
