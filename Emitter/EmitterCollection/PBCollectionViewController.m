@@ -170,6 +170,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     [self setupNavigationBar];
     [self setupNotifications];
     [self setupCollectionView];
+    [self preRegisterCellNibsAndClasses];
 
     if (self.reloadDataOnViewLoad) {
         [self reloadData];
@@ -462,6 +463,9 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     if (item != nil) {
         [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
     }
+}
+
+- (void)preRegisterCellNibsAndClasses {
 }
 
 - (NSArray *)buildDataSource {
