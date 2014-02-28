@@ -79,6 +79,7 @@ extern NSString * const kPBListActionCellID;
 - (void)dismissKeyboard;
 - (IBAction)cancelPressed:(id)sender;
 - (void)updateListViewItemHeight;
+- (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)appendItemsToDataSource:(NSArray *)items;
 - (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;
