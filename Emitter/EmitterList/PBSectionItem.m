@@ -49,4 +49,30 @@
     return self;
 }
 
+- (void)addItems:(NSArray *)items {
+
+    NSMutableArray *updatedItems = [self.items mutableCopy];
+    [updatedItems addObjectsFromArray:items];
+
+    self.items = updatedItems;
+}
+
+- (void)replaceItem:(id)oldItem withItem:(id)item {
+
+    NSInteger pos = [self.items indexOfObject:oldItem];
+
+    if (pos != NSNotFound) {
+
+        NSMutableArray *items = [self.items mutableCopy];
+        [items replaceObjectAtIndex:pos withObject:item];
+    }
+}
+
+- (void)removeItems:(NSArray *)items {
+
+    NSMutableArray *updatedItems = [self.items mutableCopy];
+    [updatedItems removeObjectsInArray:items];
+    self.items = updatedItems;
+}
+
 @end

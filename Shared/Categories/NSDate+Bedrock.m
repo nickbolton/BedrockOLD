@@ -28,7 +28,7 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (void)pb_setMidnightObject:(NSDate *)midnight {
-    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSDate *)pb_endOfDayObject {
@@ -36,9 +36,8 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (void)pb_setEndOfDayObject:(NSDate *)date {
-    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
-
 
 #if TARGET_OS_IPHONE
 - (BOOL)isGreaterThan:(id)object {

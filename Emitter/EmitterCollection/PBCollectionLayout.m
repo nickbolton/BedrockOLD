@@ -14,6 +14,7 @@
 @interface PBCollectionLayout()
 
 @property (nonatomic, strong) NSDictionary *layoutInfo;
+@property (nonatomic, strong) NSDictionary *oldLayoutInfo;
 
 @end
 
@@ -73,6 +74,8 @@
 }
 
 - (void)prepareLayout {
+
+    self.oldLayoutInfo = self.layoutInfo;
 
     NSMutableDictionary *newLayoutInfo = [NSMutableDictionary dictionary];
     NSMutableDictionary *cellLayoutInfo = [NSMutableDictionary dictionary];
@@ -276,6 +279,23 @@
     }
 
     return CGSizeMake(width, height);
+}
+
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)indexPath {
+    return self.oldLayoutInfo[kPBCollectionViewCellKind][indexPath];
+}
+
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingSupplementaryElementOfKind:(NSString *)kind
+                                                                                        atIndexPath:(NSIndexPath *)indexPath {
+    return self.oldLayoutInfo[kind][indexPath];
+}
+
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)indexPath {
+    return self.layoutInfo[kPBCollectionViewCellKind][indexPath];
+}
+
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    return self.layoutInfo[kind][indexPath];
 }
 
 @end

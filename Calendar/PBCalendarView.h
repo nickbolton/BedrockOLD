@@ -23,18 +23,22 @@
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
 @property (nonatomic) CGRect visibleBounds;
 @property (nonatomic) UIEdgeInsets contentMargins;
-
-- (void)setSelectedDay:(NSDateComponents *)selectedDay animated:(BOOL)animated;
+@property (nonatomic) BOOL startPointHidden;
+@property (nonatomic) BOOL endPointHidden;
 
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;
 - (void)centerCurrentMonth;
 - (void)scrollToMonthAtPoint:(CGPoint)point;
+- (NSDate *)dateAtPoint:(CGPoint)point;
+- (NSDate *)nearestDateAtPoint:(CGPoint)point;
+- (CGPoint)endPointMarkingInCalendar:(BOOL)isStartDate;
 - (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point;
 - (NSDate *)monthAtPoint:(CGPoint)point;
 - (NSDate *)currentMonth;
 - (NSArray *)monthViewsBoundByRect:(CGRect)rect
                             inView:(UIView *)view
                  completelyVisible:(BOOL)completelyVisible;
+- (void)updateMonthViews:(BOOL)animated;
 
 @end

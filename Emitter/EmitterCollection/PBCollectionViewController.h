@@ -13,6 +13,7 @@ extern NSString * const kPBCollectionViewSupplimentaryKind;
 extern NSString * const kPBCollectionViewDecorationKind;
 
 @class PBCollectionItem;
+@class PBSectionItem;
 @class PBCollectionLayout;
 
 @interface PBCollectionViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
@@ -33,6 +34,7 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, strong) NSArray *renderers;
 
 + (Class)collectionViewLayoutClass;
++ (Class)collectionViewClass;
 
 - (id)initWithNib;
 - (id)initWithItems:(NSArray *)items;
@@ -42,12 +44,18 @@ extern NSString * const kPBCollectionViewDecorationKind;
 - (NSArray *)buildDataSource;
 - (void)reloadDataSource;
 - (void)reloadData;
+- (void)reloadDataOnBackgroundThread;
+- (void)preRegisterCellNibsAndClasses;
 - (void)setupNavigationBar;
 - (void)reloadCollectionItem:(PBCollectionItem *)item;
 - (void)reloadCollectionItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)keyboardWillShow:(NSNotification *)notification;
 - (void)keyboardWillHide:(NSNotification *)notification;
 - (void)dismissKeyboard;
+- (PBSectionItem *)sectionItemAtSection:(NSInteger)section;
 - (PBCollectionItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)updateLayout:(PBCollectionLayout *)layout;
+- (void)updateLayout:(PBCollectionLayout *)layout
+          completion:(void(^)(void))completionBlock;
 
 @end
