@@ -2,30 +2,43 @@
 //  PBCalendarView.h
 //  Calendar
 //
-//  Created by Nick Bolton on 1/19/14.
+//  Created by Nick Bolton on 2/8/14.
 //  Copyright (c) 2014 Pixelbleed. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@class PBDateRange;
+@class PBCalendarView;
 
-@interface PBCalendarView : UIView
+@protocol PBCalendarViewDelegate <UIScrollViewDelegate>
 
-@property (nonatomic, readonly) NSInteger year;
-@property (nonatomic, readonly) NSInteger month;
+@optional
+- (void)calendarViewSelected:(PBCalendarView *)calendarView
+      selectedRangeDidChange:(PBDateRange *)dateRange;
+
+@end
+
+@interface PBCalendarView : UIScrollView
+
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
-@property (nonatomic) BOOL hideStartingPointMarker;
-@property (nonatomic) BOOL hideEndingPointMarker;
+@property (nonatomic) CGRect visibleBounds;
+@property (nonatomic) UIEdgeInsets contentMargins;
+@property (nonatomic) BOOL startPointHidden;
+@property (nonatomic) BOOL endPointHidden;
 
-- (void)setYear:(NSInteger)year month:(NSInteger)month;
-- (void)setYearAndMonthFromDate:(NSDate *)date;
-
-- (NSDateComponents *)dateComponentsAtPoint:(CGPoint)point;
-- (NSDateComponents *)nearestDateComponentsAtPoint:(CGPoint)point;
-- (void)updateView;
-
-- (CGPoint)pointForStartingMarkerView;
-- (CGPoint)pointForEndingMarkerView;
+- (void)scrollToMonth:(NSDate *)month;
+- (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;
+- (void)centerCurrentMonth;
+- (void)scrollToMonthAtPoint:(CGPoint)point;
+- (NSDate *)dateAtPoint:(CGPoint)point;
+- (NSDate *)nearestDateAtPoint:(CGPoint)point;
+- (CGPoint)endPointMarkingInCalendar:(BOOL)isStartDate;
+- (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point;
+- (NSDate *)monthAtPoint:(CGPoint)point;
+- (NSDate *)currentMonth;
+- (NSArray *)monthViewsBoundByRect:(CGRect)rect
+                            inView:(UIView *)view
+                 completelyVisible:(BOOL)completelyVisible;
+- (void)updateMonthViews:(BOOL)animated;
 
 @end

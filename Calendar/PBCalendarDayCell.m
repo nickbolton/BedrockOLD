@@ -11,7 +11,13 @@
 
 static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 
-@interface PBCalendarDayCell()
+@interface PBCalendarDayCell() {
+
+    BOOL _startingDaySet;
+    BOOL _endingDaySet;
+    BOOL _withinRangeSet;
+    BOOL _currentDaySet;
+}
 
 @property (nonatomic, readwrite) UILabel *dayLabel;
 @property (nonatomic, strong) UIView *endPointMarkerView;
@@ -56,6 +62,11 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
     self.endingDay = NO;
     self.withinRange = NO;
     self.currentDay = NO;
+    self.selectedDateRange = nil;
+    _startingDaySet = NO;
+    _endingDaySet = NO;
+    _withinRangeSet = NO;
+    _currentDaySet = NO;
 }
 
 - (void)setupDayLabel {
@@ -209,40 +220,83 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 }
 
 - (void)setStartingDay:(BOOL)startingDay {
+
+    BOOL changed =
+    _startingDaySet == NO ||
+    _startingDay != startingDay;
+
     _startingDay = startingDay;
-    [self updateLayerMask];
-    [self updateTextColor];
-    [self updateEndPointMarkerView];
-    [self updateBackgroundColor];
+    _startingDaySet = YES;
+
+    if (changed) {
+        [self updateLayerMask];
+        [self updateTextColor];
+        [self updateEndPointMarkerView];
+        [self updateBackgroundColor];
+    }
 }
 
 - (void)setEndingDay:(BOOL)endingDay {
+
+    BOOL changed =
+    _endingDaySet == NO ||
+    _endingDay != endingDay;
+
     _endingDay = endingDay;
-    [self updateLayerMask];
-    [self updateTextColor];
-    [self updateEndPointMarkerView];
-    [self updateBackgroundColor];
+    _endingDaySet = YES;
+
+    if (changed) {
+        [self updateLayerMask];
+        [self updateTextColor];
+        [self updateEndPointMarkerView];
+        [self updateBackgroundColor];
+    }
 }
 
 - (void)setWithinRange:(BOOL)withinRange {
+
+    BOOL changed =
+    _withinRangeSet == NO ||
+    _withinRange != withinRange;
+
     _withinRange = withinRange;
-    [self updateTextColor];
-    [self updateBackgroundColor];
+    _withinRangeSet = YES;
+
+    if (changed) {
+        [self updateTextColor];
+        [self updateBackgroundColor];
+    }
 }
 
 - (void)setCurrentDay:(BOOL)currentDay {
-    _currentDay = currentDay;
 
-    if (currentDay) {
-        self.dayLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
-    } else {
-        self.dayLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+    BOOL changed =
+    _currentDaySet == NO ||
+    _currentDay != currentDay;
+
+    _currentDay = currentDay;
+    _currentDaySet = YES;
+
+    if (changed) {
+        if (currentDay) {
+            self.dayLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
+        } else {
+            self.dayLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+        }
     }
 }
 
 - (void)setSelectedDateRange:(PBDateRange *)selectedDateRange {
+
+    BOOL changed =
+    _selectedDateRange == nil ||
+    [_selectedDateRange isEqual:selectedDateRange] == NO;
+
     _selectedDateRange = selectedDateRange;
-    [self updateSelectedRangeState];
+
+    if (changed) {
+        [self updateSelectedRangeState];
+    }
 }
 
 - (void)updateCellWithYear:(NSInteger)year
@@ -260,9 +314,8 @@ static CGFloat const kPBCalendarDayCellEndPointRadius = 16.0f;
 
 - (void)updateSelectedRangeState {
 
-    NSCalendar *calendar =
-    [[PBCalendarManager sharedInstance] calendarForCurrentThread];
-
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+    
     NSDate *monthDate =
     [NSDate
      dateWithYear:self.year

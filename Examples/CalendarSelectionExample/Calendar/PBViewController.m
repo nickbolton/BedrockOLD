@@ -25,10 +25,10 @@
     [super viewDidLoad];
 
     NSDate *startDate =
-    [NSDate dateWithYear:2013 month:11 day:17];
+    [NSDate dateWithYear:2013 month:10 day:1];
 
     NSDate *endDate =
-    [NSDate dateWithYear:2013 month:11 day:23];
+    [NSDate dateWithYear:2013 month:10 day:23];
 
     self.selectedDateRange =
     [PBDateRange dateRangeWithStartDate:startDate endDate:endDate];
@@ -44,11 +44,12 @@
 
 - (IBAction)selectDate:(id)sender {
 
+    [NSCalendar setFirstWeekday:1];
+
     PBCalendarSelectionViewController *viewController =
     [[PBCalendarSelectionViewController alloc]
      initWithSelectedDateRange:self.selectedDateRange
-     modeSwitchOn:YES
-     firstDayOfTheWeek:1];
+     modeSwitchOn:YES];
 
     viewController.delegate = self;
 

@@ -65,6 +65,7 @@ extern NSString * const kPBListActionCellID;
 - (NSArray *)buildDataSource;
 - (void)reloadDataSource;
 - (void)reloadData;
+- (void)preRegisterCellNibsAndClasses;
 - (void)setupNavigationBar;
 - (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
                     withAnimation:(UITableViewRowAnimation)animation;
@@ -78,6 +79,7 @@ extern NSString * const kPBListActionCellID;
 - (void)dismissKeyboard;
 - (IBAction)cancelPressed:(id)sender;
 - (void)updateListViewItemHeight;
+- (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)appendItemsToDataSource:(NSArray *)items;
 - (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;

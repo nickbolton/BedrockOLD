@@ -28,8 +28,8 @@
 #import "NSLayoutConstraint+Bedrock.h"
 #import "NSNotification+Bedrock.h"
 #import "PBDateRange.h"
-#import "PBCalendarManager.h"
 #import "NSDate+Bedrock.h"
+#import "NSCalendar+Bedrock.h"
 #import "NSDateComponents+Bedrock.h"
 
 #if TARGET_OS_IPHONE

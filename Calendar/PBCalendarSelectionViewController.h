@@ -1,15 +1,14 @@
 //
 //  PBCalendarSelectionViewController.h
-//  Calendar
+//  Bedrock
 //
-//  Created by Nick Bolton on 1/19/14.
-//  Copyright (c) 2014 Pixelbleed. All rights reserved.
+//  Created by David Beck on 5/7/12.
+//  Copyright (c) 2012 ThinkUltimate. All rights reserved.
 //
 
-#import "Emitter.h"
+#import <UIKit/UIKit.h>
 
-@class PBDateRange;
-
+@class PBCalendarView;
 @class PBCalendarSelectionViewController;
 
 @protocol PBCalendarSelectionDelegate <NSObject>
@@ -20,31 +19,15 @@
 
 @end
 
-@interface PBCalendarSelectionViewController : PBListViewController
+@interface PBCalendarSelectionViewController : UIViewController
 
-+ (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
-                                      delegate:(id <PBCalendarSelectionDelegate>)delegate
-                                  modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
-                         withSelectedDateRange:(PBDateRange *)dateRange
-                                    completion:(void(^)(void))completionBlock;
-
-+ (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
-                                      delegate:(id <PBCalendarSelectionDelegate>)delegate
-                                  modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
-                              withSelectedDate:(NSDate *)date
-                                    completion:(void(^)(void))completionBlock;
+@property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-                   modeSwitchOn:(BOOL)modeSwitchOn
-              firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
+                   modeSwitchOn:(BOOL)modeSwitchOn;
 - (id)initWithSelectedDate:(NSDate *)date
-              modeSwitchOn:(BOOL)modeSwitchOn
-         firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek;
+              modeSwitchOn:(BOOL)modeSwitchOn;
 
-@property (nonatomic) UIEdgeInsets separatorInsets;
-@property (nonatomic, readonly) BOOL modeSwitchOn;
-@property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
+- (void)showToday:(id)sender;
 
 @end

@@ -60,6 +60,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     return [PBCollectionLayout class];
 }
 
++ (Class)collectionViewClass {
+    return [UICollectionView class];
+}
+
 #pragma mark - Setup
 
 - (void)setupNotifications {
@@ -120,7 +124,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     if (self.collectionView == nil) {
         self.collectionView =
-        [[UICollectionView alloc]
+        [[[self.class collectionViewClass] alloc]
          initWithFrame:CGRectZero
          collectionViewLayout:self.collectionLayout];
         self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -166,6 +170,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     [self setupNavigationBar];
     [self setupNotifications];
     [self setupCollectionView];
+    [self preRegisterCellNibsAndClasses];
 
     if (self.reloadDataOnViewLoad) {
         [self reloadData];
@@ -323,6 +328,35 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+#pragma mark - Public
+
+- (void)updateLayout:(PBCollectionLayout *)layout
+         completion:(void(^)(void))completionBlock {
+
+    NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
+             @"layout not a subclass of %@", NSStringFromClass([PBCollectionLayout class]));
+
+    self.collectionLayout = layout;
+
+    [self.collectionView
+     setCollectionViewLayout:layout
+     animated:YES
+     completion:^(BOOL finished) {
+         if (completionBlock != nil) {
+             completionBlock();
+         }
+     }];
+}
+
+- (void)updateLayout:(PBCollectionLayout *)layout {
+
+    NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
+             @"layout not a subclass of %@", NSStringFromClass([PBCollectionLayout class]));
+
+    self.collectionLayout = layout;
+    self.collectionView.collectionViewLayout = layout;
+}
+
 #pragma mark -
 
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section {
@@ -431,6 +465,9 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+- (void)preRegisterCellNibsAndClasses {
+}
+
 - (NSArray *)buildDataSource {
     return nil;
 }
@@ -505,6 +542,33 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
          animated:NO
          scrollPosition:UICollectionViewScrollPositionNone];
     }
+}
+
+- (void)reloadDataOnBackgroundThread {
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+
+        [self reloadDataSource];
+
+        for (PBSectionItem *sectionItem in self.dataSource) {
+            [self clearSectionConfigured:sectionItem];
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            [self.collectionView reloadData];
+
+            [self setSelectionDisabled:YES forItemIndexes:self.selectedItemIndexes];
+
+            for (NSIndexPath *indexPath in self.selectedItemIndexes) {
+
+                [self.collectionView
+                 selectItemAtIndexPath:indexPath
+                 animated:NO
+                 scrollPosition:UICollectionViewScrollPositionNone];
+            }
+        });
+    });
 }
 
 - (void)setSelectionDisabled:(BOOL)selectionDisabled

@@ -206,6 +206,7 @@ static NSInteger const kPBListDefaultTag = 105;
     [self setupNavigationBar];
     [self setupNotifications];
     [self setupTableView];
+    [self preRegisterCellNibsAndClasses];
 
     if (self.tableBackgroundColor != nil) {
         self.tableView.backgroundColor = self.tableBackgroundColor;
@@ -796,6 +797,9 @@ static NSInteger const kPBListDefaultTag = 105;
         cell.titleLabel.text = item.title;
         cell.valueLabel.text = item.value;
     }
+}
+
+- (void)preRegisterCellNibsAndClasses {
 }
 
 #pragma mark - Keyboard Handling

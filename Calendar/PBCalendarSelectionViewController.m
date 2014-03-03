@@ -1,137 +1,107 @@
 //
 //  PBCalendarSelectionViewController.m
-//  Calendar
+//  Bedrock
 //
-//  Created by Nick Bolton on 1/19/14.
-//  Copyright (c) 2014 Pixelbleed. All rights reserved.
+//  Created by David Beck on 5/7/12.
+//  Copyright (c) 2012 ThinkUltimate. All rights reserved.
 //
 
 #import "PBCalendarSelectionViewController.h"
-#import "Bedrock.h"
 #import "PBCalendarView.h"
-#import "NSCalendar+Bedrock.h"
+#import "PBMonthView.h"
+#import "PBRunningAverageValue.h"
 
-static NSInteger const kPBCalendarSelectionViewControllerVisibleMonths = 5;
-static CGFloat kPBCalendarSelectionViewControllerItemHeight = 264.0f;
-static CGFloat kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
-static CGFloat kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
-static NSInteger const kPBCalendarSelectionViewControllerCalendarTag = 999;
+typedef NS_ENUM(NSInteger, PBCalendarViewMonthIndicatorState) {
+
+    PBCalendarViewMonthIndicatorStateHidden = 0,
+    PBCalendarViewMonthIndicatorStateShowing,
+    PBCalendarViewMonthIndicatorStateHiding,
+    PBCalendarViewMonthIndicatorStateVisible,
+};
+
+static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
+static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
+static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
+static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 1.4f;
+static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold = 300.0f;
 static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsAdvancement = 10.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsThreshold = 22.0f;
 static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
-@interface PBCalendarSelectionViewController () <UIGestureRecognizerDelegate> {
+@interface PBCalendarSelectionViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _rangeMode;
-    BOOL _infiniteDisabled;
-    BOOL _scrollAdvancing;
-    NSInteger _scrollAdvancingMonthDirection;
+    NSTimeInterval _lastScrollTime;
+    CGFloat _lastScrollPosition;
+    BOOL _decelerating;
+    BOOL _animatingCurrentMonth;
+    BOOL _animatingCurrentSelection;
+    BOOL _isDragging;
+    PBCalendarViewMonthIndicatorState _monthIndicatorState;
+    NSTimeInterval _monthIndicatorStopTime;
+    NSTimeInterval _lastMonthIndicatorTrigger;
     CGPoint _lastPanningLocation;
     NSTimeInterval _lastOutOfBoundsUpdate;
 }
 
-@property (nonatomic, strong) PBDateRange *selectedDateRange;
-@property (nonatomic, strong) NSDate *currentStartDate;
-@property (nonatomic, strong) UIBarButtonItem *rangeToggleItem;
 @property (nonatomic, strong) UIToolbar *toolbar;
 @property (nonatomic, strong) UINavigationBar *navbar;
-@property (nonatomic, strong) NSMutableDictionary *calendarViews;
-@property (nonatomic, strong) NSMutableDictionary *calendarViewsByIndexPath;
-@property (nonatomic, strong) NSDate *draggingStartDate;
-@property (nonatomic, strong) NSDate *draggingEndDate;
+@property (nonatomic, strong) PBCalendarView *calendarView;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
-@property (nonatomic) NSInteger firstDayOfTheWeek;
-@property (nonatomic) BOOL hideEndPointMarkers;
-@property (nonatomic, strong) UIView *endPointMarkerView;
-@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerLeadingSpace;
-@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerTopSpace;
+@property (nonatomic, strong) UIBarButtonItem *rangeToggleItem;
+@property (nonatomic, strong) UIBarButtonItem *currentMonthItem;
+@property (nonatomic, strong) UIBarButtonItem *currentSelectionItem;
+@property (nonatomic, readonly) PBDateRange *selectedDateRange;
+@property (nonatomic, strong) PBDateRange *initialSelectedDateRange;
+@property (nonatomic, strong) UIView *monthIndicatorContainer;
+@property (nonatomic, strong) UILabel *monthIndicatorLabel;
+@property (nonatomic, strong) NSDate *currentMonth;
+@property (nonatomic, strong) NSArray *visibleMonthViews;
+@property (nonatomic) CGRect visibleRect;
+@property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
-@property (nonatomic) CGRect visibleRect;
+@property (nonatomic, strong) NSDate *draggingStartDate;
+@property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic) CADisplayLink *displayLink;
+@property (nonatomic, strong) UIView *endPointMarkerView;
+@property (nonatomic, strong) UILabel *endPointLabel;
+@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerLeadingSpace;
+@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerTopSpace;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLabelLeadingSpace;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLabelTopSpace;
 
 @end
 
 @implementation PBCalendarSelectionViewController
 
-+ (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
-                                      delegate:(id <PBCalendarSelectionDelegate>)delegate
-                                  modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
-                         withSelectedDateRange:(PBDateRange *)dateRange
-                                    completion:(void(^)(void))completionBlock {
-
-    PBCalendarSelectionViewController *viewController =
-    [[PBCalendarSelectionViewController alloc]
-     initWithSelectedDateRange:dateRange
-     modeSwitchOn:modeSwitchOn
-     firstDayOfTheWeek:firstDayOfTheWeek];
-
-    viewController.delegate = delegate;
-
-    [UINavigationController
-     presentViewController:viewController
-     fromViewController:presentingViewController
-     completion:completionBlock];
-}
-
-+ (void)presentCalendarSelectionViewController:(UIViewController *)presentingViewController
-                                      delegate:(id <PBCalendarSelectionDelegate>)delegate
-                                  modeSwitchOn:(BOOL)modeSwitchOn
-                             firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek
-                              withSelectedDate:(NSDate *)date
-                                    completion:(void(^)(void))completionBlock {
-
-    PBCalendarSelectionViewController *viewController =
-    [[PBCalendarSelectionViewController alloc]
-     initWithSelectedDate:date
-     modeSwitchOn:modeSwitchOn
-     firstDayOfTheWeek:firstDayOfTheWeek];
-
-    viewController.delegate = delegate;
-
-    [UINavigationController
-     presentViewController:viewController
-     fromViewController:presentingViewController
-     completion:completionBlock];
-}
-
 - (id)initWithSelectedDate:(NSDate *)date
-              modeSwitchOn:(BOOL)modeSwitchOn
-         firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek {
+              modeSwitchOn:(BOOL)modeSwitchOn {
 
     self = [super init];
     if (self) {
-        self.currentStartDate = date;
+        self.initialSelectedDateRange =
+        [PBDateRange dateRangeWithStartDate:date endDate:date];
         self.modeSwitchOn = modeSwitchOn;
-        self.firstDayOfTheWeek = firstDayOfTheWeek;
-        [self _commonInit];
+        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
     }
     return self;
 }
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-                   modeSwitchOn:(BOOL)modeSwitchOn
-              firstDayOfTheWeek:(NSInteger)firstDayOfTheWeek {
+                   modeSwitchOn:(BOOL)modeSwitchOn {
 
     self = [super init];
     if (self) {
-        self.selectedDateRange = dateRange;
-        self.currentStartDate = dateRange.startDate;
+        self.initialSelectedDateRange = dateRange;
         self.modeSwitchOn = modeSwitchOn;
-        self.firstDayOfTheWeek = firstDayOfTheWeek;
-        [self _commonInit];
 
         _rangeMode =
         [dateRange.endDate.midnight isGreaterThan:dateRange.startDate];
+        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
     }
     return self;
-}
-
-- (void)_commonInit {
-    self.calendarViews = [NSMutableDictionary dictionary];
-    self.calendarViewsByIndexPath = [NSMutableDictionary dictionary];
 }
 
 #pragma mark - Setup
@@ -158,7 +128,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
          toView:self.navbar];
 
         [NSLayoutConstraint expandWidthToSuperview:self.navbar];
-        
+
         [NSLayoutConstraint alignToTop:self.navbar withPadding:0.0f];
 
     } else {
@@ -222,30 +192,92 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      target:self
      action:@selector(toggleRangeMode)];
 
-    UIBarButtonItem *spacer =
+    UIBarButtonItem *flexSpacer =
     [[UIBarButtonItem alloc]
      initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
      target:nil
      action:nil];
 
-    UIBarButtonItem *currentMonthItem =
+    UIBarButtonItem *spacer =
     [[UIBarButtonItem alloc]
-     initWithTitle:PBLoc(@"Jump to Today")
+     initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+     target:nil
+     action:nil];
+    spacer.width = 12.0f;
+
+    self.currentMonthItem =
+    [[UIBarButtonItem alloc]
+     initWithTitle:PBLoc(@"Today")
      style:UIBarButtonItemStylePlain
      target:self
-     action:@selector(jumpToCurrentMonth)];
+     action:@selector(showToday:)];
+
+    self.currentSelectionItem =
+    [[UIBarButtonItem alloc]
+     initWithTitle:PBLoc(@"Selection")
+     style:UIBarButtonItemStylePlain
+     target:self
+     action:@selector(showCurrentSelection:)];
 
     NSMutableArray *items = [NSMutableArray array];
 
     if (self.modeSwitchOn) {
         [items addObject:self.rangeToggleItem];
     }
-
+    
+    [items addObject:flexSpacer];
+    [items addObject:self.currentSelectionItem];
     [items addObject:spacer];
-    [items addObject:currentMonthItem];
+    [items addObject:self.currentMonthItem];
 
     self.toolbar.items = items;
     [self updateToolbarItems];
+}
+
+- (void)setupCalendarView {
+	self.calendarView = [[PBCalendarView alloc] initWithFrame:self.view.bounds];
+    self.calendarView.delegate = self;
+	self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	[self.view addSubview:_calendarView];
+
+    self.calendarView.selectedDateRange = self.initialSelectedDateRange;
+}
+
+- (void)setupMonthIndicatorLabel {
+
+    self.monthIndicatorContainer = [[UIView alloc] init];
+    self.monthIndicatorContainer.translatesAutoresizingMaskIntoConstraints = NO;
+    self.monthIndicatorContainer.alpha = 0.0f;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
+
+    [self.view addSubview:self.monthIndicatorContainer];
+
+    [NSLayoutConstraint
+     alignToTop:self.monthIndicatorContainer
+     withPadding:kPBCalendarSelectionViewControllerNavigationBarHeight];
+
+    [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorContainer];
+    [NSLayoutConstraint
+     addHeightConstraint:40.0f
+     toView:self.monthIndicatorContainer];
+
+    UIView *backgroundView = [[UIView alloc] init];
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = self.view.tintColor;
+    backgroundView.alpha = kPBCalendarSelectionViewCurrentMonthAlpha;
+
+    [self.monthIndicatorContainer addSubview:backgroundView];
+    [NSLayoutConstraint expandToSuperview:backgroundView];
+
+    self.monthIndicatorLabel = [[UILabel alloc] init];
+    self.monthIndicatorLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.monthIndicatorLabel.textColor = [UIColor blackColor];
+    self.monthIndicatorLabel.textAlignment = NSTextAlignmentCenter;
+    self.monthIndicatorLabel.font =
+    [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+
+    [self.monthIndicatorContainer addSubview:self.monthIndicatorLabel];
+    [NSLayoutConstraint expandToSuperview:self.monthIndicatorLabel];
 }
 
 - (void)setupGestures {
@@ -271,11 +303,26 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self.tapGesture requireGestureRecognizerToFail:self.panGesture];
 }
 
+- (void)setupDisplayLink {
+
+    self.displayLink =
+    [CADisplayLink
+     displayLinkWithTarget:self
+     selector:@selector(outOfBoundsCheck)];
+
+    [self.displayLink
+     addToRunLoop:[NSRunLoop mainRunLoop]
+     forMode:NSRunLoopCommonModes];
+
+    self.displayLink.paused = YES;
+}
+
 - (void)setupEndPointMarkerView {
 
     self.endPointMarkerView = [[UIView alloc] init];
     self.endPointMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.endPointMarkerView.alpha = .5f;
+    self.endPointMarkerView.alpha = .9f;
+    self.endPointMarkerView.clipsToBounds = YES;
 
     [self.view addSubview:self.endPointMarkerView];
 
@@ -294,37 +341,22 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     self.endPointMarkerView.backgroundColor = [UIColor colorWithRGBHex:0x3060FA];
     self.endPointMarkerView.hidden = YES;
-}
 
-- (void)updateVisibleRect {
+    self.endPointLabel = [[UILabel alloc] init];
+    self.endPointLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.endPointLabel.textAlignment = NSTextAlignmentCenter;
+    self.endPointLabel.textColor = [UIColor whiteColor];
 
-    CGFloat navigationBarHeight =
-    CGRectGetHeight(self.navbar.bounds);
+    [self.endPointMarkerView addSubview:self.endPointLabel];
 
-    CGFloat toolbarHeight =
-    CGRectGetHeight(self.toolbar.bounds);
+    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointLabel];
+    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointLabel];
 
-    self.visibleRect =
-    CGRectMake(0.0f,
-               navigationBarHeight,
-               CGRectGetWidth(self.view.frame),
-               CGRectGetHeight(self.view.frame) - navigationBarHeight - toolbarHeight);
+    self.endPointLabelTopSpace =
+    [NSLayoutConstraint alignToTop:self.endPointLabel withPadding:-1.0f];
 
-    NSLog(@"visibleRect: %@", NSStringFromCGRect(self.visibleRect));
-}
-
-- (void)setupDisplayLink {
-
-    self.displayLink =
-    [CADisplayLink
-     displayLinkWithTarget:self
-     selector:@selector(outOfBoundsCheck)];
-
-    [self.displayLink
-     addToRunLoop:[NSRunLoop mainRunLoop]
-     forMode:NSRunLoopCommonModes];
-
-    self.displayLink.paused = YES;
+    self.endPointLabelLeadingSpace =
+    [NSLayoutConstraint alignToLeft:self.endPointLabel withPadding:0.0f];
 }
 
 #pragma mark - View Lifecycle
@@ -332,194 +364,46 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupDisplayLink];
-    [self setupEndPointMarkerView];
     [self setupGestures];
+	[self setupCalendarView];
+    [self setupNavigationBar];
     [self setupToolbar];
-    self.tableView.contentOffset = [self zeroContentOffset];
-    self.tableView.showsVerticalScrollIndicator = NO;
+    [self setupMonthIndicatorLabel];
+    [self setupEndPointMarkerView];
+
+    CGFloat height =
+    CGRectGetHeight(self.view.frame) -
+    kPBCalendarSelectionViewControllerNavigationBarHeight -
+    kPBCalendarSelectionViewControllerToolbarHeight;
+
+    self.visibleRect =
+    CGRectMake(0.0f,
+               kPBCalendarSelectionViewControllerNavigationBarHeight,
+               CGRectGetWidth(self.view.frame),
+               height);
+
+    self.calendarView.visibleBounds = self.visibleRect;
+
+    self.calendarView.contentMargins =
+    UIEdgeInsetsMake(kPBCalendarSelectionViewControllerNavigationBarHeight,
+                     0.0f,
+                     kPBCalendarSelectionViewControllerToolbarHeight,
+                     0.0f);
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self updateVisibleRect];
+    [self showCurrentSelection:nil];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad || interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown;
 }
 
-#pragma mark - Data Source
+#pragma mark - Getters and Setters
 
-- (void)pruneCalendarViews {
-}
-
-- (PBListItem *)itemForMonthDate:(NSDate *)monthDate {
-
-    PBListItem *item =
-    [PBListItem
-     customClassItemWithUserContext:monthDate
-     cellID:@"cell-id"
-     cellClass:[PBListCell class]
-     configure:^(id viewController, PBListItem *item, PBListCell *cell) {
-
-         NSDate *monthDate = item.userContext;
-
-         PBCalendarView *calendarView =
-         self.calendarViews[monthDate];
-
-         NSAssert(calendarView != nil,
-                  @"no calendarView for monthDate: %@", monthDate);
-
-         [calendarView removeFromSuperview];
-
-         [cell.contentView addSubview:calendarView];
-
-         [NSLayoutConstraint expandToSuperview:calendarView];
-
-     } binding:^(id viewController, NSIndexPath *indexPath, PBListItem *item, PBListCell *cell) {
-
-         NSDate *monthDate = item.userContext;
-
-         PBCalendarView *calendarView =
-         (id)[cell.contentView viewWithTag:kPBCalendarSelectionViewControllerCalendarTag];
-
-         calendarView.selectedDateRange = self.selectedDateRange;
-
-         self.calendarViewsByIndexPath[indexPath] = calendarView;
-
-         NSDateComponents *dateComponents =
-         [NSDateComponents
-          components:NSCalendarUnitYear|NSCalendarUnitMonth
-          fromDate:monthDate];
-
-         [calendarView
-          setYear:dateComponents.year
-          month:dateComponents.month];
-
-     } selectAction:nil
-     deleteAction:nil];
-
-    item.rowHeight = kPBCalendarSelectionViewControllerItemHeight;
-    item.separatorInsets = self.separatorInsets;
-
-    return item;
-}
-
-- (NSArray *)buildDataSource {
-
-    NSArray *items;
-
-    if (_scrollAdvancing) {
-
-        PBSectionItem *sectionItem = self.dataSource.firstObject;
-
-        NSMutableArray *updatedDataSource =
-        [sectionItem.items mutableCopy];
-
-        NSDate *monthDate = self.currentStartDate;
-
-        if (_scrollAdvancingMonthDirection < 0) {
-
-            [updatedDataSource removeLastObject];
-
-            NSDateComponents *monthComponents = [[NSDateComponents alloc] init];
-            monthComponents.month = -2;
-
-            monthDate = [monthDate dateByAddingComponents:monthComponents];
-
-            [self createCalendarViewForMonthDateIfNecessary:monthDate];
-
-            PBListItem *addedItem =
-            [self itemForMonthDate:monthDate];
-
-            [updatedDataSource insertObject:addedItem atIndex:0];
-
-        } else {
-
-            [updatedDataSource removeObjectAtIndex:0];
-
-            NSDateComponents *monthComponents = [[NSDateComponents alloc] init];
-            monthComponents.month = 2;
-
-            monthDate = [monthDate dateByAddingComponents:monthComponents];
-
-            [self createCalendarViewForMonthDateIfNecessary:monthDate];
-
-            PBListItem *addedItem =
-            [self itemForMonthDate:monthDate];
-
-            [updatedDataSource addObject:addedItem];
-        }
-
-        items = updatedDataSource;
-
-    } else {
-
-        items = [self buildFullDataSource];
-    }
-
-    return items;
-}
-
-- (void)createCalendarViewForMonthDateIfNecessary:(NSDate *)monthDate {
-
-    PBCalendarView *calendarView = self.calendarViews[monthDate];
-
-    if (calendarView == nil) {
-
-        calendarView = [[PBCalendarView alloc] init];
-        calendarView.translatesAutoresizingMaskIntoConstraints = NO;
-        calendarView.tag = kPBCalendarSelectionViewControllerCalendarTag;
-
-        NSDateComponents *components =
-        [NSDateComponents
-         components:NSCalendarUnitYear|NSCalendarUnitMonth
-         fromDate:monthDate];
-
-        [calendarView
-         setYear:components.year
-         month:components.month];
-
-        self.calendarViews[monthDate] = calendarView;
-    }
-}
-
-- (NSArray *)buildFullDataSource {
-
-    NSMutableArray *items = [NSMutableArray array];
-
-    NSDate *monthDate = self.currentStartDate;
-
-    NSDateComponents *monthComponents = [[NSDateComponents alloc] init];
-
-    monthComponents.month = -3;
-
-    monthDate = [monthDate dateByAddingComponents:monthComponents];
-
-    monthComponents.month = 1;
-
-    for (NSInteger i = -1; i < kPBCalendarSelectionViewControllerVisibleMonths + 1; i++) {
-
-        [self createCalendarViewForMonthDateIfNecessary:monthDate];
-        monthDate = [monthDate dateByAddingComponents:monthComponents];
-    }
-
-    monthComponents.month = -2;
-
-    monthDate = [self.currentStartDate dateByAddingComponents:monthComponents];
-
-    monthComponents.month = 1;
-
-    for (NSInteger i = 0; i < kPBCalendarSelectionViewControllerVisibleMonths; i++) {
-
-        PBListItem *item = [self itemForMonthDate:monthDate];
-
-        [items addObject:item];
-
-        monthDate = [monthDate dateByAddingComponents:monthComponents];
-    }
-
-    return items;
+- (PBDateRange *)selectedDateRange {
+    return self.calendarView.selectedDateRange;
 }
 
 #pragma mark - Actions
@@ -532,91 +416,35 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self.delegate calendarSelectionViewController:self didSelectedRange:self.selectedDateRange];
 }
 
-#pragma mark - Getters and Setters
+- (void)showToday:(id)sender {
 
-- (void)setCurrentStartDate:(NSDate *)currentStartDate {
+    _animatingCurrentMonth = YES;
+//    self.currentMonthItem.enabled = NO;
 
-    NSDateComponents *dateComponents =
-    [NSDateComponents
-     components:NSCalendarUnitYear|NSCalendarUnitMonth
-     fromDate:currentStartDate];
+	[self.calendarView scrollToMonth:[NSDate date] animated:YES];
 
-    _currentStartDate =
-    [NSDate
-     dateWithYear:dateComponents.year
-     month:dateComponents.month
-     day:1];
+    NSTimeInterval delayInSeconds = .3f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        _animatingCurrentMonth = NO;
+    });
 }
 
-#pragma mark - UITableViewDelegate Conformance
+- (void)showCurrentSelection:(id)sender {
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    _animatingCurrentSelection = YES;
+    self.currentSelectionItem.enabled = NO;
 
-    CGPoint location = [scrollView.panGestureRecognizer locationInView:self.view];
+    [self.calendarView scrollToMonth:self.selectedDateRange.startDate animated:YES];
 
-    NSDate *date = [self dateAtPoint:location];
-
-    if (date != nil) {
-
-        if ([date isEqualToDate:self.selectedDateRange.startDate]) {
-            self.tableView.scrollEnabled = NO;
-            return;
-        } else if ([date isEqualToDate:self.selectedDateRange.endDate.midnight]) {
-            self.tableView.scrollEnabled = NO;
-            return;
-        }
-    }
-
-    if (_infiniteDisabled) return;
-
-    CGFloat backThreshold =
-    kPBCalendarSelectionViewControllerItemHeight * (kPBCalendarSelectionViewControllerVisibleMonths - 2.5);
-    CGFloat frontThreshold =
-    kPBCalendarSelectionViewControllerItemHeight * 1.5;
-
-    CGPoint currentOffset = scrollView.contentOffset;
-    if (currentOffset.y < frontThreshold) {
-
-        CGFloat distanceFromThreshold =
-        currentOffset.y - kPBCalendarSelectionViewControllerItemHeight/2.0f;
-
-        CGFloat offset =
-        kPBCalendarSelectionViewControllerItemHeight +
-        kPBCalendarSelectionViewControllerItemHeight/2.0f +
-        distanceFromThreshold;
-
-        _infiniteDisabled = YES;
-        [self addCalendarMonthDirection:-1 offset:offset];
-        _infiniteDisabled = NO;
-
-    } else if (currentOffset.y >= backThreshold) {
-
-        CGFloat distanceFromThreshold =
-        currentOffset.y - kPBCalendarSelectionViewControllerItemHeight/2.0f;
-
-        CGFloat offset =
-        backThreshold +
-        kPBCalendarSelectionViewControllerItemHeight -
-        distanceFromThreshold;
-
-        _infiniteDisabled = YES;
-        [self addCalendarMonthDirection:1 offset:offset];
-        _infiniteDisabled = NO;
-    }
+    NSTimeInterval delayInSeconds = .3f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        _animatingCurrentSelection = NO;
+    });
 }
 
 #pragma mark -
-
-- (CGPoint)zeroContentOffset {
-
-    CGFloat topSpaceInView =
-    kPBCalendarSelectionViewControllerItemHeight -
-    (CGRectGetHeight(self.view.frame) -
-     kPBCalendarSelectionViewControllerItemHeight) / 2.0f;
-
-    return
-    CGPointMake(0.0f, kPBCalendarSelectionViewControllerItemHeight + topSpaceInView);
-}
 
 - (void)updateToolbarItems {
 
@@ -631,6 +459,54 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     }
 
     self.rangeToggleItem.title = title;
+
+    __block BOOL currentMonthItemEnabled = YES;
+    __block BOOL currentSelectionItemEnabled = YES;
+
+    [self.visibleMonthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+
+        NSDateComponents *monthComponents =
+        [monthView.month components:NSCalendarUnitYear|NSCalendarUnitMonth];
+
+        NSInteger days =
+        [monthView.month
+         rangeOfUnit:NSCalendarUnitDay
+         inUnit:NSCalendarUnitMonth].length;
+
+        NSDate *endDate =
+        [NSDate
+         dateWithYear:monthComponents.year
+         month:monthComponents.month
+         day:days];
+
+        BOOL overlapping =
+        [self.selectedDateRange.startDate isLessThanOrEqualTo:endDate] &&
+        [self.selectedDateRange.endDate isGreaterThanOrEqualTo:monthView.month];
+
+        if (overlapping) {
+            currentSelectionItemEnabled = NO;
+        }
+
+        PBDateRange *currentMonthRange =
+        [PBDateRange
+         dateRangeWithStartDate:monthView.month
+         endDate:endDate];
+
+        if ([currentMonthRange dateWithinRange:[NSDate date]]) {
+            currentMonthItemEnabled = NO;
+        }
+    }];
+
+    if (_animatingCurrentMonth == NO) {
+
+        if (self.currentMonthItem.enabled != currentMonthItemEnabled) {
+            self.currentMonthItem.enabled = currentMonthItemEnabled;
+        }
+    }
+
+    if (_animatingCurrentSelection == NO) {
+        self.currentSelectionItem.enabled = currentSelectionItemEnabled;
+    }
 }
 
 - (void)toggleRangeMode {
@@ -652,204 +528,133 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)switchToRangeMode {
 
-    NSDate *endDate =
-    [self.selectedDateRange.startDate dateByAddingDays:6];
+    PBDateRange *dateRange =
+    [self dateRangeforDate:self.selectedDateRange.startDate];
 
-    self.selectedDateRange =
-    [PBDateRange
-     dateRangeWithStartDate:self.selectedDateRange.startDate
-     endDate:endDate];
-
-    [self updateVisibleCalendarSelection];
+    self.calendarView.selectedDateRange = dateRange;
 }
 
 - (void)switchToSingleSelectionMode {
 
-    self.selectedDateRange =
+    self.calendarView.selectedDateRange =
     [PBDateRange
      dateRangeWithStartDate:self.selectedDateRange.startDate
      endDate:self.selectedDateRange.startDate];
-
-    [self updateVisibleCalendarSelection];
 }
 
-- (void)jumpToCurrentMonth {
+- (BOOL)willMonthIndicatorBeVisible {
+    return
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateShowing ||
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateVisible;
+}
 
-    self.view.userInteractionEnabled = NO;
-    _infiniteDisabled = YES;
+- (BOOL)willMonthIndicatorBeHidden {
+    return
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHiding ||
+    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHidden;
+}
 
-    NSDateComponents *dateComponents =
-    [NSDateComponents
-     components:NSCalendarUnitYear|NSCalendarUnitMonth
-     fromDate:[NSDate date]];
+- (void)showMonthIndicatorContainer {
 
-    NSDate *date =
-    [NSDate
-     dateWithYear:dateComponents.year
-     month:dateComponents.month
-     day:1];
-
-    NSDateComponents *monthComponents =
-    [self.currentStartDate
-     components:NSCalendarUnitMonth
-     toDate:date];
-
-    if (monthComponents.month == 1) {
-
-        CGPoint contentOffset = self.tableView.contentOffset;
-        contentOffset.y -= kPBCalendarSelectionViewControllerItemHeight;
-
-        NSLog(@"setting date: %@", date);
-
-        self.currentStartDate = date;
-        [self reloadData];
-        self.tableView.contentOffset = contentOffset;
-
-    } else if (monthComponents.month == -1) {
-
-        CGPoint contentOffset = self.tableView.contentOffset;
-        contentOffset.y += kPBCalendarSelectionViewControllerItemHeight;
-
-        self.currentStartDate = date;
-        [self reloadData];
-        self.tableView.contentOffset = contentOffset;
-
-    } else if (monthComponents.month != 0) {
-
-        self.currentStartDate = date;
-        [self reloadData];
-    }
+    self.monthIndicatorContainer.alpha = 0.0f;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateShowing;
 
     [UIView
      animateWithDuration:.3f
      animations:^{
-
-         self.tableView.contentOffset =
-         [self zeroContentOffset];
-
+         self.monthIndicatorContainer.alpha = 1.0f;
      } completion:^(BOOL finished) {
-
-         self.view.userInteractionEnabled = YES;
-         _infiniteDisabled = NO;
+         _monthIndicatorState = PBCalendarViewMonthIndicatorStateVisible;
      }];
 }
 
-- (void)addCalendarMonthDirection:(NSInteger)month offset:(CGFloat)offset {
+- (void)hideMonthIndicatorContainer {
 
-    if (_scrollAdvancing) return;
-    _scrollAdvancing = YES;
-    _scrollAdvancingMonthDirection = month;
+    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHiding;
 
-    NSDateComponents *monthComponents =
-    [[NSDateComponents alloc] init];
-    monthComponents.month = month;
-
-    self.currentStartDate =
-    [self.currentStartDate dateByAddingComponents:monthComponents];
-
-    [self reloadData];
-
-    self.tableView.contentOffset =
-    CGPointMake(self.tableView.contentOffset.x, offset);
-
-    _scrollAdvancing = NO;
+    [UIView
+     animateWithDuration:.3f
+     animations:^{
+         self.monthIndicatorContainer.alpha = 0.0f;
+     } completion:^(BOOL finished) {
+         _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
+     }];
 }
 
-- (PBCalendarView *)calendarViewAtPoint:(CGPoint)point {
+- (void)ensureMonthIndicatorHides {
 
-    __block PBCalendarView *result = nil;
+    if ([self willMonthIndicatorBeVisible]) {
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
+        static CGFloat const epsilon = .0001f;
+        static CGFloat const threshold = .3f;
 
-        CGRect rectInContainer =
-        [self.view
-         convertRect:calendarView.bounds
-         fromView:calendarView];
+        __weak typeof(self) this = self;
 
-        if (CGRectContainsPoint(rectInContainer, point)) {
-            result = calendarView;
-            *stop = YES;
-        }
-    }];
+        NSTimeInterval delayInSeconds = threshold;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void){
 
-    return result;
-}
+            NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+            NSTimeInterval timeDelta = now - _lastScrollTime;
 
-- (NSDate *)nearestDateAtPoint:(CGPoint)point {
-
-    PBCalendarView *calendarView = [self calendarViewAtPoint:point];
-
-    CGPoint pointInCalendarView =
-    [calendarView
-     convertPoint:point
-     fromView:self.view];
-
-    NSDateComponents *dateComponents =
-    [calendarView nearestDateComponentsAtPoint:pointInCalendarView];
-
-    if (dateComponents != nil) {
-
-        return
-        [NSDate
-         dateWithYear:dateComponents.year
-         month:dateComponents.month
-         day:dateComponents.day];
-    }
-    
-    return nil;
-}
-
-- (NSDate *)dateAtPoint:(CGPoint)point {
-
-    PBCalendarView *calendarView = [self calendarViewAtPoint:point];
-
-    CGPoint pointInCalendarView =
-    [calendarView
-     convertPoint:point
-     fromView:self.view];
-
-    NSDateComponents *dateComponents =
-    [calendarView dateComponentsAtPoint:pointInCalendarView];
-
-    if (dateComponents != nil) {
-
-        return
-        [NSDate
-         dateWithYear:dateComponents.year
-         month:dateComponents.month
-         day:dateComponents.day];
-    }
-
-    return nil;
-}
-
-- (void)enumerateCalendarViews:(void(^)(PBCalendarView *calendarView, NSInteger index, BOOL *stop))block {
-
-    if (block == nil) return;
-
-    NSArray *visiableIndexPaths = [self.tableView indexPathsForVisibleRows];
-
-    for (NSIndexPath *indexPath in visiableIndexPaths) {
-
-        PBCalendarView *calendarView = self.calendarViewsByIndexPath[indexPath];
-
-        if (calendarView != nil) {
-
-            BOOL stop = NO;
-            block(calendarView, indexPath.row, &stop);
-
-            if (stop) {
-                break;
+            if (timeDelta > (threshold-epsilon)) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [this hideMonthIndicatorContainer];
+                });
             }
-        }
+        });
     }
 }
 
-- (void)updateVisibleCalendarSelection {
+- (void)updateCurrentMonth {
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-        calendarView.selectedDateRange = self.selectedDateRange;
-    }];
+    CGFloat height =
+    CGRectGetHeight(self.view.frame) -
+    kPBCalendarSelectionViewControllerNavigationBarHeight -
+    kPBCalendarSelectionViewControllerToolbarHeight;
+
+    CGRect rect =
+    CGRectMake(0.0f,
+               kPBCalendarSelectionViewControllerNavigationBarHeight,
+               CGRectGetWidth(self.view.frame),
+               height);
+
+    NSArray *visibleMonthViews =
+    [self.calendarView
+     monthViewsBoundByRect:rect
+     inView:self.view
+     completelyVisible:YES];
+
+    BOOL visibleMonthsChanged =
+    [visibleMonthViews isEqualToArray:self.visibleMonthViews] == NO;
+
+    self.visibleMonthViews = visibleMonthViews;
+
+    NSDate *currentMonth = [self.calendarView currentMonth];
+
+    if ([currentMonth isEqualToDate:self.currentMonth] == NO) {
+
+        NSLocale *locale = [NSLocale currentLocale];
+
+        NSString *dateComponents = @"MMMMy";
+
+        NSString *dateFormat =
+        [NSDateFormatter
+         dateFormatFromTemplate:dateComponents
+         options:0
+         locale:locale];
+
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = dateFormat;
+
+        self.monthIndicatorLabel.text = [dateFormatter stringFromDate:currentMonth];
+
+        self.currentMonth = currentMonth;
+    }
+
+    if (visibleMonthsChanged) {
+        [self updateToolbarItems];
+    }
 }
 
 - (UINavigationBar *)activeNavigationBar {
@@ -879,115 +684,96 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     CGRectContainsPoint(navbarRect, point);
 }
 
-- (void)updateFloatingStartPointMarker:(CGPoint)point {
+#pragma mark - End Point
 
-    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
+- (NSDate *)dateAtPoint:(CGPoint)point {
 
-    if (pointInCalendarView.y < MAXFLOAT) {
-        
-        self.endPointMarkerView.hidden = NO;
-
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
-
-        self.endPointMarkerLeadingSpace.constant =
-        point.x - kPBCalendarSelectionViewEndPointRadius;
-
-        [self.endPointMarkerView layoutIfNeeded];
-    }
+    point = [self.calendarView convertPoint:point fromView:self.view];
+    return [self.calendarView dateAtPoint:point];
 }
 
-- (void)updateFloatingEndPointMarker:(CGPoint)point {
+- (NSDate *)nearestDateAtPoint:(CGPoint)point {
 
-    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
-
-    if (pointInCalendarView.y < MAXFLOAT) {
-
-        self.endPointMarkerView.hidden = NO;
-        self.endPointMarkerTopSpace.constant = pointInCalendarView.y;
-
-        self.endPointMarkerLeadingSpace.constant =
-        point.x - kPBCalendarSelectionViewEndPointRadius;
-
-        [self.endPointMarkerView layoutIfNeeded];
-    }
+    point = [self.calendarView convertPoint:point fromView:self.view];
+    return [self.calendarView nearestDateAtPoint:point];
 }
 
 - (CGPoint)endPointMarkingInCalendar {
 
-    __block CGPoint markerViewFinalPoint = CGPointZero;
+    if (self.draggingStartDate != nil) {
+        return [self.calendarView endPointMarkingInCalendar:YES];
+    } else if (self.draggingEndDate != nil) {
+        return [self.calendarView endPointMarkingInCalendar:NO];
+    }
 
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-
-        NSDate *monthStartDate =
-        [NSDate
-         dateWithYear:calendarView.year
-         month:calendarView.month
-         day:1];
-
-        NSRange days =
-        [monthStartDate
-         rangeOfUnit:NSCalendarUnitDay
-         inUnit:NSCalendarUnitMonth];
-
-        NSDate *monthEndDate =
-        [NSDate
-         dateWithYear:calendarView.year
-         month:calendarView.month
-         day:days.length];
-
-        PBDateRange *dateRange =
-        [PBDateRange
-         dateRangeWithStartDate:monthStartDate
-         endDate:monthEndDate];
-
-        if (self.draggingStartDate != nil) {
-            if ([dateRange dateWithinRange:self.selectedDateRange.startDate]) {
-
-                markerViewFinalPoint =
-                [self.view
-                 convertPoint:[calendarView pointForStartingMarkerView]
-                 fromView:calendarView];
-
-            }
-        } else if (self.draggingEndDate != nil) {
-            if ([dateRange dateWithinRange:self.selectedDateRange.endDate.midnight]) {
-
-                markerViewFinalPoint =
-                [self.view
-                 convertPoint:[calendarView pointForEndingMarkerView]
-                 fromView:calendarView];
-            }
-        }
-        
-    }];
-
-    return markerViewFinalPoint;
+    return CGPointMake(MAXFLOAT, MAXFLOAT);
 }
 
-#pragma mark - Gestures
+- (void)updateEndPointLabel:(NSDate *)date {
 
-- (void)handleTap:(UITapGestureRecognizer *)gesture {
+    if ([date.midnight isEqualToDate:[[NSDate date] midnight]]) {
+        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
+        self.endPointLabelTopSpace.constant = .5f;
+    } else {
+        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
+        self.endPointLabelTopSpace.constant = -1.0f;
+    }
 
-    if (gesture.state == UIGestureRecognizerStateEnded) {
+    NSDateComponents *day = [date components:NSCalendarUnitDay];
 
-        CGPoint location = [gesture locationInView:self.view];
+    self.endPointLabel.text = [NSString stringWithFormat:@"%d", day.day];
+}
 
-        if ([self pointInNavbarOrToolbar:location] == NO) {
+- (void)updateFloatingStartPointMarker:(CGPoint)point forDate:(NSDate *)date {
 
-            if (_rangeMode) {
-                [self handleRangeModeTap:gesture];
-            } else {
-                [self handleSingleSelectionTap:gesture];
-            }
-        }
+    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
+
+    if (pointInCalendarView.y < MAXFLOAT) {
+
+        CGPoint pointInView =
+        [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
+
+        self.endPointMarkerView.hidden = NO;
+
+        self.endPointMarkerTopSpace.constant = pointInView.y;
+
+        self.endPointMarkerLeadingSpace.constant =
+        point.x - kPBCalendarSelectionViewEndPointRadius;
+
+        self.endPointLabelLeadingSpace.constant =
+        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+
+        [self updateEndPointLabel:date];
+
+        [self.endPointMarkerView layoutIfNeeded];
     }
 }
 
-- (void)handleRangeModeTap:(UIGestureRecognizer *)gesture {
+- (void)updateFloatingEndPointMarker:(CGPoint)point forDate:(NSDate *)date {
 
-    CGPoint location = [gesture locationInView:self.view];
+    CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
 
-    NSDate *date = [self dateAtPoint:location];
+    if (pointInCalendarView.y < MAXFLOAT) {
+
+        CGPoint pointInView =
+        [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
+
+        self.endPointMarkerView.hidden = NO;
+        self.endPointMarkerTopSpace.constant = pointInView.y;
+
+        self.endPointMarkerLeadingSpace.constant =
+        point.x - kPBCalendarSelectionViewEndPointRadius;
+
+        self.endPointLabelLeadingSpace.constant =
+        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+
+        [self updateEndPointLabel:date];
+
+        [self.endPointMarkerView layoutIfNeeded];
+    }
+}
+
+- (PBDateRange *)dateRangeforDate:(NSDate *)date {
 
     if (date != nil) {
 
@@ -996,7 +782,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
          components:NSCalendarUnitWeekday
          fromDate:date];
 
-        NSInteger distanceStartOfWeek = self.firstDayOfTheWeek - dateComponents.weekday;
+        NSInteger distanceStartOfWeek = [NSCalendar firstWeekday] - dateComponents.weekday;
 
         dateComponents.weekday = 0;
 
@@ -1020,12 +806,154 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
             startDate = [endDate dateByAddingComponents:dateComponents];
         }
 
-        self.selectedDateRange =
+        return
         [PBDateRange
          dateRangeWithStartDate:startDate
          endDate:endDate];
+    }
+    
+    return nil;
+}
 
-        [self updateVisibleCalendarSelection];
+#pragma mark - UIScrollViewDelegate Conformance
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+
+    _isDragging = YES;
+
+    NSTimeInterval beginDraggingTime = [NSDate timeIntervalSinceReferenceDate];
+
+    NSTimeInterval delayInSeconds = .3f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+
+        if (_lastMonthIndicatorTrigger < beginDraggingTime) {
+            [self hideMonthIndicatorContainer];
+        }
+    });
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    _decelerating = decelerate;
+
+    _isDragging = NO;
+
+    if (decelerate) {
+        self.currentMonth = nil;
+        _lastScrollPosition = scrollView.contentOffset.y;
+        _lastScrollTime = [NSDate timeIntervalSinceReferenceDate];
+        [self.averageScrollSpeed clearRunningValues];
+    } else {
+        [self hideMonthIndicatorContainer];
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    _decelerating = NO;
+    [self updateCurrentMonth];
+    [self hideMonthIndicatorContainer];
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView
+                     withVelocity:(CGPoint)velocity
+              targetContentOffset:(inout CGPoint *)targetContentOffset {
+
+    if ([self willMonthIndicatorBeHidden] &&
+        ABS(velocity.y) > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
+
+        [self showMonthIndicatorContainer];
+        scrollView.decelerationRate = UIScrollViewDecelerationRateNormal * 2.0f;
+
+        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+
+        _lastMonthIndicatorTrigger = now;
+        _monthIndicatorStopTime = (3.0f * .8f) + now;
+    }
+
+//    if (velocity.y != 0.0f && [self willMonthIndicatorBeVisible]) {
+//
+//        CGPoint point = *targetContentOffset;
+//        point.y += kPBCalendarSelectionViewControllerNavigationBarHeight;
+//        point.y += (CGRectGetHeight(self.visibleRect) / 2.0f);
+//
+//        *targetContentOffset =
+//        [self.calendarView centeredContentOffsetAtPoint:point];
+//
+//        NSLog(@"targetContentOffset: %@", NSStringFromCGPoint(*targetContentOffset));
+//    }
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+    [self updateCurrentMonth];
+
+    if (_decelerating) {
+
+        CGFloat scrollPosition = scrollView.contentOffset.y;
+        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+
+        NSTimeInterval deltaT = now - _lastScrollTime;
+        CGFloat deltaY = scrollPosition - _lastScrollPosition;
+        CGFloat speed = ABS(deltaY / deltaT);
+
+        if (speed < 50000.0f ) {
+
+            self.averageScrollSpeed.value = speed;
+        }
+
+        if (now >= _monthIndicatorStopTime &&
+            self.averageScrollSpeed.value < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
+            [self hideMonthIndicatorContainer];
+        } else {
+            _lastMonthIndicatorTrigger = now;
+        }
+
+        _lastScrollPosition = scrollPosition;
+        _lastScrollTime = now;
+    }
+
+    [self ensureMonthIndicatorHides];
+}
+
+- (void)calendarViewSelected:(PBCalendarView *)calendarView
+      selectedRangeDidChange:(PBDateRange *)dateRange {
+
+    [self updateToolbarItems];
+}
+
+#pragma mark - Gestures
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture {
+
+    if (self.draggingStartDate != nil || self.draggingEndDate != nil || _isDragging) {
+        return;
+    }
+
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+
+        CGPoint location = [gesture locationInView:self.view];
+
+        if ([self pointInNavbarOrToolbar:location] == NO) {
+
+            if (_rangeMode) {
+                [self handleRangeModeTap:gesture];
+            } else {
+                [self handleSingleSelectionTap:gesture];
+            }
+        }
+    }
+}
+
+- (void)handleRangeModeTap:(UIGestureRecognizer *)gesture {
+
+    CGPoint location = [gesture locationInView:self.view];
+
+    NSDate *date = [self nearestDateAtPoint:location];
+
+    PBDateRange *dateRange = [self dateRangeforDate:date];
+
+    if (dateRange != nil) {
+        self.calendarView.selectedDateRange = dateRange;
     }
 }
 
@@ -1033,17 +961,14 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     CGPoint location = [gesture locationInView:self.view];
 
-    NSDate *date = [self dateAtPoint:location];
+    NSDate *date = [self nearestDateAtPoint:location];
 
     if (date != nil) {
-        self.selectedDateRange =
+
+        self.calendarView.selectedDateRange =
         [PBDateRange
          dateRangeWithStartDate:date
          endDate:date];
-
-        [self updateVisibleCalendarSelection];
-
-        NSLog(@"selectedDateRange: %@", self.selectedDateRange);
     }
 }
 
@@ -1094,24 +1019,19 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         if (self.draggingStartDate != nil || self.draggingEndDate != nil) {
 
-            self.tableView.scrollEnabled = NO;
+            self.calendarView.scrollEnabled = NO;
             self.displayLink.paused = NO;
-            self.hideEndPointMarkers = YES;
-            [self endPointMarkersHidden:YES];
+            self.calendarView.startPointHidden = self.draggingStartDate != nil;
+
+            if (_rangeMode) {
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+            } else {
+                self.calendarView.endPointHidden = self.draggingStartDate != nil;
+            }
+
+            [self.calendarView updateMonthViews:YES];
         }
     }
-}
-
-- (void)endPointMarkersHidden:(BOOL)hidden {
-
-    [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-
-        if (self.draggingStartDate != nil) {
-            calendarView.hideStartingPointMarker = hidden;
-        } else {
-            calendarView.hideEndingPointMarker = hidden;
-        }
-    }];
 }
 
 - (void)handlePanChanged:(UIGestureRecognizer *)gesture {
@@ -1138,16 +1058,18 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
                 self.draggingStartDate = date;
             } else if ([date isGreaterThan:endDate]) {
 
-                [self endPointMarkersHidden:NO];
                 self.draggingStartDate = nil;
                 self.draggingEndDate = date;
-                [self endPointMarkersHidden:YES];
+
+                self.calendarView.startPointHidden = self.draggingStartDate != nil;
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+                [self.calendarView updateMonthViews:YES];
 
                 startDate = endDate;
                 endDate = date;
             }
 
-            [self updateFloatingStartPointMarker:_lastPanningLocation];
+            [self updateFloatingStartPointMarker:_lastPanningLocation forDate:date];
 
         } else {
 
@@ -1158,20 +1080,22 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
                 endDate = startDate;
                 startDate = date;
 
-                [self endPointMarkersHidden:NO];
                 self.draggingEndDate = nil;
                 self.draggingStartDate = date;
-                [self endPointMarkersHidden:YES];
+
+                self.calendarView.startPointHidden = self.draggingStartDate != nil;
+                self.calendarView.endPointHidden = self.draggingEndDate != nil;
+                [self.calendarView updateMonthViews:YES];
             }
 
-            [self updateFloatingEndPointMarker:_lastPanningLocation];
+            [self updateFloatingEndPointMarker:_lastPanningLocation forDate:date];
         }
 
     } else {
 
         startDate = date;
 
-        [self updateFloatingStartPointMarker:_lastPanningLocation];
+        [self updateFloatingStartPointMarker:_lastPanningLocation forDate:date];
     }
 
     if ([startDate isEqualToDate:self.selectedDateRange.startDate] == NO ||
@@ -1179,22 +1103,18 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         if (_rangeMode) {
 
-            self.selectedDateRange =
+            self.calendarView.selectedDateRange =
             [PBDateRange
              dateRangeWithStartDate:startDate
              endDate:endDate];
 
         } else {
 
-            self.selectedDateRange =
+            self.calendarView.selectedDateRange =
             [PBDateRange
              dateRangeWithStartDate:startDate
              endDate:startDate];
         }
-
-        [self enumerateCalendarViews:^(PBCalendarView *calendarView, NSInteger index, BOOL *stop) {
-            calendarView.selectedDateRange = self.selectedDateRange;
-        }];
     }
 }
 
@@ -1205,7 +1125,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     if (delta >= kPBCalendarSelectionOutOfBoundsUpdatePeriod) {
 
-        CGPoint contentOffset = self.tableView.contentOffset;
+        CGPoint contentOffset = self.calendarView.contentOffset;
         CGFloat speed = 0.0f;
         CGFloat advancement = 0.0f;
 
@@ -1227,7 +1147,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         }
 
         contentOffset.y += speed * advancement;
-        self.tableView.contentOffset = contentOffset;
+        self.calendarView.contentOffset = contentOffset;
 
         _lastOutOfBoundsUpdate = now;
     }
@@ -1235,65 +1155,48 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)handlePanEnded:(UIPanGestureRecognizer *)gesture {
 
-    self.tableView.scrollEnabled = YES;
+    self.calendarView.scrollEnabled = YES;
     self.displayLink.paused = YES;
-    self.hideEndPointMarkers = NO;
+
+    if (self.draggingStartDate == nil && self.draggingEndDate == nil) return;
 
     CGPoint markerViewFinalPoint = [self endPointMarkingInCalendar];
 
+    markerViewFinalPoint =
+    [self.view
+     convertPoint:markerViewFinalPoint
+     fromView:self.calendarView];
+
     [self.endPointMarkerView setNeedsLayout];
 
-    NSTimeInterval t = .15f;
-
-    CGPoint velocity = [gesture velocityInView:gesture.view];
-    CGFloat xPos = self.endPointMarkerLeadingSpace.constant + velocity.x * t / 4.0f;
-    CGFloat yPos = self.endPointMarkerTopSpace.constant + velocity.y * t / 4.0f;
-
     [UIView
-     animateWithDuration:t
+     animateWithDuration:.3
      animations:^{
 
-         self.endPointMarkerTopSpace.constant = yPos;
-         self.endPointMarkerLeadingSpace.constant = xPos;
+         self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
+         self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x;
+         self.endPointLabelLeadingSpace.constant = 0.0f;
 
          [self.endPointMarkerView layoutIfNeeded];
 
      } completion:^(BOOL finished) {
 
-         [self.endPointMarkerView setNeedsLayout];
-         
-         [UIView
-          animateWithDuration:.15f
-          delay:0.0f
-          usingSpringWithDamping:.7f
-          initialSpringVelocity:15.0f
-          options:0
-          animations:^{
+         self.endPointMarkerView.hidden = YES;
 
-              self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
-              self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x + 4.0f;
+         if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
+             return;
+         }
 
-              [self.endPointMarkerView layoutIfNeeded];
+         self.calendarView.startPointHidden = NO;
+         self.calendarView.endPointHidden = NO;
+         [self.calendarView updateMonthViews:NO];
 
-          } completion:^(BOOL finished) {
-
-              self.endPointMarkerView.hidden = YES;
-
-              if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
-                  return;
-              }
-
-              [self endPointMarkersHidden:NO];
-
-              if (_rangeMode &&
-                  self.modeSwitchOn &&
-                  [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
-                  [self toggleRangeMode];
-              }
-          }];
+         if (_rangeMode &&
+             self.modeSwitchOn &&
+             [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
+             [self toggleRangeMode];
+         }
      }];
-
-    NSLog(@"selectedDateRange: %@", self.selectedDateRange);
 }
 
 #pragma mark - UIGestureRecognizerDelegate Conformance
