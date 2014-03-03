@@ -17,6 +17,8 @@
 #import "PBListViewDefaultCell.h"
 #import "PBListItemRenderer.h"
 #import "PBPaginationRenderer.h"
+#import "PBListTextItem.h"
+#import "PBListTextRenderer.h"
 
 #import "PBCollectionViewController.h"
 #import "PBCollectionItem.h"
