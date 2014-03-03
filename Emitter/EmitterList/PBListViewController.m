@@ -301,14 +301,16 @@ static NSInteger const kPBListDefaultTag = 105;
     for (PBSectionItem *sectionItem in self.dataSource) {
 
         NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
-                 @"dataSource not a PBSectionItem class (or subclass)");
+                 @"dataSource not a PBSectionItem class (or subclass): %@",
+                 NSStringFromClass([sectionItem class]));
 
         NSInteger row = 0;
 
         for (PBListItem *item in sectionItem.items) {
 
             NSAssert([item isKindOfClass:[PBListItem class]],
-                     @"section item not a PBListItem class (or subclass)");
+                     @"section item not a PBListItem class (or subclass): %@",
+                     NSStringFromClass([item class]));
 
             if (item.isSelected) {
 
@@ -364,6 +366,11 @@ static NSInteger const kPBListDefaultTag = 105;
     NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
 
     for (PBListItem *item in addedItems) {
+
+        NSAssert([item isKindOfClass:[PBListItem class]],
+                 @"list view item is not a PBListItem: %@",
+                 NSStringFromClass([item class]));
+
         item.sectionItem = sectionItem;
         [sectionItems addObject:item];
     }
@@ -540,7 +547,8 @@ static NSInteger const kPBListDefaultTag = 105;
         item = sectionItem.items[row];
 
         NSAssert([item isKindOfClass:[PBListItem class]],
-                 @"item not a PBListItem");
+                 @"item not a PBListItem: %@",
+                 NSStringFromClass([item class]));
     }
 
     return item;
@@ -1063,7 +1071,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
     if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
