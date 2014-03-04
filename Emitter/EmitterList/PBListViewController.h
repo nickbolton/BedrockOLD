@@ -17,6 +17,7 @@ typedef NS_ENUM (NSInteger, PBListViewAutoSelectionType) {
 };
 
 @class TCTimePeriodSelectorView;
+@class PBSectionItem;
 @class PBListItem;
 @class PBActionDelegate;
 
@@ -35,6 +36,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic, assign) id doneTarget;
 @property (nonatomic) SEL doneSelector;
 @property (nonatomic) BOOL dismissOnDone;
+@property (nonatomic) BOOL addSwipeDownToDismissKeyboard;
 @property (nonatomic, strong) UIColor *titleColor;
 @property (nonatomic, strong) UIColor *valueColor;
 @property (nonatomic, strong) UIColor *actionColor;
@@ -81,9 +83,16 @@ extern NSString * const kPBListActionCellID;
 - (void)updateListViewItemHeight;
 - (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)insertSectionItem:(PBSectionItem *)sectionItem atSection:(NSInteger)section commitUpdates:(BOOL)commitUpdates;
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem atSection:(NSInteger)section commitUpdates:(BOOL)commitUpdates;
+- (void)removeSectionItemAtSection:(NSInteger)section commitUpdates:(BOOL)commitUpdates;
+- (void)insertSectionItem:(PBSectionItem *)sectionItem atSection:(NSInteger)section;
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem atSection:(NSInteger)section;
+- (void)removeSectionItemAtSection:(NSInteger)section;
 - (void)appendItemsToDataSource:(NSArray *)items;
 - (void)appendItemsToDataSource:(NSArray *)items inSection:(NSInteger)section;
 - (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
 - (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath;
+- (void)insertItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
 
 @end

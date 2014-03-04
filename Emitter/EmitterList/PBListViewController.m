@@ -25,6 +25,11 @@ static NSInteger const kPBListCheckedTag = 103;
 static NSInteger const kPBListDefaultTag = 105;
 
 @interface PBListViewController () <UITableViewDataSource, UITableViewDelegate> {
+
+    BOOL _setupNotificationsCalled;
+    BOOL _setupNavigationBarCalled;
+    BOOL _setupTableViewCalled;
+    BOOL _reloadDataSourceCalled;
 }
 
 @property (nonatomic, readwrite) NSArray *dataSource;
@@ -89,6 +94,8 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)setupNotifications {
 
+    _setupNotificationsCalled = YES;
+
     [[NSNotificationCenter defaultCenter]
      addObserver:self
      selector:@selector(keyboardWillHide:)
@@ -103,6 +110,8 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)setupNavigationBar {
+
+    _setupNavigationBarCalled = YES;
 
     if (self.hasCancelNavigationBarItem) {
 
@@ -157,6 +166,8 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)setupTableView {
 
+    _setupTableViewCalled = YES;
+
     UINib *nib =
     [UINib
      nibWithNibName:NSStringFromClass([PBListCell class])
@@ -207,6 +218,10 @@ static NSInteger const kPBListDefaultTag = 105;
     [self setupNotifications];
     [self setupTableView];
     [self preRegisterCellNibsAndClasses];
+
+    NSAssert(_setupNavigationBarCalled, @"You must call [super setupNavigationBar]");
+    NSAssert(_setupNotificationsCalled, @"You must call [super setupNotifications]");
+    NSAssert(_setupTableViewCalled, @"You must call [super setupTableView]");
 
     if (self.tableBackgroundColor != nil) {
         self.tableView.backgroundColor = self.tableBackgroundColor;
@@ -342,6 +357,100 @@ static NSInteger const kPBListDefaultTag = 105;
     self.listViewItemHeight = self.listViewItemHeight;
 }
 
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+                atSection:(NSInteger)section {
+    [self insertSectionItem:sectionItem atSection:section commitUpdates:YES];
+}
+
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem atSection:(NSInteger)section {
+    [self replaceSectionItem:sectionItem atSection:section commitUpdates:YES];
+}
+
+- (void)removeSectionItemAtSection:(NSInteger)section {
+    [self removeSectionItemAtSection:section commitUpdates:YES];
+}
+
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+                atSection:(NSInteger)section
+            commitUpdates:(BOOL)commitUpdates {
+
+    NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+             @"dataSource not a PBSectionItem class (or subclass): %@",
+             NSStringFromClass([sectionItem class]));
+
+    if (commitUpdates) {
+        [self.tableView beginUpdates];
+    }
+
+    NSMutableArray *dataSource = [self.dataSource mutableCopy];
+
+    section = MIN(section, dataSource.count);
+    [dataSource insertObject:sectionItem atIndex:section];
+    self.dataSource = dataSource;
+
+    [self.tableView
+     insertSections:[NSIndexSet indexSetWithIndex:section]
+     withRowAnimation:UITableViewRowAnimationAutomatic];
+
+    if (commitUpdates) {
+        [self.tableView endUpdates];
+    }
+}
+
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem
+                 atSection:(NSInteger)section
+             commitUpdates:(BOOL)commitUpdates {
+
+    NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+             @"dataSource not a PBSectionItem class (or subclass): %@",
+             NSStringFromClass([sectionItem class]));
+
+    if (commitUpdates) {
+        [self.tableView beginUpdates];
+    }
+
+    NSMutableArray *dataSource = [self.dataSource mutableCopy];
+
+    section = MIN(section, dataSource.count);
+    [dataSource replaceObjectAtIndex:section withObject:sectionItem];
+    self.dataSource = dataSource;
+
+    [self.tableView
+     reloadSections:[NSIndexSet indexSetWithIndex:section]
+     withRowAnimation:UITableViewRowAnimationAutomatic];
+
+    if (commitUpdates) {
+        [self.tableView endUpdates];
+    }
+}
+
+- (void)removeSectionItemAtSection:(NSInteger)section
+                     commitUpdates:(BOOL)commitUpdates {
+
+    if (section < self.dataSource.count) {
+
+        if (commitUpdates) {
+            [self.tableView beginUpdates];
+        }
+
+        NSMutableArray *dataSource = [self.dataSource mutableCopy];
+        [dataSource removeObjectAtIndex:section];
+        self.dataSource = dataSource;
+
+        [self.tableView
+         deleteSections:[NSIndexSet indexSetWithIndex:section]
+         withRowAnimation:UITableViewRowAnimationAutomatic];
+
+        if (commitUpdates) {
+            [self.tableView endUpdates];
+        }
+
+    } else {
+
+        PBLog(@"WARN : tried to remove non-existent section %ld", (long)section);
+    }
+}
+
 - (void)appendItemsToDataSource:(NSArray *)items {
     [self appendItemsToDataSource:items inSection:0];
 }
@@ -400,6 +509,28 @@ static NSInteger const kPBListDefaultTag = 105;
     [self.tableView
      insertRowsAtIndexPaths:indexPaths
      withRowAnimation:UITableViewRowAnimationBottom];
+}
+
+- (void)insertItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath {
+
+    NSAssert([item isKindOfClass:[PBListItem class]],
+             @"list view item is not a PBListItem: %@",
+             NSStringFromClass([item class]));
+
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+    if (sectionItem != nil) {
+
+        NSInteger row = MIN(sectionItem.items.count, indexPath.row);
+
+        item.sectionItem = sectionItem;
+
+        NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
+        [sectionItems insertObject:item atIndex:row];
+        sectionItem.items = sectionItems;
+
+
+    }
 }
 
 - (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -527,8 +658,7 @@ static NSInteger const kPBListDefaultTag = 105;
 - (BOOL)itemExistsAtIndexPath:(NSIndexPath *)indexPath {
 
     PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
-    PBSectionItem *item =
-    [self itemAtRow:indexPath.row inSectionItem:sectionItem];
+    PBListItem *item = [self itemAtRow:indexPath.row inSectionItem:sectionItem];
 
     return item != nil;
 }
@@ -589,6 +719,8 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)reloadDataSource {
 
+    _reloadDataSourceCalled = YES;
+
     if (self.providedDataSource.count > 0) {
         self.dataSource = self.providedDataSource;
     } else {
@@ -642,7 +774,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)reloadData {
 
+    _reloadDataSourceCalled = NO;
     [self reloadDataSource];
+
+    NSAssert(_reloadDataSourceCalled, @"You must call [super reloadDataSource]");
 
     for (PBSectionItem *sectionItem in self.dataSource) {
         [self clearSectionConfigured:sectionItem];
@@ -806,20 +941,26 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)keyboardWillShow:(NSNotification *)notification {
 
-    self.swipeGesture =
-    [[UISwipeGestureRecognizer alloc]
-     initWithTarget:self action:@selector(dismissKeyboard:)];
+    if (self.addSwipeDownToDismissKeyboard) {
 
-    self.tableView.scrollEnabled = NO;
-    self.swipeGesture.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.tableView addGestureRecognizer:self.swipeGesture];
+        self.swipeGesture =
+        [[UISwipeGestureRecognizer alloc]
+         initWithTarget:self action:@selector(dismissKeyboard:)];
+
+        self.tableView.scrollEnabled = NO;
+        self.swipeGesture.direction = UISwipeGestureRecognizerDirectionDown;
+        [self.tableView addGestureRecognizer:self.swipeGesture];
+    }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
 
-    [self.tableView removeGestureRecognizer:self.swipeGesture];
-    self.swipeGesture = nil;
-    self.tableView.scrollEnabled = YES;
+    if (self.addSwipeDownToDismissKeyboard) {
+        
+        [self.tableView removeGestureRecognizer:self.swipeGesture];
+        self.swipeGesture = nil;
+        self.tableView.scrollEnabled = YES;
+    }
 }
 
 - (void)dismissKeyboard:(UISwipeGestureRecognizer *)gesture {

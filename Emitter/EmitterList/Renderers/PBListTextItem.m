@@ -81,6 +81,10 @@
     } else {
         textField.clearButtonMode = UITextFieldViewModeNever;
     }
+
+    if (self.textEditingWillBegin != nil) {
+        self.textEditingWillBegin(self);
+    }
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {

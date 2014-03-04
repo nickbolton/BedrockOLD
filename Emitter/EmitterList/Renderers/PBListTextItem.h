@@ -15,6 +15,7 @@
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) NSString *placeholder;
 @property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic, copy) void (^textEditingWillBegin)(PBListTextItem *item);
 
 + (PBListTextItem *)textItemWithText:(NSString *)text
                            textColor:(UIColor *)textColor

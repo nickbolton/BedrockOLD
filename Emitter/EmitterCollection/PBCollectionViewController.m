@@ -18,6 +18,11 @@ NSString * const kPBCollectionViewSupplimentaryKind = @"kPBCollectionViewSupplim
 NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecorationKind";
 
 @interface PBCollectionViewController () {
+
+    BOOL _setupNotificationsCalled;
+    BOOL _setupNavigationBarCalled;
+    BOOL _setupCollectionViewCalled;
+    BOOL _reloadDataSourceCalled;
 }
 
 @property (nonatomic, readwrite) IBOutlet PBCollectionLayout *collectionLayout;
@@ -68,6 +73,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)setupNotifications {
 
+    _setupNotificationsCalled = YES;
+
     [[NSNotificationCenter defaultCenter]
      addObserver:self
      selector:@selector(keyboardWillHide:)
@@ -82,6 +89,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 }
 
 - (void)setupNavigationBar {
+
+    _setupNavigationBarCalled = YES;
 
     if (self.hasCancelNavigationBarItem) {
 
@@ -136,6 +145,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)setupCollectionView {
 
+    _setupCollectionViewCalled = YES;
+
     self.collectionView.collectionViewLayout = self.collectionLayout;
     self.collectionView.dataSource = self;
     self.collectionView.delegate = self;
@@ -172,6 +183,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     [self setupCollectionView];
     [self preRegisterCellNibsAndClasses];
 
+    NSAssert(_setupNavigationBarCalled, @"You must call [super setupNavigationBar]");
+    NSAssert(_setupNotificationsCalled, @"You must call [super setupNotifications]");
+    NSAssert(_setupCollectionViewCalled, @"You must call [super setupCollectionView]");
+
     if (self.reloadDataOnViewLoad) {
         [self reloadData];
     }
@@ -200,20 +215,26 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)keyboardWillShow:(NSNotification *)notification {
 
-    self.swipeGesture =
-    [[UISwipeGestureRecognizer alloc]
-     initWithTarget:self action:@selector(dismissKeyboard:)];
+    if (self.addSwipeDownToDismissKeyboard) {
 
-    self.collectionView.scrollEnabled = NO;
-    self.swipeGesture.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.collectionView addGestureRecognizer:self.swipeGesture];
+        self.swipeGesture =
+        [[UISwipeGestureRecognizer alloc]
+         initWithTarget:self action:@selector(dismissKeyboard:)];
+
+        self.collectionView.scrollEnabled = NO;
+        self.swipeGesture.direction = UISwipeGestureRecognizerDirectionDown;
+        [self.collectionView addGestureRecognizer:self.swipeGesture];
+    }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
 
-    [self.collectionView removeGestureRecognizer:self.swipeGesture];
-    self.swipeGesture = nil;
-    self.collectionView.scrollEnabled = YES;
+    if (self.addSwipeDownToDismissKeyboard) {
+        
+        [self.collectionView removeGestureRecognizer:self.swipeGesture];
+        self.swipeGesture = nil;
+        self.collectionView.scrollEnabled = YES;
+    }
 }
 
 - (void)dismissKeyboard:(UISwipeGestureRecognizer *)gesture {
@@ -474,6 +495,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)reloadDataSource {
 
+    _reloadDataSourceCalled = YES;
+
     if (self.providedDataSource != nil) {
         self.dataSource = self.providedDataSource;
     } else {
@@ -525,7 +548,11 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)reloadData {
 
+    _reloadDataSourceCalled = NO;
+
     [self reloadDataSource];
+
+    NSAssert(_reloadDataSourceCalled, @"You must call [super reloadDataSource]");
 
     for (PBSectionItem *sectionItem in self.dataSource) {
         [self clearSectionConfigured:sectionItem];
