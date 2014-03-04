@@ -20,8 +20,9 @@
                            textColor:(UIColor *)textColor
                                 font:(UIFont *)font
                          placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(NSString *updatedText))textUpdatedBlock;
+                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock;
 
 - (void)textChanged:(UITextField *)textField;
+- (void)resignFirstResponder;
 
 @end

@@ -26,7 +26,8 @@
     }
 }
 
-- (UITextField *)cellTextField:(PBListViewDefaultCell *)cell {
+- (UITextField *)cellTextField:(PBListViewDefaultCell *)cell
+                          item:(PBListTextItem *)item {
 
     static NSInteger const textFieldTag = 999;
 
@@ -37,10 +38,14 @@
         textField = [[UITextField alloc] init];
         textField.translatesAutoresizingMaskIntoConstraints = NO;
         textField.tag = textFieldTag;
+        textField.clearButtonMode = UITextFieldViewModeNever;
 
         [cell.contentView addSubview:textField];
 
-        [NSLayoutConstraint expandHeightToSuperview:textField];
+        [NSLayoutConstraint alignToTop:textField withPadding:item.textInsets.top];
+        [NSLayoutConstraint alignToBottom:textField withPadding:-item.textInsets.bottom];
+        [NSLayoutConstraint alignToLeft:textField withPadding:item.textInsets.left];
+        [NSLayoutConstraint alignToRight:textField withPadding:-item.textInsets.right];
     }
 
     return textField;
@@ -49,7 +54,7 @@
 - (void)renderCell:(PBListViewDefaultCell *)cell
           withItem:(PBListTextItem *)item {
 
-    UITextField *textField = [self cellTextField:cell];
+    UITextField *textField = [self cellTextField:cell item:item];
 
     textField.delegate = item;
     textField.text = item.text;

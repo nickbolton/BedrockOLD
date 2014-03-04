@@ -13,8 +13,9 @@
 
 @interface PBListTextItem()
 
-@property (nonatomic, copy) void(^textUpdatedBlock)(NSString *updatedText);
+@property (nonatomic, copy) void(^textUpdatedBlock)(PBListTextItem *item, NSString *updatedText);
 @property (nonatomic, weak) PBListViewController *listViewController;
+@property (nonatomic, weak) UITextField *textField;
 
 @end
 
@@ -24,7 +25,7 @@
                            textColor:(UIColor *)textColor
                                 font:(UIFont *)font
                          placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(NSString *updatedText))textUpdatedBlock {
+                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock {
 
     PBListTextItem *item = [[PBListTextItem alloc] init];
 
@@ -54,11 +55,37 @@
 
 #pragma mark - Public
 
+- (void)resignFirstResponder {
+    [self.textField resignFirstResponder];
+}
+
 - (void)textChanged:(UITextField *)textField {
 
-    if (self.textUpdatedBlock != nil) {
-        self.textUpdatedBlock(textField.text);
+    if (textField.text.trimmedValue.length > 0) {
+        textField.clearButtonMode = UITextFieldViewModeAlways;
+    } else {
+        textField.clearButtonMode = UITextFieldViewModeNever;
     }
+
+    if (self.textUpdatedBlock != nil) {
+        self.textUpdatedBlock(self, textField.text);
+    }
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+
+    self.textField = textField;
+
+    if (textField.text.trimmedValue.length > 0) {
+        textField.clearButtonMode = UITextFieldViewModeAlways;
+    } else {
+        textField.clearButtonMode = UITextFieldViewModeNever;
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    self.textField = nil;
+    textField.clearButtonMode = UITextFieldViewModeNever;
 }
 
 #pragma mark - Getters and Setters
