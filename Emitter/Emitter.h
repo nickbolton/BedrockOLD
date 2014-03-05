@@ -19,6 +19,8 @@
 #import "PBPaginationRenderer.h"
 #import "PBListTextItem.h"
 #import "PBListTextRenderer.h"
+#import "PBListDatePickerItem.h"
+#import "PBListDatePickerRenderer.h"
 
 #import "PBCollectionViewController.h"
 #import "PBCollectionItem.h"
