@@ -14,6 +14,7 @@
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) NSString *placeholder;
+@property (nonatomic, weak) UITextField *textField;
 @property (nonatomic) UIEdgeInsets textInsets;
 @property (nonatomic, copy) void (^textEditingWillBegin)(PBListTextItem *item);
 
@@ -25,5 +26,6 @@
 
 - (void)textChanged:(UITextField *)textField;
 - (void)resignFirstResponder;
+- (void)becomeFirstResponder;
 
 @end

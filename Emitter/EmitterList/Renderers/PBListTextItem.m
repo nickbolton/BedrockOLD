@@ -11,11 +11,13 @@
 #import "PBListTextRenderer.h"
 #import "PBListViewController.h"
 
-@interface PBListTextItem()
+@interface PBListTextItem() {
+
+    BOOL _markFirstResponder;
+}
 
 @property (nonatomic, copy) void(^textUpdatedBlock)(PBListTextItem *item, NSString *updatedText);
 @property (nonatomic, weak) PBListViewController *listViewController;
-@property (nonatomic, weak) UITextField *textField;
 
 @end
 
@@ -55,8 +57,26 @@
 
 #pragma mark - Public
 
+- (void)setTextField:(UITextField *)textField {
+    _textField = textField;
+
+    if (_markFirstResponder) {
+        [self.textField becomeFirstResponder];
+        _markFirstResponder = NO;
+    }
+}
+
 - (void)resignFirstResponder {
     [self.textField resignFirstResponder];
+}
+
+- (void)becomeFirstResponder {
+
+    if (self.textField != nil) {
+        [self.textField becomeFirstResponder];
+    } else {
+        _markFirstResponder = YES;
+    }
 }
 
 - (void)textChanged:(UITextField *)textField {
@@ -73,8 +93,6 @@
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-
-    self.textField = textField;
 
     if (textField.text.trimmedValue.length > 0) {
         textField.clearButtonMode = UITextFieldViewModeAlways;

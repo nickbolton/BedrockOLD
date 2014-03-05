@@ -13,6 +13,8 @@
 @property (nonatomic, readonly) NSString *headerTitle;
 @property (nonatomic, readonly) NSString *footerTitle;
 @property (nonatomic, strong) NSArray *items;
+@property (nonatomic) CGFloat headerHeight;
+@property (nonatomic) CGFloat footerHeight;
 
 + (PBSectionItem *)sectionItemWithHeaderTitle:(NSString *)headerTitle
                                   footerTitle:(NSString *)footerTitle

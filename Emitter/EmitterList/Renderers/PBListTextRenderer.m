@@ -56,6 +56,8 @@
 
     UITextField *textField = [self cellTextField:cell item:item];
 
+    item.textField = textField;
+
     textField.delegate = item;
     textField.text = item.text;
     textField.textColor = item.textColor;

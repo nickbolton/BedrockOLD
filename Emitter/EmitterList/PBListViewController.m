@@ -1267,4 +1267,14 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
     return sectionItem.footerTitle;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.headerHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    PBSectionItem *sectionItem = [self sectionItemAtSection:section];
+    return sectionItem.footerHeight;
+}
+
 @end
