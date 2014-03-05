@@ -59,7 +59,7 @@
 
     item.datePicker = datePicker;
 
-    datePicker.date = item.date;
+    datePicker.date = item.date != nil ? item.date : [NSDate date];
 
     [self renderControl:datePicker withItem:item];
 }

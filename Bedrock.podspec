@@ -28,6 +28,6 @@ Pod::Spec.new do |s|
   s.subspec 'Emitter' do |em|
     em.dependency 'Bedrock/Core'
     em.ios.source_files  = 'Emitter/**/*.{h,m}'
-    em.ios.resources = 'Emitter/EmitterList/PBListCell.xib', 'Emitter/EmitterList/PBTitleCell.xib'
+    em.ios.resources = 'Emitter/EmitterList/PBListCell.xib', 'Emitter/EmitterList/PBTitleCell.xib', 'Emitter/EmitterList/PBListViewExpandableCell.xib'
   end
 end

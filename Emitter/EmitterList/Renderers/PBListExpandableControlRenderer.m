@@ -29,6 +29,14 @@
 
     cell.titleLeadingSpace.constant = item.titleMargin;
     cell.valueTrailingSpace.constant = item.valueMargin;
+
+    cell.titleLabel.font = item.titleFont;
+    cell.titleLabel.textColor = item.titleColor;
+    cell.titleLabel.text = item.title;
+
+    cell.valueLabel.font = item.valueFont;
+    cell.valueLabel.textColor = item.valueColor;
+    cell.valueLabel.text = item.value;
 }
 
 - (void)addExpandedView:(UIView *)view

@@ -34,6 +34,7 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
     item.cellID = NSStringFromClass([self class]);
     item.cellClass = [PBListViewExpandableCell class];
     item.valueUpdatedBlock = valueUpdatedBlock;
+    item.hasDisclosure = YES;
 
     return item;
 }
