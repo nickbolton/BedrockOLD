@@ -614,6 +614,46 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+- (void)updateItemStates {
+
+    NSInteger section = 0;
+
+    NSMutableDictionary *visibleCellsDict = [NSMutableDictionary dictionary];
+
+    for (PBCollectionDefaultCell *cell in self.collectionView.visibleCells) {
+
+        if ([cell isKindOfClass:[PBCollectionDefaultCell class]]) {
+            visibleCellsDict[cell.indexPath] = cell;
+        }
+    }
+
+    for (PBSectionItem *sectionItem in self.dataSource) {
+
+        NSInteger itemCount = 0;
+
+        for (PBCollectionItem *item in sectionItem.items) {
+
+            NSIndexPath *oldIndexPath = item.indexPath;
+
+            NSIndexPath *indexPath =
+            [NSIndexPath
+             indexPathForItem:itemCount
+             inSection:section];
+
+            if ([oldIndexPath isEqual:indexPath] == NO) {
+
+                item.indexPath = indexPath;
+
+                PBCollectionDefaultCell *cell = visibleCellsDict[oldIndexPath];
+                cell.indexPath = indexPath;
+            }
+            itemCount++;
+        }
+
+        section++;
+    }
+}
+
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

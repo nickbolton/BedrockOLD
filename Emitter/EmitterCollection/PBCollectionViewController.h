@@ -58,5 +58,6 @@ extern NSString * const kPBCollectionViewDecorationKind;
 - (void)updateLayout:(PBCollectionLayout *)layout;
 - (void)updateLayout:(PBCollectionLayout *)layout
           completion:(void(^)(void))completionBlock;
+- (void)updateItemStates;
 
 @end
