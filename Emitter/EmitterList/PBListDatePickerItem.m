@@ -42,7 +42,11 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
 
 - (void)valueChanged:(UIDatePicker *)datePicker {
 
+
+    BOOL reloadItemOnValueChange = self.reloadItemOnValueChange;
+    self.reloadItemOnValueChange = NO;
     self.date = datePicker.date;
+    self.reloadItemOnValueChange = reloadItemOnValueChange;
 
     [super valueChanged:datePicker];
 }

@@ -26,4 +26,10 @@
      forControlEvents:UIControlEventEditingChanged];
 }
 
+- (void)renderItem:(PBListItem *)item
+       atIndexPath:(NSIndexPath *)indexPath
+            inCell:(UITableViewCell *)cell
+      withListView:(PBListViewController *)listViewController {
+}
+
 @end

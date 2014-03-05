@@ -23,6 +23,7 @@
     self = [super init];
     if (self) {
         [self setupBindingBlock];
+        self.reloadItemOnValueChange = YES;
     }
     return self;
 }
@@ -40,9 +41,12 @@
 
 - (void)setItemValue:(id)value {
     _itemValue = value;
-    [self.listViewController
-     reloadTableRowAtIndexPath:self.indexPath
-     withAnimation:UITableViewRowAnimationAutomatic];
+
+    if (self.reloadItemOnValueChange) {
+        [self.listViewController
+         reloadTableRowAtIndexPath:self.indexPath
+         withAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 - (void)setControl:(UIControl *)control {
@@ -85,6 +89,7 @@
 }
 
 - (void)controlDidEndEditing:(UIControl *)control {
+    _markFirstResponder = NO;
     self.control = nil;
 }
 

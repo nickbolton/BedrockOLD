@@ -15,6 +15,7 @@
 @property (nonatomic, weak) UIControl *control;
 @property (nonatomic, copy) void (^editingDidBegin)(PBListControlItem *item);
 @property (nonatomic, copy) void(^valueUpdatedBlock)(PBListControlItem *item, id updatedValue);
+@property (nonatomic) BOOL reloadItemOnValueChange;
 
 - (void)valueChanged:(UIControl *)control;
 - (void)resignFirstResponder;

@@ -20,6 +20,12 @@
             inCell:(PBListViewExpandableCell *)cell
       withListView:(PBListViewController *)listViewController {
 
+    [super
+     renderItem:item
+     atIndexPath:indexPath
+     inCell:cell
+     withListView:listViewController];
+
     if ([item isKindOfClass:[PBListDatePickerItem class]]) {
 
         [self renderCell:cell withItem:item];

@@ -49,7 +49,10 @@
         textField.clearButtonMode = UITextFieldViewModeNever;
     }
 
+    BOOL reloadItemOnValueChange = self.reloadItemOnValueChange;
+    self.reloadItemOnValueChange = NO;
     self.text = textField.text;
+    self.reloadItemOnValueChange = reloadItemOnValueChange;
 
     [super valueChanged:textField];
 }
