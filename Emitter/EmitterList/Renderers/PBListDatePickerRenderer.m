@@ -1,79 +1,61 @@
 //
-//  PBListTextRenderer.m
+//  PBListDatePickerRenderer.m
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
-//
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
-#import "PBListTextRenderer.h"
-#import "PBListTextItem.h"
-#import "PBListViewDefaultCell.h"
+#import "PBListDatePickerRenderer.h"
+#import "PBListDatePickerItem.h"
+#import "PBListViewExpandableCell.h"
 
-@interface PBListTextRenderer()
+@interface PBListDatePickerRenderer()
 @end
 
-@implementation PBListTextRenderer
+@implementation PBListDatePickerRenderer
 
-- (void)renderItem:(PBListTextItem *)item
+- (void)renderItem:(PBListDatePickerItem *)item
        atIndexPath:(NSIndexPath *)indexPath
-            inCell:(PBListViewDefaultCell *)cell
+            inCell:(PBListViewExpandableCell *)cell
       withListView:(PBListViewController *)listViewController {
 
-    if ([item isKindOfClass:[PBListTextItem class]]) {
+    if ([item isKindOfClass:[PBListDatePickerItem class]]) {
 
         [self renderCell:cell withItem:item];
     }
 }
 
-- (UITextField *)cellTextField:(PBListViewDefaultCell *)cell
-                          item:(PBListTextItem *)item {
+- (UIDatePicker *)cellDatePicker:(PBListViewExpandableCell *)cell
+                            item:(PBListDatePickerItem *)item {
 
-    static NSInteger const textFieldTag = 999;
+    static NSInteger const datePickerTag = 998;
 
-    UITextField *textField = (id)[cell viewWithTag:textFieldTag];
+    UIDatePicker *datePicker = (id)[cell viewWithTag:datePickerTag];
 
-    if (textField == nil) {
+    if (datePicker == nil) {
 
-        textField = [[UITextField alloc] init];
-        textField.translatesAutoresizingMaskIntoConstraints = NO;
-        textField.tag = textFieldTag;
-        textField.clearButtonMode = UITextFieldViewModeNever;
-
-        [cell.contentView addSubview:textField];
-
-        [NSLayoutConstraint alignToTop:textField withPadding:item.textInsets.top];
-        [NSLayoutConstraint alignToBottom:textField withPadding:-item.textInsets.bottom];
-        [NSLayoutConstraint alignToLeft:textField withPadding:item.textInsets.left];
-        [NSLayoutConstraint alignToRight:textField withPadding:-item.textInsets.right];
+        datePicker = [[UIDatePicker alloc] init];
+        datePicker.datePickerMode = UIDatePickerModeDate;
+        datePicker.translatesAutoresizingMaskIntoConstraints = NO;
+        datePicker.tag = datePickerTag;
     }
 
-    return textField;
+    return datePicker;
 }
 
-- (void)renderCell:(PBListViewDefaultCell *)cell
-          withItem:(PBListTextItem *)item {
+- (void)renderCell:(PBListViewExpandableCell *)cell
+          withItem:(PBListDatePickerItem *)item {
 
-    UITextField *textField = [self cellTextField:cell item:item];
+    UIDatePicker *datePicker = [self cellDatePicker:cell item:item];
 
-    item.textField = textField;
+    [super renderCell:cell withItem:item expandedView:datePicker];
 
-    textField.delegate = item;
-    textField.text = item.text;
-    textField.textColor = item.textColor;
-    textField.font = item.font;
+    item.datePicker = datePicker;
 
-    textField.placeholder = item.placeholder;
+    datePicker.date = item.date;
 
-    [textField
-     removeTarget:nil
-     action:NULL
-     forControlEvents:UIControlEventAllEvents];
-
-    [textField
-     addTarget:item
-     action:@selector(textChanged:)
-     forControlEvents:UIControlEventEditingChanged];
+    [self renderControl:datePicker withItem:item];
 }
 
 @end

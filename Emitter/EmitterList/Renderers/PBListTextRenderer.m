@@ -3,7 +3,7 @@
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
-//
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
 #import "PBListTextRenderer.h"
@@ -65,15 +65,7 @@
 
     textField.placeholder = item.placeholder;
 
-    [textField
-     removeTarget:nil
-     action:NULL
-     forControlEvents:UIControlEventAllEvents];
-
-    [textField
-     addTarget:item
-     action:@selector(textChanged:)
-     forControlEvents:UIControlEventEditingChanged];
+    [self renderControl:textField withItem:item];
 }
 
 @end

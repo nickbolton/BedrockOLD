@@ -1,31 +1,21 @@
 //
-//  PBListTextItem.h
+//  PBListDatePickerItem.h
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
-//
 
-#import "PBListItem.h"
+#import "PBListExpandableControlItem.h"
 
-@interface PBListTextItem : PBListItem <UITextFieldDelegate>
+@interface PBListDatePickerItem : PBListExpandableControlItem
 
-@property (nonatomic, strong) NSString *text;
-@property (nonatomic, strong) UIColor *textColor;
-@property (nonatomic, strong) UIFont *font;
-@property (nonatomic, strong) NSString *placeholder;
-@property (nonatomic, weak) UITextField *textField;
-@property (nonatomic) UIEdgeInsets textInsets;
-@property (nonatomic, copy) void (^textEditingWillBegin)(PBListTextItem *item);
+@property (nonatomic) NSDate *date;
+@property (nonatomic) UIDatePicker *datePicker;
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
 
-+ (PBListTextItem *)textItemWithText:(NSString *)text
-                           textColor:(UIColor *)textColor
-                                font:(UIFont *)font
-                         placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock;
-
-- (void)textChanged:(UITextField *)textField;
-- (void)resignFirstResponder;
-- (void)becomeFirstResponder;
++ (PBListDatePickerItem *)datePickerItemWithTitle:(NSString *)title
+                                             date:(NSDate *)date
+                                     valueUpdated:(void(^)(PBListControlItem *item, NSDate *updatedValue))valueUpdatedBlock;
 
 @end

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5051" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="V1K-Yg-pq2" customClass="PBListViewExpandableCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="V1K-Yg-pq2" id="3pa-Fr-rrH">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Yu-Xe-j5E" userLabel="Title/Value Container">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="89x-o9-kme">
+                                <rect key="frame" x="187" y="1" width="123" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="123" id="83S-Sj-agR"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jNY-p2-iGv">
+                                <rect key="frame" x="10" y="1" width="236" height="42"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="236" id="jsX-Ej-m0J"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="43" id="6qH-kf-cTp"/>
+                            <constraint firstAttribute="trailing" secondItem="89x-o9-kme" secondAttribute="trailing" constant="10" id="8Q3-At-1zL"/>
+                            <constraint firstItem="jNY-p2-iGv" firstAttribute="top" secondItem="6Yu-Xe-j5E" secondAttribute="top" constant="1" id="SkV-oG-IcE"/>
+                            <constraint firstAttribute="bottom" secondItem="89x-o9-kme" secondAttribute="bottom" id="U1D-3a-CIe"/>
+                            <constraint firstAttribute="bottom" secondItem="jNY-p2-iGv" secondAttribute="bottom" id="eCz-Pf-cpI"/>
+                            <constraint firstItem="89x-o9-kme" firstAttribute="top" secondItem="6Yu-Xe-j5E" secondAttribute="top" constant="1" id="fcq-sr-dHJ"/>
+                            <constraint firstItem="jNY-p2-iGv" firstAttribute="leading" secondItem="6Yu-Xe-j5E" secondAttribute="leading" constant="10" id="h9B-zj-ePD"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="6Yu-Xe-j5E" secondAttribute="trailing" id="VKb-Wu-Zk8"/>
+                    <constraint firstItem="6Yu-Xe-j5E" firstAttribute="leading" secondItem="3pa-Fr-rrH" secondAttribute="leading" id="tWY-X5-vX1"/>
+                    <constraint firstItem="6Yu-Xe-j5E" firstAttribute="top" secondItem="3pa-Fr-rrH" secondAttribute="top" id="yMN-td-fW0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="defaultCellHeight" destination="6qH-kf-cTp" id="HOf-lz-bGP"/>
+                <outlet property="titleLabel" destination="jNY-p2-iGv" id="Ddl-be-6Kt"/>
+                <outlet property="titleLeadingSpace" destination="h9B-zj-ePD" id="uFX-mX-Xzo"/>
+                <outlet property="valueLabel" destination="89x-o9-kme" id="NQV-aw-EZ5"/>
+                <outlet property="valueTrailingSpace" destination="8Q3-At-1zL" id="NWJ-cN-ckM"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

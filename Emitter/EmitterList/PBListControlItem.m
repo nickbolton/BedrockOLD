@@ -1,0 +1,91 @@
+//
+//  PBListControlItem.m
+//  Pods
+//
+//  Created by Nick Bolton on 3/5/14.
+//
+//
+
+#import "PBListControlItem.h"
+#import "PBListViewController.h"
+
+@interface PBListControlItem() {
+
+    BOOL _markFirstResponder;
+}
+
+@end
+
+@implementation PBListControlItem
+
+- (id)init {
+
+    self = [super init];
+    if (self) {
+        [self setupBindingBlock];
+    }
+    return self;
+}
+
+- (void)setupBindingBlock {
+
+    __weak typeof(self) this = self;
+
+    self.bindingBlock = ^(PBListViewController *listViewController, NSIndexPath *indexPath, PBListItem *item, PBListViewDefaultCell *cell) {
+        this.listViewController = listViewController;
+    };
+}
+
+#pragma mark - Getters and Setters
+
+- (void)setItemValue:(id)value {
+    _itemValue = value;
+    [self.listViewController
+     reloadTableRowAtIndexPath:self.indexPath
+     withAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)setControl:(UIControl *)control {
+
+    _control = control;
+
+    if (_markFirstResponder) {
+        [self.control becomeFirstResponder];
+        _markFirstResponder = NO;
+    }
+}
+
+#pragma mark -
+
+- (void)resignFirstResponder {
+    [self.control resignFirstResponder];
+}
+
+- (void)becomeFirstResponder {
+
+    if (self.control != nil) {
+        [self.control becomeFirstResponder];
+    } else {
+        _markFirstResponder = YES;
+    }
+}
+
+- (void)valueChanged:(UIControl *)control {
+
+    if (self.valueUpdatedBlock != nil) {
+        self.valueUpdatedBlock(self, self.value);
+    }
+}
+
+- (void)controlDidBeginEditing:(UIControl *)control {
+
+    if (self.editingDidBegin != nil) {
+        self.editingDidBegin(self);
+    }
+}
+
+- (void)controlDidEndEditing:(UIControl *)control {
+    self.control = nil;
+}
+
+@end

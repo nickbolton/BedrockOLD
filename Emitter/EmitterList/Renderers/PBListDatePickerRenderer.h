@@ -1,14 +1,14 @@
 //
-//  PBListTextRenderer.h
+//  PBListDatePickerRenderer.h
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
-//
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "PBListItemRenderer.h"
+#import "PBListExpandableControlRenderer.h"
 
-@interface PBListTextRenderer : NSObject <PBListItemRenderer>
+@interface PBListDatePickerRenderer : PBListExpandableControlRenderer
 
 @end

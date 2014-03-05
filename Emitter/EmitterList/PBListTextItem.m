@@ -3,7 +3,7 @@
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
-//
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
 #import "PBListTextItem.h"
@@ -12,12 +12,7 @@
 #import "PBListViewController.h"
 
 @interface PBListTextItem() {
-
-    BOOL _markFirstResponder;
 }
-
-@property (nonatomic, copy) void(^textUpdatedBlock)(PBListTextItem *item, NSString *updatedText);
-@property (nonatomic, weak) PBListViewController *listViewController;
 
 @end
 
@@ -27,7 +22,7 @@
                            textColor:(UIColor *)textColor
                                 font:(UIFont *)font
                          placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock {
+                        valueUpdated:(void(^)(PBListControlItem *item, NSString *updatedText))valueUpdatedBlock {
 
     PBListTextItem *item = [[PBListTextItem alloc] init];
 
@@ -39,47 +34,14 @@
     item.itemType = PBItemTypeCustom;
     item.cellID = NSStringFromClass([self class]);
     item.cellClass = [PBListViewDefaultCell class];
-    item.textUpdatedBlock = textUpdatedBlock;
-
-    [item setupBindingBlock];
+    item.valueUpdatedBlock = valueUpdatedBlock;
 
     return item;
 }
 
-- (void)setupBindingBlock {
-
-    __weak typeof(self) this = self;
-
-    self.bindingBlock = ^(PBListViewController *listViewController, NSIndexPath *indexPath, PBListItem *item, PBListViewDefaultCell *cell) {
-        this.listViewController = listViewController;
-    };
-}
-
 #pragma mark - Public
 
-- (void)setTextField:(UITextField *)textField {
-    _textField = textField;
-
-    if (_markFirstResponder) {
-        [self.textField becomeFirstResponder];
-        _markFirstResponder = NO;
-    }
-}
-
-- (void)resignFirstResponder {
-    [self.textField resignFirstResponder];
-}
-
-- (void)becomeFirstResponder {
-
-    if (self.textField != nil) {
-        [self.textField becomeFirstResponder];
-    } else {
-        _markFirstResponder = YES;
-    }
-}
-
-- (void)textChanged:(UITextField *)textField {
+- (void)valueChanged:(UITextField *)textField {
 
     if (textField.text.trimmedValue.length > 0) {
         textField.clearButtonMode = UITextFieldViewModeAlways;
@@ -87,9 +49,9 @@
         textField.clearButtonMode = UITextFieldViewModeNever;
     }
 
-    if (self.textUpdatedBlock != nil) {
-        self.textUpdatedBlock(self, textField.text);
-    }
+    self.text = textField.text;
+
+    [super valueChanged:textField];
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
@@ -100,24 +62,26 @@
         textField.clearButtonMode = UITextFieldViewModeNever;
     }
 
-    if (self.textEditingWillBegin != nil) {
-        self.textEditingWillBegin(self);
-    }
+    [super controlDidBeginEditing:textField];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    self.textField = nil;
     textField.clearButtonMode = UITextFieldViewModeNever;
+    [super controlDidEndEditing:textField];
 }
 
 #pragma mark - Getters and Setters
 
-- (void)setText:(NSString *)text {
-    _text = text;
+- (void)setTextField:(UITextField *)textField {
+    self.control = textField;
+}
 
-    [self.listViewController
-     reloadTableRowAtIndexPath:self.indexPath
-     withAnimation:UITableViewRowAnimationAutomatic];
+- (NSString *)text {
+    return self.itemValue;
+}
+
+- (void)setText:(NSString *)text {
+    self.itemValue = text;
 }
 
 - (void)setPlaceholder:(NSString *)placeholder {

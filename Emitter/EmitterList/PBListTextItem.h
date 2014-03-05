@@ -3,29 +3,24 @@
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
-//
 
-#import "PBListItem.h"
+#import "PBListControlItem.h"
 
-@interface PBListTextItem : PBListItem <UITextFieldDelegate>
+@interface PBListTextItem : PBListControlItem <UITextFieldDelegate>
 
-@property (nonatomic, strong) NSString *text;
+@property (nonatomic) NSString *text;
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) NSString *placeholder;
-@property (nonatomic, weak) UITextField *textField;
+@property (nonatomic) UITextField *textField;
 @property (nonatomic) UIEdgeInsets textInsets;
-@property (nonatomic, copy) void (^textEditingWillBegin)(PBListTextItem *item);
 
 + (PBListTextItem *)textItemWithText:(NSString *)text
                            textColor:(UIColor *)textColor
                                 font:(UIFont *)font
                          placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock;
-
-- (void)textChanged:(UITextField *)textField;
-- (void)resignFirstResponder;
-- (void)becomeFirstResponder;
+                        valueUpdated:(void(^)(PBListControlItem *item, NSString *updatedValue))valueUpdatedBlock;
 
 @end

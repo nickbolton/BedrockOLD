@@ -1,131 +1,81 @@
 //
-//  PBListTextItem.m
+//  PBListDatePickerItem.m
 //  Pods
 //
 //  Created by Nick Bolton on 3/3/14.
-//
+//  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
-#import "PBListTextItem.h"
-#import "PBListViewDefaultCell.h"
+#import "PBListDatePickerItem.h"
+#import "PBListViewExpandableCell.h"
 #import "PBListTextRenderer.h"
 #import "PBListViewController.h"
 
-@interface PBListTextItem() {
+static CGFloat const kPBListDatePickerHeight = 216.0f;
 
-    BOOL _markFirstResponder;
+@interface PBListDatePickerItem() {
 }
-
-@property (nonatomic, copy) void(^textUpdatedBlock)(PBListTextItem *item, NSString *updatedText);
-@property (nonatomic, weak) PBListViewController *listViewController;
 
 @end
 
-@implementation PBListTextItem
+@implementation PBListDatePickerItem
 
-+ (PBListTextItem *)textItemWithText:(NSString *)text
-                           textColor:(UIColor *)textColor
-                                font:(UIFont *)font
-                         placeholder:(NSString *)placeholder
-                         textUpdated:(void(^)(PBListTextItem *item, NSString *updatedText))textUpdatedBlock {
++ (PBListDatePickerItem *)datePickerItemWithTitle:(NSString *)title
+                                             date:(NSDate *)date
+                                     valueUpdated:(void(^)(PBListControlItem *item, NSDate *updatedValue))valueUpdatedBlock {
 
-    PBListTextItem *item = [[PBListTextItem alloc] init];
+    PBListDatePickerItem *item = [[PBListDatePickerItem alloc] init];
 
     [item commonInit];
-    item.text = text;
-    item.placeholder = placeholder;
-    item.textColor = textColor;
-    item.font = font;
+    item.title = title;
+    item.date = date;
+    item.value = [item.dateFormatter stringFromDate:date];
     item.itemType = PBItemTypeCustom;
     item.cellID = NSStringFromClass([self class]);
-    item.cellClass = [PBListViewDefaultCell class];
-    item.textUpdatedBlock = textUpdatedBlock;
-
-    [item setupBindingBlock];
+    item.cellClass = [PBListViewExpandableCell class];
+    item.valueUpdatedBlock = valueUpdatedBlock;
 
     return item;
 }
 
-- (void)setupBindingBlock {
-
-    __weak typeof(self) this = self;
-
-    self.bindingBlock = ^(PBListViewController *listViewController, NSIndexPath *indexPath, PBListItem *item, PBListViewDefaultCell *cell) {
-        this.listViewController = listViewController;
-    };
-}
-
 #pragma mark - Public
 
-- (void)setTextField:(UITextField *)textField {
-    _textField = textField;
+- (void)valueChanged:(UIDatePicker *)datePicker {
 
-    if (_markFirstResponder) {
-        [self.textField becomeFirstResponder];
-        _markFirstResponder = NO;
-    }
-}
+    self.date = datePicker.date;
 
-- (void)resignFirstResponder {
-    [self.textField resignFirstResponder];
-}
-
-- (void)becomeFirstResponder {
-
-    if (self.textField != nil) {
-        [self.textField becomeFirstResponder];
-    } else {
-        _markFirstResponder = YES;
-    }
-}
-
-- (void)textChanged:(UITextField *)textField {
-
-    if (textField.text.trimmedValue.length > 0) {
-        textField.clearButtonMode = UITextFieldViewModeAlways;
-    } else {
-        textField.clearButtonMode = UITextFieldViewModeNever;
-    }
-
-    if (self.textUpdatedBlock != nil) {
-        self.textUpdatedBlock(self, textField.text);
-    }
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-
-    if (textField.text.trimmedValue.length > 0) {
-        textField.clearButtonMode = UITextFieldViewModeAlways;
-    } else {
-        textField.clearButtonMode = UITextFieldViewModeNever;
-    }
-
-    if (self.textEditingWillBegin != nil) {
-        self.textEditingWillBegin(self);
-    }
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    self.textField = nil;
-    textField.clearButtonMode = UITextFieldViewModeNever;
+    [super valueChanged:datePicker];
 }
 
 #pragma mark - Getters and Setters
 
-- (void)setText:(NSString *)text {
-    _text = text;
-
-    [self.listViewController
-     reloadTableRowAtIndexPath:self.indexPath
-     withAnimation:UITableViewRowAnimationAutomatic];
+- (CGFloat)expandableHeight {
+    return kPBListDatePickerHeight;
 }
 
-- (void)setPlaceholder:(NSString *)placeholder {
-    _placeholder = placeholder;
+- (NSDateFormatter *)dateFormatter {
 
-    [self.listViewController
-     reloadTableRowAtIndexPath:self.indexPath
-     withAnimation:UITableViewRowAnimationAutomatic];
+    if (_dateFormatter == nil) {
+
+        _dateFormatter = [[NSDateFormatter alloc] init];
+        _dateFormatter.dateStyle = NSDateFormatterShortStyle;
+        _dateFormatter.timeStyle = NSDateFormatterNoStyle;
+        _dateFormatter.locale = [NSLocale autoupdatingCurrentLocale];
+    }
+
+    return _dateFormatter;
+}
+
+- (NSString *)date {
+    return self.itemValue;
+}
+
+- (void)setDate:(NSDate *)date {
+    self.itemValue = date;
+}
+
+- (void)setDatePicker:(UIDatePicker *)datePicker {
+    self.control = datePicker;
 }
 
 @end
