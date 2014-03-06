@@ -19,9 +19,29 @@
 
         _expanded = expanded;
 
-        [self.listViewController
-         reloadTableRowAtIndexPath:self.indexPath
-         withAnimation:UITableViewRowAnimationAutomatic];
+        if (self.expandedItem != nil) {
+
+            NSIndexPath *expandedItemIndexPath =
+            [NSIndexPath
+             indexPathForRow:self.indexPath.row+1
+             inSection:self.indexPath.section];
+
+            [self.listViewController.tableView beginUpdates];
+
+            if (_expanded) {
+
+                [self.listViewController
+                 insertItem:self.expandedItem
+                 atIndexPath:expandedItemIndexPath];
+
+            } else {
+
+                [self.listViewController
+                 removeItemAtIndexPath:expandedItemIndexPath];
+            }
+
+            [self.listViewController.tableView endUpdates];
+        }
     }
 }
 

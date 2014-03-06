@@ -12,6 +12,7 @@
 #import "PBTitleCell.h"
 #import "PBSectionItem.h"
 #import "PBListItemRenderer.h"
+#import "PBListExpandableItem.h"
 
 NSString * const kPBListCellID = @"default-cell-id";
 NSString * const kPBListSpacerCellID = @"spacer-cell-id";
