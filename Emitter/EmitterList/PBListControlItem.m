@@ -8,6 +8,7 @@
 
 #import "PBListControlItem.h"
 #import "PBListViewController.h"
+#import "PBSectionItem.h"
 
 @interface PBListControlItem() {
 
@@ -59,6 +60,26 @@
     }
 }
 
+- (void)setExpanded:(BOOL)expanded {
+
+    BOOL changed = self.isExpanded != expanded;
+
+    if (changed) {
+
+        if (expanded) {
+            [self becomeFirstResponder];
+        } else {
+            [self resignFirstResponder];
+        }
+
+        [self.listViewController
+         reloadTableRowAtIndexPath:self.indexPath
+         withAnimation:UITableViewRowAnimationAutomatic];
+    }
+
+    [super setExpanded:expanded];
+}
+
 #pragma mark -
 
 - (void)resignFirstResponder {
@@ -69,15 +90,26 @@
 
     if (self.control != nil) {
         [self.control becomeFirstResponder];
+
     } else {
         _markFirstResponder = YES;
+    }
+
+    for (PBSectionItem *sectionItem in self.listViewController.dataSource) {
+
+        for (PBListControlItem *item in sectionItem.items) {
+
+            if (item != self && [item isKindOfClass:[PBListControlItem class]]) {
+                [item resignFirstResponder];
+            }
+        }
     }
 }
 
 - (void)valueChanged:(UIControl *)control {
 
     if (self.valueUpdatedBlock != nil) {
-        self.valueUpdatedBlock(self, self.value);
+        self.valueUpdatedBlock(self, self.itemValue);
     }
 }
 
@@ -90,7 +122,6 @@
 
 - (void)controlDidEndEditing:(UIControl *)control {
     _markFirstResponder = NO;
-    self.control = nil;
 }
 
 @end

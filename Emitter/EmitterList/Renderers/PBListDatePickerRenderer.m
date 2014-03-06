@@ -54,9 +54,6 @@
           withItem:(PBListDatePickerItem *)item {
 
     UIDatePicker *datePicker = [self cellDatePicker:cell item:item];
-
-    [super renderCell:cell withItem:item expandedView:datePicker];
-
     item.datePicker = datePicker;
 
     datePicker.date = item.date != nil ? item.date : [NSDate date];

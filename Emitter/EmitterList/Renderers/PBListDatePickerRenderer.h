@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PBListExpandableControlRenderer.h"
+#import "PBListControlRenderer.h"
 
-@interface PBListDatePickerRenderer : PBListExpandableControlRenderer
+@interface PBListDatePickerRenderer : PBListControlRenderer
 
 @end

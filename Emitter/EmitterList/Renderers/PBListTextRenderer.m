@@ -68,4 +68,15 @@
     [self renderControl:textField withItem:item];
 }
 
+- (void)didEndRendering:(PBListTextItem *)item
+            atIndexPath:(NSIndexPath *)indexPath
+                 inCell:(PBListViewDefaultCell *)cell
+           withListView:(PBListViewController *)listViewController {
+
+    if ([item isKindOfClass:[PBListTextItem class]]) {
+        UITextField *textField = [self cellTextField:cell item:item];
+        textField.delegate = nil;
+    }
+}
+
 @end

@@ -32,4 +32,14 @@
       withListView:(PBListViewController *)listViewController {
 }
 
+- (void)didEndRendering:(PBListControlItem *)item
+            atIndexPath:(NSIndexPath *)indexPath
+                 inCell:(UITableViewCell *)cell
+           withListView:(PBListViewController *)listViewController {
+
+    if ([item isKindOfClass:[PBListControlItem class]]) {
+        item.control = nil;
+    }
+}
+
 @end

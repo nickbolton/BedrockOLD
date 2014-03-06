@@ -26,15 +26,26 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
 
     PBListDatePickerItem *item = [[PBListDatePickerItem alloc] init];
 
+    UINib *nib =
+    [UINib
+     nibWithNibName:NSStringFromClass([PBListViewExpandableCell class])
+     bundle:nil];
+
     [item commonInit];
     item.title = title;
     item.date = date;
     item.value = [item.dateFormatter stringFromDate:date];
     item.itemType = PBItemTypeCustom;
     item.cellID = NSStringFromClass([self class]);
-    item.cellClass = [PBListViewExpandableCell class];
+    item.cellNib = nib;
     item.valueUpdatedBlock = valueUpdatedBlock;
     item.hasDisclosure = YES;
+
+    item.selectActionBlock = ^(PBListViewExpandableCell *cell) {
+
+        PBListDatePickerItem *item = (id)cell.item;
+        item.expanded = !item.expanded;
+    };
 
     return item;
 }

@@ -19,7 +19,6 @@ NSString * const kPBListActionCellID = @"action-cell-id";
 NSString * const kPBListTitleCellID = @"title-cell-id";
 
 static NSInteger const kPBListSeparatorCellTag = 98;
-static NSInteger const kPBListSeparatorTag = 99;
 static NSInteger const kPBListActionTag = 101;
 static NSInteger const kPBListCheckedTag = 103;
 static NSInteger const kPBListDefaultTag = 105;
@@ -736,6 +735,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
     for (PBListItem *item in sectionItem.items) {
 
+        item.listViewController = self;
         item.sectionItem = sectionItem;
 
         if (item.cellNib != nil) {
@@ -1238,6 +1238,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
     }
 
     for (id <PBListItemRenderer> renderer in self.renderers) {
+
         [renderer
          renderItem:item
          atIndexPath:indexPath
@@ -1252,6 +1253,19 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 
         PBListViewDefaultCell *defaultCell = (id)cell;
         [defaultCell didEndDisplayingCell];
+
+        PBListItem *item = [self itemAtIndexPath:indexPath];
+
+        for (id <PBListItemRenderer> renderer in self.renderers) {
+
+            if ([renderer respondsToSelector:@selector(didEndRendering:atIndexPath:inCell:withListView:)]) {
+                [renderer
+                 didEndRendering:item
+                 atIndexPath:indexPath
+                 inCell:defaultCell
+                 withListView:self];
+            }
+        }
     }
 }
 

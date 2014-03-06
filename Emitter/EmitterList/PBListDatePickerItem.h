@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
-#import "PBListExpandableControlItem.h"
+#import "PBListControlItem.h"
 
-@interface PBListDatePickerItem : PBListExpandableControlItem
+@interface PBListDatePickerItem : PBListControlItem
 
 @property (nonatomic) NSDate *date;
 @property (nonatomic) UIDatePicker *datePicker;

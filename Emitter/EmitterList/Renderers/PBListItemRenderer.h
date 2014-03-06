@@ -19,4 +19,10 @@
             inCell:(UITableViewCell *)cell
       withListView:(PBListViewController *)listViewController;
 
+@optional
+- (void)didEndRendering:(PBListItem *)item
+            atIndexPath:(NSIndexPath *)indexPath
+                 inCell:(UITableViewCell *)cell
+           withListView:(PBListViewController *)listViewController;
+
 @end

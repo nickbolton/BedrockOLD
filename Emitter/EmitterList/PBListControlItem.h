@@ -6,9 +6,9 @@
 //
 //
 
-#import "PBListItem.h"
+#import "PBListExpandableItem.h"
 
-@interface PBListControlItem : PBListItem
+@interface PBListControlItem : PBListExpandableItem
 
 @property (nonatomic, strong) id itemValue;
 @property (nonatomic, weak) PBListViewController *listViewController;
