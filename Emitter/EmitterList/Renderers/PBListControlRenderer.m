@@ -12,6 +12,14 @@
 
 @implementation PBListControlRenderer
 
+#pragma mark - Getter and Setters
+
+- (UIControlEvents)valueChangedControlEvents {
+    return UIControlEventValueChanged;
+}
+
+#pragma mark - Public
+
 - (void)renderControl:(UIControl *)control
              withItem:(PBListControlItem *)item {
 
@@ -23,8 +31,10 @@
     [control
      addTarget:item
      action:@selector(valueChanged:)
-     forControlEvents:UIControlEventEditingChanged];
+     forControlEvents:self.valueChangedControlEvents];
 }
+
+#pragma mark - PBListItemRenderer Conformance
 
 - (void)renderItem:(PBListItem *)item
        atIndexPath:(NSIndexPath *)indexPath

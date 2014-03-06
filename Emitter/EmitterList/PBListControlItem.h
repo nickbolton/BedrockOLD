@@ -6,9 +6,9 @@
 //
 //
 
-#import "PBListExpandableItem.h"
+#import "PBListItem.h"
 
-@interface PBListControlItem : PBListExpandableItem
+@interface PBListControlItem : PBListItem
 
 @property (nonatomic, strong) id itemValue;
 @property (nonatomic, weak) PBListViewController *listViewController;
@@ -18,8 +18,6 @@
 @property (nonatomic) BOOL reloadItemOnValueChange;
 
 - (void)valueChanged:(UIControl *)control;
-- (void)resignFirstResponder;
-- (void)becomeFirstResponder;
 
 - (void)controlDidBeginEditing:(UIControl *)control;
 - (void)controlDidEndEditing:(UIControl *)control;

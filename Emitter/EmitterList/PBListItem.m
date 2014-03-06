@@ -7,6 +7,8 @@
 //
 
 #import "PBListItem.h"
+#import "PBListViewController.h"
+#import "PBSectionItem.h"
 
 CGFloat const kPBListRowHeight = 44.0f;
 CGFloat const kPBListSpacerRowHeight = 32.0f;
@@ -226,6 +228,22 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     }
 
     return rowHeight;
+}
+
+- (void)resignFirstResponder {
+}
+
+- (void)becomeFirstResponder {
+
+    for (PBSectionItem *sectionItem in self.listViewController.dataSource) {
+
+        for (PBListItem *item in sectionItem.items) {
+
+            if (item != self) {
+                [item resignFirstResponder];
+            }
+        }
+    }
 }
 
 @end

@@ -19,6 +19,12 @@
 
         _expanded = expanded;
 
+        if (expanded) {
+            [self becomeFirstResponder];
+        } else {
+            [self resignFirstResponder];
+        }
+
         if (self.expandedItem != nil) {
 
             NSIndexPath *expandedItemIndexPath =
@@ -34,14 +40,30 @@
                  insertItem:self.expandedItem
                  atIndexPath:expandedItemIndexPath];
 
+                [self.listViewController.tableView
+                 insertRowsAtIndexPaths:@[expandedItemIndexPath]
+                 withRowAnimation:UITableViewRowAnimationAutomatic];
+
             } else {
 
                 [self.listViewController
                  removeItemAtIndexPath:expandedItemIndexPath];
+
+                [self.listViewController.tableView
+                 deleteRowsAtIndexPaths:@[expandedItemIndexPath]
+                 withRowAnimation:UITableViewRowAnimationAutomatic];
             }
 
             [self.listViewController.tableView endUpdates];
         }
+    }
+}
+
+- (void)resignFirstResponder {
+    [super resignFirstResponder];
+
+    if (self.isExpanded) {
+        self.expanded = NO;
     }
 }
 

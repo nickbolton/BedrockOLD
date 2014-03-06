@@ -7,7 +7,7 @@
 //
 
 #import "PBListDatePickerRenderer.h"
-#import "PBListDatePickerItem.h"
+#import "PBListDatePickerExpandedItem.h"
 #import "PBListViewExpandableCell.h"
 
 @interface PBListDatePickerRenderer()
@@ -15,7 +15,7 @@
 
 @implementation PBListDatePickerRenderer
 
-- (void)renderItem:(PBListDatePickerItem *)item
+- (void)renderItem:(PBListDatePickerExpandedItem *)item
        atIndexPath:(NSIndexPath *)indexPath
             inCell:(PBListViewExpandableCell *)cell
       withListView:(PBListViewController *)listViewController {
@@ -26,14 +26,14 @@
      inCell:cell
      withListView:listViewController];
 
-    if ([item isKindOfClass:[PBListDatePickerItem class]]) {
+    if ([item isKindOfClass:[PBListDatePickerExpandedItem class]]) {
 
         [self renderCell:cell withItem:item];
     }
 }
 
 - (UIDatePicker *)cellDatePicker:(PBListViewExpandableCell *)cell
-                            item:(PBListDatePickerItem *)item {
+                            item:(PBListDatePickerExpandedItem *)item {
 
     static NSInteger const datePickerTag = 998;
 
@@ -45,13 +45,17 @@
         datePicker.datePickerMode = UIDatePickerModeDate;
         datePicker.translatesAutoresizingMaskIntoConstraints = NO;
         datePicker.tag = datePickerTag;
+
+        [cell.contentView addSubview:datePicker];
+
+        [NSLayoutConstraint expandToSuperview:datePicker];
     }
 
     return datePicker;
 }
 
 - (void)renderCell:(PBListViewExpandableCell *)cell
-          withItem:(PBListDatePickerItem *)item {
+          withItem:(PBListDatePickerExpandedItem *)item {
 
     UIDatePicker *datePicker = [self cellDatePicker:cell item:item];
     item.datePicker = datePicker;

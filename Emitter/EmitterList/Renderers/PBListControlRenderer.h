@@ -12,6 +12,8 @@
 
 @interface PBListControlRenderer : NSObject <PBListItemRenderer>
 
+@property (nonatomic, readonly) UIControlEvents valueChangedControlEvents;
+
 - (void)renderControl:(UIControl *)control
           withItem:(PBListControlItem *)item;
 

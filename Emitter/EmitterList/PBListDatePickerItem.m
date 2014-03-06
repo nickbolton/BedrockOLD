@@ -10,8 +10,7 @@
 #import "PBListViewExpandableCell.h"
 #import "PBListTextRenderer.h"
 #import "PBListViewController.h"
-
-static CGFloat const kPBListDatePickerHeight = 216.0f;
+#import "PBListDatePickerExpandedItem.h"
 
 @interface PBListDatePickerItem() {
 }
@@ -22,17 +21,17 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
 
 + (PBListDatePickerItem *)datePickerItemWithTitle:(NSString *)title
                                              date:(NSDate *)date
-                                     valueUpdated:(void(^)(PBListControlItem *item, NSDate *updatedValue))valueUpdatedBlock {
+                                     valueUpdated:(void(^)(PBListDatePickerItem *item, NSDate *updatedValue))valueUpdatedBlock {
 
     PBListDatePickerItem *item = [[PBListDatePickerItem alloc] init];
 
     [item commonInit];
     item.title = title;
-    item.date = date;
     item.value = [item.dateFormatter stringFromDate:date];
     item.itemType = PBItemTypeDefault;
-    item.valueUpdatedBlock = valueUpdatedBlock;
     item.hasDisclosure = YES;
+    item.selectionStyle = UITableViewCellSelectionStyleGray;
+    item.valueColor = [UIColor grayColor];
 
     item.selectActionBlock = ^(PBListViewExpandableCell *cell) {
 
@@ -40,26 +39,30 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
         item.expanded = !item.expanded;
     };
 
+    PBListDatePickerExpandedItem *expandedItem =
+    [[PBListDatePickerExpandedItem alloc] init];
+
+    [expandedItem commonInit];
+    expandedItem.itemType = PBItemTypeCustom;
+    expandedItem.date = date;
+    expandedItem.cellID = NSStringFromClass([PBListDatePickerExpandedItem class]);
+    expandedItem.cellClass = [PBListViewDefaultCell class];
+    expandedItem.valueUpdatedBlock = ^(PBListControlItem *controlItem, NSDate *updatedValue) {
+
+        item.value = [item.dateFormatter stringFromDate:updatedValue];
+
+        [item.listViewController
+         reloadTableRowAtIndexPath:item.indexPath
+         withAnimation:UITableViewRowAnimationAutomatic];
+
+        if (valueUpdatedBlock != nil) {
+            valueUpdatedBlock(item, updatedValue);
+        }
+    };
+
+    item.expandedItem = expandedItem;
+
     return item;
-}
-
-#pragma mark - Public
-
-- (void)valueChanged:(UIDatePicker *)datePicker {
-
-
-    BOOL reloadItemOnValueChange = self.reloadItemOnValueChange;
-    self.reloadItemOnValueChange = NO;
-    self.date = datePicker.date;
-    self.reloadItemOnValueChange = reloadItemOnValueChange;
-
-    [super valueChanged:datePicker];
-}
-
-#pragma mark - Getters and Setters
-
-- (CGFloat)expandableHeight {
-    return kPBListDatePickerHeight;
 }
 
 - (NSDateFormatter *)dateFormatter {
@@ -73,18 +76,6 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
     }
 
     return _dateFormatter;
-}
-
-- (NSString *)date {
-    return self.itemValue;
-}
-
-- (void)setDate:(NSDate *)date {
-    self.itemValue = date;
-}
-
-- (void)setDatePicker:(UIDatePicker *)datePicker {
-    self.control = datePicker;
 }
 
 @end

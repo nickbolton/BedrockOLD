@@ -118,5 +118,7 @@ extern CGFloat const kPBListActionRowHeight;
                                   deleteAction:(void(^)(id cell))deleteActionBlock;
 
 - (void)commonInit;
+- (void)resignFirstResponder;
+- (void)becomeFirstResponder;
 
 @end

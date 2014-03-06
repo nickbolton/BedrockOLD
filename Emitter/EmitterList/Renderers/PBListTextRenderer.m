@@ -15,6 +15,14 @@
 
 @implementation PBListTextRenderer
 
+#pragma mark - Getters and Setters
+
+- (UIControlEvents)valueChangedControlEvents {
+    return UIControlEventEditingChanged;
+}
+
+#pragma mark -
+
 - (void)renderItem:(PBListTextItem *)item
        atIndexPath:(NSIndexPath *)indexPath
             inCell:(PBListViewDefaultCell *)cell

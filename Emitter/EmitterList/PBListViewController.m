@@ -482,6 +482,8 @@ static NSInteger const kPBListDefaultTag = 105;
 
         item.sectionItem = sectionItem;
         [sectionItems addObject:item];
+
+        [self registerCustomCellIfNecessaryForItem:item];
     }
 
     sectionItem.items = sectionItems;
@@ -529,7 +531,7 @@ static NSInteger const kPBListDefaultTag = 105;
         [sectionItems insertObject:item atIndex:row];
         sectionItem.items = sectionItems;
 
-
+        [self registerCustomCellIfNecessaryForItem:item];
     }
 }
 
@@ -732,6 +734,31 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
+- (void)registerCustomCellIfNecessaryForItem:(PBListItem *)item {
+
+    if (item.cellNib != nil) {
+
+        [self.tableView
+         registerNib:item.cellNib
+         forCellReuseIdentifier:item.cellID];
+
+        NSArray *views =
+        [item.cellNib instantiateWithOwner:self options:nil];
+
+        if (views.count > 0) {
+            UIView *cell = views[0];
+
+            item.rowHeight = CGRectGetHeight(cell.frame);
+        }
+
+    } else if (item.cellID != nil && item.cellClass != NULL) {
+
+        [self.tableView
+         registerClass:item.cellClass
+         forCellReuseIdentifier:item.cellID];
+    }
+}
+
 - (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem {
 
     for (PBListItem *item in sectionItem.items) {
@@ -739,27 +766,7 @@ static NSInteger const kPBListDefaultTag = 105;
         item.listViewController = self;
         item.sectionItem = sectionItem;
 
-        if (item.cellNib != nil) {
-
-            [self.tableView
-             registerNib:item.cellNib
-             forCellReuseIdentifier:item.cellID];
-
-            NSArray *views =
-            [item.cellNib instantiateWithOwner:self options:nil];
-
-            if (views.count > 0) {
-                UIView *cell = views[0];
-
-                item.rowHeight = CGRectGetHeight(cell.frame);
-            }
-
-        } else if (item.cellID != nil && item.cellClass != NULL) {
-
-            [self.tableView
-             registerClass:item.cellClass
-             forCellReuseIdentifier:item.cellID];
-        }
+        [self registerCustomCellIfNecessaryForItem:item];
 
         if (item.checkedType == PBItemCheckedTypeAll) {
 

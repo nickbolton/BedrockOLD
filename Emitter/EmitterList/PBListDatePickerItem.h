@@ -6,16 +6,16 @@
 //  Copyright (c) 2013 Pixelbleed. All rights reserved.
 //
 
-#import "PBListControlItem.h"
+#import "PBListExpandableItem.h"
 
-@interface PBListDatePickerItem : PBListControlItem
+@class PBListControlItem;
 
-@property (nonatomic) NSDate *date;
-@property (nonatomic) UIDatePicker *datePicker;
+@interface PBListDatePickerItem : PBListExpandableItem
+
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 
 + (PBListDatePickerItem *)datePickerItemWithTitle:(NSString *)title
                                              date:(NSDate *)date
-                                     valueUpdated:(void(^)(PBListControlItem *item, NSDate *updatedValue))valueUpdatedBlock;
+                                     valueUpdated:(void(^)(PBListDatePickerItem *item, NSDate *updatedValue))valueUpdatedBlock;
 
 @end
