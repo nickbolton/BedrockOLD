@@ -22,10 +22,9 @@
 #import "PBListDatePickerItem.h"
 #import "PBListDatePickerRenderer.h"
 #import "PBListControlItem.h"
-#import "PBListExpandableControlItem.h"
+#import "PBListExpandableItem.h"
 #import "PBListViewExpandableCell.h"
 #import "PBListControlRenderer.h"
-#import "PBListExpandableControlRenderer.h"
 
 #import "PBCollectionViewController.h"
 #import "PBCollectionItem.h"
