@@ -10,7 +10,8 @@
 
 @interface PBListDatePickerExpandedItem : PBListControlItem
 
-@property (nonatomic) UIDatePicker *datePicker;
-@property (nonatomic) NSDate *date;
+@property (nonatomic, assign) UIDatePicker *datePicker;
+@property (nonatomic, assign) NSDate *date;
+@property (nonatomic, strong) PBDateRange *dateRange;
 
 @end

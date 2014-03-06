@@ -78,4 +78,11 @@
     return _dateFormatter;
 }
 
+- (void)setDateRange:(PBDateRange *)dateRange {
+    _dateRange = dateRange;
+
+    PBListDatePickerExpandedItem *expandedItem = (id)self.expandedItem;
+    expandedItem.dateRange = dateRange;
+}
+
 @end

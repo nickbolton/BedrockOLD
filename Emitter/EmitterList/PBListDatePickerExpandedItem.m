@@ -39,7 +39,17 @@ static CGFloat const kPBListDatePickerHeight = 216.0f;
     self.itemValue = date;
 }
 
+- (UIDatePicker *)datePicker {
+    return (id)self.control;
+}
+
 - (void)setDatePicker:(UIDatePicker *)datePicker {
+
+    if (self.dateRange != nil) {
+        datePicker.minimumDate = self.dateRange.startDate;
+        datePicker.maximumDate = self.dateRange.endDate;
+    }
+    
     self.control = datePicker;
 }
 
