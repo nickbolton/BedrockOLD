@@ -7,7 +7,7 @@
 //
 
 #import "NSDate+Bedrock.h"
-#import "TCSwizzler.h"
+#import "PBSwizzler.h"
 
 static NSString * const kPBMidnightObjectKey = @"midnight";
 static NSString * const kPBEndOfDayObjectKey = @"end-of-day";
