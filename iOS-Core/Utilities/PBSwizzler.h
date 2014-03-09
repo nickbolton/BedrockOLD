@@ -1,6 +1,6 @@
 //
-//  TCSwizzler.h
-//  Pods
+//  PBSwizzler.h
+//  Bedrock
 //
 //  Created by Nick Bolton on 3/9/14.
 //
@@ -10,6 +10,6 @@
 
 void PBReplaceSelectorForTargetWithSourceImpAndSwizzle(Class c, SEL orig, SEL new);
 
-@interface TCSwizzler : NSObject
+@interface PBSwizzler : NSObject
 
 @end

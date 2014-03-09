@@ -1,12 +1,12 @@
 //
 //  TCSwizzler.m
-//  Pods
+//  Bedrock
 //
 //  Created by Nick Bolton on 3/9/14.
 //
 //
 
-#import "TCSwizzler.h"
+#import "PBSwizzler.h"
 #import <objc/runtime.h>
 
 void PBReplaceSelectorForTargetWithSourceImpAndSwizzle(Class c, SEL orig, SEL new) {
@@ -19,6 +19,6 @@ void PBReplaceSelectorForTargetWithSourceImpAndSwizzle(Class c, SEL orig, SEL ne
         method_exchangeImplementations(origMethod, newMethod);
 }
 
-@implementation TCSwizzler
+@implementation PBSwizzler
 
 @end
