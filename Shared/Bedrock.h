@@ -31,6 +31,7 @@
 #import "NSDate+Bedrock.h"
 #import "NSCalendar+Bedrock.h"
 #import "NSDateComponents+Bedrock.h"
+#import "TCSwizzler.h"
 
 #if TARGET_OS_IPHONE
 #import "PBActionDelegate.h"

@@ -7,10 +7,15 @@
 //
 
 #import "NSDate+Bedrock.h"
-#import <objc/runtime.h>
+#import "TCSwizzler.h"
 
-static char kPBMidnightObjectKey;
-static char kPBEndOfDayObjectKey;
+static NSString * const kPBMidnightObjectKey = @"midnight";
+static NSString * const kPBEndOfDayObjectKey = @"end-of-day";
+static NSString * const kPBFirstDayOfMonthObjectKey = @"first-day";
+static NSString * const kPBLastDayOfMonthObjectKey = @"last-day";
+static NSString * const kPBWeekdayObjectKey = @"weekday";
+
+static NSMutableDictionary * PBDateValueCache = nil;
 
 @interface NSDate()
 
@@ -18,25 +23,90 @@ static char kPBEndOfDayObjectKey;
 
 @implementation NSDate(Utilities)
 
-- (void)dealloc {
-    [self pb_setMidnightObject:nil];
-    [self pb_setEndOfDayObject:nil];
+- (void)setupSwizzlesIfNecessary {
+
+    static dispatch_once_t onceToken;
+
+    dispatch_once(&onceToken, ^{
+
+        NSString *deallocSector = @"dealloc";
+
+        PBReplaceSelectorForTargetWithSourceImpAndSwizzle([self class],
+                                                            NSSelectorFromString(deallocSector),
+                                                            @selector(pb_dealloc));
+    });
+}
+
+- (void)pb_dealloc {
+    [self pb_setCacheValue:nil forKey:kPBMidnightObjectKey];
+    [self pb_setCacheValue:nil forKey:kPBEndOfDayObjectKey];
+    [self pb_setCacheValue:nil forKey:kPBFirstDayOfMonthObjectKey];
+    [self pb_setCacheValue:nil forKey:kPBLastDayOfMonthObjectKey];
+    [self pb_setCacheValue:nil forKey:kPBWeekdayObjectKey];
+
+    [self pb_dealloc];
+}
+
+- (void)pb_setCacheValue:(id)value forKey:(NSString *)key {
+
+    NSMutableDictionary *cache = [self pb_valueCache];
+
+    @synchronized (cache) {
+
+        if (key != nil) {
+
+            if (value != nil) {
+                cache[key] = value;
+            } else {
+                [cache removeObjectForKey:key];
+            }
+        }
+    }
+}
+
+- (id)pb_cacheValueForKey:(NSString *)key {
+
+    NSMutableDictionary *cache = [self pb_valueCache];
+
+    id result = nil;
+
+    @synchronized (cache) {
+
+        if (key != nil) {
+            result = cache[key];
+        }
+    }
+
+    return result;
+}
+
+- (NSDictionary *)pb_valueCache {
+
+    if (PBDateValueCache == nil) {
+        PBDateValueCache = [NSMutableDictionary dictionary];
+    }
+
+    return PBDateValueCache;
 }
 
 - (NSDate *)pb_midnightObject {
-    return (NSDate *)objc_getAssociatedObject(self, &kPBMidnightObjectKey);
+    [self setupSwizzlesIfNecessary];
+    return [self pb_cacheValueForKey:kPBMidnightObjectKey];
 }
 
 - (void)pb_setMidnightObject:(NSDate *)midnight {
-//    objc_setAssociatedObject(self, &kPBMidnightObjectKey, midnight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self setupSwizzlesIfNecessary];
+    [self pb_setCacheValue:midnight forKey:kPBMidnightObjectKey];
 }
 
 - (NSDate *)pb_endOfDayObject {
-    return (NSDate *)objc_getAssociatedObject(self, &kPBEndOfDayObjectKey);
+    [self setupSwizzlesIfNecessary];
+    return [self pb_cacheValueForKey:kPBEndOfDayObjectKey];
 }
 
 - (void)pb_setEndOfDayObject:(NSDate *)date {
-//    objc_setAssociatedObject(self, &kPBEndOfDayObjectKey, date, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self setupSwizzlesIfNecessary];
+    [self pb_setCacheValue:date forKey:kPBEndOfDayObjectKey];
 }
 
 #if TARGET_OS_IPHONE
@@ -183,7 +253,10 @@ static char kPBEndOfDayObjectKey;
 }
 
 - (NSDate *)firstDayOfMonth {
-	NSDate *firstDay = objc_getAssociatedObject(self, @"firstDayOfMonth");
+
+    [self setupSwizzlesIfNecessary];
+
+	NSDate *firstDay = [self pb_cacheValueForKey:kPBFirstDayOfMonthObjectKey];
 
 	if (firstDay == nil) {
 
@@ -191,14 +264,17 @@ static char kPBEndOfDayObjectKey;
 
 		NSDateComponents *components = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self];
 		firstDay = [calendar dateFromComponents:components];
-		objc_setAssociatedObject(self, @"firstDayOfMonth", firstDay, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        [self pb_setCacheValue:firstDay forKey:kPBFirstDayOfMonthObjectKey];
 	}
 
 	return firstDay;
 }
 
 - (NSDate *)lastDayOfMonth {
-	NSDate *lastDay = objc_getAssociatedObject(self, @"lastDayOfMonth");
+
+    [self setupSwizzlesIfNecessary];
+
+	NSDate *lastDay = [self pb_cacheValueForKey:kPBLastDayOfMonthObjectKey];
 
 	if (lastDay == nil) {
 
@@ -207,7 +283,7 @@ static char kPBEndOfDayObjectKey;
 		NSDateComponents *components = [calendar components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self];
 		[components setDay:[calendar rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit forDate:self].length];
 		lastDay = [calendar dateFromComponents:components];
-		objc_setAssociatedObject(self, @"lastDayOfMonth", lastDay, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        [self pb_setCacheValue:lastDay forKey:kPBLastDayOfMonthObjectKey];
 	}
 
 	return lastDay;
@@ -215,14 +291,16 @@ static char kPBEndOfDayObjectKey;
 
 - (NSInteger)weekday {
 
-	NSNumber *weekday = objc_getAssociatedObject(self, @"weekday");
+    [self setupSwizzlesIfNecessary];
+
+	NSNumber *weekday = [self pb_cacheValueForKey:kPBWeekdayObjectKey];
 
 	if (weekday == nil) {
 
         NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
 
 		weekday = [NSNumber numberWithInteger:[calendar components:NSWeekdayCalendarUnit fromDate:self].weekday];
-		objc_setAssociatedObject(self, @"weekday", weekday, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        [self pb_setCacheValue:weekday forKey:kPBWeekdayObjectKey];
 	}
 
 	return [weekday integerValue];
