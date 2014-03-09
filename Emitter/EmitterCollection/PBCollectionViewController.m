@@ -472,7 +472,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)reloadCollectionItem:(PBCollectionItem *)item {
 
-    if (item != nil) {
+    if (item.indexPath != nil) {
         [self.collectionView reloadItemsAtIndexPaths:@[item.indexPath]];
     }
 }
@@ -481,7 +481,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     PBCollectionItem *item = [self itemAtIndexPath:indexPath];
 
-    if (item != nil) {
+    if (item.indexPath != nil) {
         [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
     }
 }
