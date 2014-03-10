@@ -7,7 +7,6 @@
 //
 
 #import "NSDate+Bedrock.h"
-#import "PBSwizzler.h"
 
 static NSString * const kPBMidnightObjectKey = @"midnight";
 static NSString * const kPBEndOfDayObjectKey = @"end-of-day";
@@ -23,28 +22,12 @@ static NSMutableDictionary * PBDateValueCache = nil;
 
 @implementation NSDate(Utilities)
 
-- (void)setupSwizzlesIfNecessary {
-
-    static dispatch_once_t onceToken;
-
-    dispatch_once(&onceToken, ^{
-
-        NSString *deallocSector = @"dealloc";
-
-        PBReplaceSelectorForTargetWithSourceImpAndSwizzle([self class],
-                                                            NSSelectorFromString(deallocSector),
-                                                            @selector(pb_dealloc));
-    });
-}
-
-- (void)pb_dealloc {
+- (void)dealloc {
     [self pb_setCacheValue:nil forKey:kPBMidnightObjectKey];
     [self pb_setCacheValue:nil forKey:kPBEndOfDayObjectKey];
     [self pb_setCacheValue:nil forKey:kPBFirstDayOfMonthObjectKey];
     [self pb_setCacheValue:nil forKey:kPBLastDayOfMonthObjectKey];
     [self pb_setCacheValue:nil forKey:kPBWeekdayObjectKey];
-
-    [self pb_dealloc];
 }
 
 - (void)pb_setCacheValue:(id)value forKey:(NSString *)key {
@@ -59,6 +42,10 @@ static NSMutableDictionary * PBDateValueCache = nil;
                 cache[key] = value;
             } else {
                 [cache removeObjectForKey:key];
+
+                if (cache.count == 0) {
+                    [PBDateValueCache removeObjectForKey:self];
+                }
             }
         }
     }
@@ -80,7 +67,7 @@ static NSMutableDictionary * PBDateValueCache = nil;
     return result;
 }
 
-- (NSDictionary *)pb_valueCache {
+- (NSMutableDictionary *)pb_dateValuesCache {
 
     if (PBDateValueCache == nil) {
         PBDateValueCache = [NSMutableDictionary dictionary];
@@ -89,23 +76,36 @@ static NSMutableDictionary * PBDateValueCache = nil;
     return PBDateValueCache;
 }
 
+- (NSMutableDictionary *)pb_valueCache {
+
+    NSMutableDictionary *dateValuesCache = [self pb_dateValuesCache];
+
+    @synchronized (dateValuesCache) {
+
+        NSDictionary *valuesCache = dateValuesCache[self];
+
+        if (valuesCache == nil) {
+            valuesCache = [NSMutableDictionary dictionary];
+            dateValuesCache[self] = valuesCache;
+        }
+
+        return valuesCache;
+    }
+}
+
 - (NSDate *)pb_midnightObject {
-    [self setupSwizzlesIfNecessary];
     return [self pb_cacheValueForKey:kPBMidnightObjectKey];
 }
 
 - (void)pb_setMidnightObject:(NSDate *)midnight {
-    [self setupSwizzlesIfNecessary];
     [self pb_setCacheValue:midnight forKey:kPBMidnightObjectKey];
 }
 
 - (NSDate *)pb_endOfDayObject {
-    [self setupSwizzlesIfNecessary];
     return [self pb_cacheValueForKey:kPBEndOfDayObjectKey];
 }
 
 - (void)pb_setEndOfDayObject:(NSDate *)date {
-    [self setupSwizzlesIfNecessary];
     [self pb_setCacheValue:date forKey:kPBEndOfDayObjectKey];
 }
 
@@ -254,8 +254,6 @@ static NSMutableDictionary * PBDateValueCache = nil;
 
 - (NSDate *)firstDayOfMonth {
 
-    [self setupSwizzlesIfNecessary];
-
 	NSDate *firstDay = [self pb_cacheValueForKey:kPBFirstDayOfMonthObjectKey];
 
 	if (firstDay == nil) {
@@ -271,8 +269,6 @@ static NSMutableDictionary * PBDateValueCache = nil;
 }
 
 - (NSDate *)lastDayOfMonth {
-
-    [self setupSwizzlesIfNecessary];
 
 	NSDate *lastDay = [self pb_cacheValueForKey:kPBLastDayOfMonthObjectKey];
 
@@ -290,8 +286,6 @@ static NSMutableDictionary * PBDateValueCache = nil;
 }
 
 - (NSInteger)weekday {
-
-    [self setupSwizzlesIfNecessary];
 
 	NSNumber *weekday = [self pb_cacheValueForKey:kPBWeekdayObjectKey];
 
