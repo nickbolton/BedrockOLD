@@ -49,7 +49,7 @@
             [item.listViewController.tableView
              scrollToRowAtIndexPath:expandedIndexPath
              atScrollPosition:UITableViewScrollPositionBottom
-             animated:YES];
+             animated:NO];
         }
     };
 

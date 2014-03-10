@@ -56,6 +56,7 @@
 
     if (_markFirstResponder) {
         [self.control becomeFirstResponder];
+        self.listViewController.firstResponder = self.control;
         _markFirstResponder = NO;
     }
 }
@@ -65,6 +66,9 @@
 - (void)resignFirstResponder {
     [super resignFirstResponder];
     [self.control resignFirstResponder];
+    if (self.listViewController.firstResponder == self.control) {
+        self.listViewController.firstResponder = nil;
+    }
 }
 
 - (void)becomeFirstResponder {
@@ -72,6 +76,7 @@
 
     if (self.control != nil) {
         [self.control becomeFirstResponder];
+        self.listViewController.firstResponder = self.control;
 
     } else {
         _markFirstResponder = YES;
@@ -91,11 +96,14 @@
         self.editingDidBegin(self);
     }
 
-    [super becomeFirstResponder];
+    [super becomeFirstResponder]; // clears the first responder
+
+    self.listViewController.firstResponder = control;
 }
 
 - (void)controlDidEndEditing:(UIControl *)control {
     _markFirstResponder = NO;
+    self.listViewController.firstResponder = nil;
 }
 
 @end

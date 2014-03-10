@@ -244,6 +244,17 @@ CGFloat const kPBListActionRowHeight = 44.0f;
             }
         }
     }
+
+    SEL selector = @selector(resignFirstResponder);
+
+    if ([self.listViewController.firstResponder respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [self.listViewController.firstResponder performSelector:selector];
+#pragma clang diagnostic pop
+    }
+
+    self.listViewController.firstResponder = nil;
 }
 
 @end
