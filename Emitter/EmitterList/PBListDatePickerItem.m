@@ -37,6 +37,20 @@
 
         PBListDatePickerItem *item = (id)cell.item;
         item.expanded = !item.expanded;
+
+
+        if (item.isExpanded) {
+
+            NSIndexPath *expandedIndexPath =
+            [NSIndexPath
+             indexPathForRow:item.indexPath.row+1
+             inSection:item.indexPath.section];
+
+            [item.listViewController.tableView
+             scrollToRowAtIndexPath:expandedIndexPath
+             atScrollPosition:UITableViewScrollPositionBottom
+             animated:YES];
+        }
     };
 
     PBListDatePickerExpandedItem *expandedItem =
