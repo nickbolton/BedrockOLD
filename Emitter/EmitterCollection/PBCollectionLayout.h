@@ -21,5 +21,6 @@
 - (void)configureAttributes:(UICollectionViewLayoutAttributes *)itemAttributes
                    withItem:(PBCollectionItem *)item
                 atIndexPath:(NSIndexPath *)indexPath;
+- (void)prepareLayout;
 
 @end
