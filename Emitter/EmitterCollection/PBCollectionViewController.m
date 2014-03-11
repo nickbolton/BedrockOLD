@@ -61,11 +61,11 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-+ (Class)collectionViewLayoutClass {
+- (Class)collectionViewLayoutClass {
     return [PBCollectionLayout class];
 }
 
-+ (Class)collectionViewClass {
+- (Class)collectionViewClass {
     return [UICollectionView class];
 }
 
@@ -133,7 +133,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     if (self.collectionView == nil) {
         self.collectionView =
-        [[[self.class collectionViewClass] alloc]
+        [[[self collectionViewClass] alloc]
          initWithFrame:CGRectZero
          collectionViewLayout:self.collectionLayout];
         self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -171,7 +171,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 
     PBCollectionLayout *layout =
-    [[[self.class collectionViewLayoutClass] alloc] init];
+    [[[self collectionViewLayoutClass] alloc] init];
 
     NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
              @"collection view layout must subclass PBCollectionLayout");
@@ -349,7 +349,20 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     }
 }
 
+- (void)setCollectionLayout:(PBCollectionLayout *)collectionLayout {
+
+    BOOL changed = _collectionLayout != collectionLayout;
+    _collectionLayout = collectionLayout;
+
+    if (changed) {
+        [self collectionLayoutChanged];
+    }
+}
+
 #pragma mark - Public
+
+- (void)collectionLayoutChanged {
+}
 
 - (void)updateLayout:(PBCollectionLayout *)layout
          completion:(void(^)(void))completionBlock {

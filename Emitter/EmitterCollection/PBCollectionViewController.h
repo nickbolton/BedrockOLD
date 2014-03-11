@@ -34,8 +34,8 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, strong) UIColor *collectionBackgroundColor;
 @property (nonatomic, strong) NSArray *renderers;
 
-+ (Class)collectionViewLayoutClass;
-+ (Class)collectionViewClass;
+- (Class)collectionViewLayoutClass;
+- (Class)collectionViewClass;
 
 - (id)initWithNib;
 - (id)initWithItems:(NSArray *)items;
@@ -59,5 +59,6 @@ extern NSString * const kPBCollectionViewDecorationKind;
 - (void)updateLayout:(PBCollectionLayout *)layout
           completion:(void(^)(void))completionBlock;
 - (void)updateItemStates;
+- (void)collectionLayoutChanged;
 
 @end
