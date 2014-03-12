@@ -22,56 +22,56 @@ static NSMutableDictionary * PBDateValueCache = nil;
 
 @implementation NSDate(Utilities)
 
-- (void)dealloc {
-    [self pb_setCacheValue:nil forKey:kPBMidnightObjectKey];
-    [self pb_setCacheValue:nil forKey:kPBEndOfDayObjectKey];
-    [self pb_setCacheValue:nil forKey:kPBFirstDayOfMonthObjectKey];
-    [self pb_setCacheValue:nil forKey:kPBLastDayOfMonthObjectKey];
-    [self pb_setCacheValue:nil forKey:kPBWeekdayObjectKey];
-}
+//- (void)dealloc {
+//    [self pb_setCacheValue:nil forKey:kPBMidnightObjectKey];
+//    [self pb_setCacheValue:nil forKey:kPBEndOfDayObjectKey];
+//    [self pb_setCacheValue:nil forKey:kPBFirstDayOfMonthObjectKey];
+//    [self pb_setCacheValue:nil forKey:kPBLastDayOfMonthObjectKey];
+//    [self pb_setCacheValue:nil forKey:kPBWeekdayObjectKey];
+//}
 
 - (void)pb_setCacheValue:(id)value forKey:(NSString *)key {
 
-    NSMutableDictionary *cache = [self pb_valueCache];
-
-    @synchronized (cache) {
-
-        if (key != nil) {
-
-            if (value != nil) {
-                cache[key] = value;
-            } else {
-                [cache removeObjectForKey:key];
-
-                if (cache.count == 0) {
-                    [PBDateValueCache removeObjectForKey:self];
-                }
-            }
-        }
-    }
+//    NSMutableDictionary *cache = [self pb_valueCache];
+//
+//    @synchronized (cache) {
+//
+//        if (key != nil) {
+//
+//            if (value != nil) {
+//                cache[key] = value;
+//            } else {
+//                [cache removeObjectForKey:key];
+//
+//                if (cache.count == 0) {
+//                    [PBDateValueCache removeObjectForKey:self.description];
+//                }
+//            }
+//        }
+//    }
 }
 
 - (id)pb_cacheValueForKey:(NSString *)key {
 
-    NSMutableDictionary *cache = [self pb_valueCache];
+//    NSMutableDictionary *cache = [self pb_valueCache];
 
     id result = nil;
 
-    @synchronized (cache) {
-
-        if (key != nil) {
-            result = cache[key];
-        }
-    }
+//    @synchronized (cache) {
+//
+//        if (key != nil) {
+//            result = cache[key];
+//        }
+//    }
 
     return result;
 }
 
 - (NSMutableDictionary *)pb_dateValuesCache {
 
-    if (PBDateValueCache == nil) {
-        PBDateValueCache = [NSMutableDictionary dictionary];
-    }
+//    if (PBDateValueCache == nil) {
+//        PBDateValueCache = [NSMutableDictionary dictionary];
+//    }
 
     return PBDateValueCache;
 }
@@ -80,17 +80,14 @@ static NSMutableDictionary * PBDateValueCache = nil;
 
     NSMutableDictionary *dateValuesCache = [self pb_dateValuesCache];
 
-    @synchronized (dateValuesCache) {
+    NSDictionary *valuesCache = dateValuesCache[self.description];
 
-        NSDictionary *valuesCache = dateValuesCache[self];
-
-        if (valuesCache == nil) {
-            valuesCache = [NSMutableDictionary dictionary];
-            dateValuesCache[self] = valuesCache;
-        }
-
-        return valuesCache;
+    if (valuesCache == nil) {
+        valuesCache = [NSMutableDictionary dictionary];
+        dateValuesCache[self.description] = valuesCache;
     }
+
+    return valuesCache;
 }
 
 - (NSDate *)pb_midnightObject {
