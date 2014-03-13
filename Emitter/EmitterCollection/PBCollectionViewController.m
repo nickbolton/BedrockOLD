@@ -314,10 +314,11 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
                  item:(NSInteger)itemIndex
   selectedIndexes:(NSMutableArray *)selectedIndexes {
 
-    if (item.isSelected) {
+    NSIndexPath *indexPath =
+    [NSIndexPath indexPathForRow:itemIndex inSection:section];
+    item.indexPath = indexPath;
 
-        NSIndexPath *indexPath =
-        [NSIndexPath indexPathForRow:itemIndex inSection:section];
+    if (item.isSelected) {
 
         [selectedIndexes addObject:indexPath];
     }
@@ -586,6 +587,32 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
 - (void)reloadDataOnBackgroundThread {
 
+    NSTimeInterval duration =
+    self.collectionView.alpha > 0.0f ? .15f : 0.0f;
+
+    __weak typeof(self) this = self;
+
+    [UIView
+     animateWithDuration:duration
+     animations:^{
+         self.collectionView.alpha = 0.0f;
+
+     } completion:^(BOOL finished) {
+
+         [this doReloadDataOnBackgroundThread:^{
+
+             [UIView
+              animateWithDuration:.15f
+              animations:^{
+                  
+                  this.collectionView.alpha = 1.0f;
+              }];
+         }];
+     }];
+}
+
+- (void)doReloadDataOnBackgroundThread:(void(^)(void))completionBlock {
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
 
         [self reloadDataSource];
@@ -606,6 +633,10 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
                  selectItemAtIndexPath:indexPath
                  animated:NO
                  scrollPosition:UICollectionViewScrollPositionNone];
+            }
+
+            if (completionBlock != nil) {
+                completionBlock();
             }
         });
     });
@@ -684,7 +715,6 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
     PBCollectionItem *item = [self itemAtIndexPath:indexPath];
-    item.indexPath = indexPath;
 
     UICollectionViewCell *cell =
     [collectionView

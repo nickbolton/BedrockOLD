@@ -388,6 +388,8 @@ static NSInteger const kPBListDefaultTag = 105;
     [dataSource insertObject:sectionItem atIndex:section];
     self.dataSource = dataSource;
 
+    [self updateItemStates];
+
     [self.tableView
      insertSections:[NSIndexSet indexSetWithIndex:section]
      withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -413,7 +415,10 @@ static NSInteger const kPBListDefaultTag = 105;
 
     section = MIN(section, dataSource.count);
     [dataSource replaceObjectAtIndex:section withObject:sectionItem];
+
     self.dataSource = dataSource;
+
+    [self updateItemStates];
 
     [self.tableView
      reloadSections:[NSIndexSet indexSetWithIndex:section]
@@ -435,6 +440,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
         NSMutableArray *dataSource = [self.dataSource mutableCopy];
         [dataSource removeObjectAtIndex:section];
+
         self.dataSource = dataSource;
 
         [self.tableView
@@ -508,6 +514,8 @@ static NSInteger const kPBListDefaultTag = 105;
           inSection:section]];
     }
 
+    [self updateItemStates];
+
     [self.tableView
      insertRowsAtIndexPaths:indexPaths
      withRowAnimation:UITableViewRowAnimationBottom];
@@ -531,6 +539,8 @@ static NSInteger const kPBListDefaultTag = 105;
         [sectionItems insertObject:item atIndex:row];
         sectionItem.items = sectionItems;
 
+        [self updateItemStates];
+
         [self registerCustomCellIfNecessaryForItem:item];
     }
 }
@@ -549,6 +559,8 @@ static NSInteger const kPBListDefaultTag = 105;
             NSMutableArray *sectionItems = [sectionItem.items mutableCopy];
             [sectionItems removeObjectAtIndex:indexPath.row];
             sectionItem.items = sectionItems;
+
+            [self updateItemStates];
 
             return YES;
         }
@@ -578,6 +590,28 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 
     [self.tableView endUpdates];
+}
+
+- (void)updateItemStates {
+
+    NSInteger section = 0;
+
+    for (PBSectionItem *sectionItem in self.dataSource) {
+
+        NSInteger itemCount = 0;
+
+        for (PBListItem *item in sectionItem.items) {
+
+            NSIndexPath *indexPath =
+            [NSIndexPath
+             indexPathForItem:itemCount++
+             inSection:section];
+
+            item.indexPath = indexPath;
+        }
+        
+        section++;
+    }
 }
 
 #pragma mark - Actions
@@ -729,8 +763,10 @@ static NSInteger const kPBListDefaultTag = 105;
         self.dataSource = [self buildDataSource];
     }
 
+    NSInteger section = 0;
+
     for (PBSectionItem *sectionItem in self.dataSource) {
-        [self reloadDataSourceSectionItem:sectionItem];
+        [self reloadDataSourceSectionItem:sectionItem section:section++];
     }
 }
 
@@ -759,12 +795,21 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
-- (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem {
+- (void)reloadDataSourceSectionItem:(PBSectionItem *)sectionItem section:(NSInteger)section {
+
+    NSInteger index = 0;
 
     for (PBListItem *item in sectionItem.items) {
 
         item.listViewController = self;
         item.sectionItem = sectionItem;
+
+        NSIndexPath *indexPath =
+        [NSIndexPath
+         indexPathForItem:index++
+         inSection:section];
+
+        item.indexPath = indexPath;
 
         [self registerCustomCellIfNecessaryForItem:item];
 
@@ -1003,7 +1048,6 @@ static NSInteger const kPBListDefaultTag = 105;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
-    item.indexPath = indexPath;
 
     UITableViewCell *cell;
     NSString *cellID = item.cellID;
