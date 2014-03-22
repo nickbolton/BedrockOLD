@@ -163,6 +163,13 @@
     return frame;
 }
 
+- (BOOL)shouldIncludeAttributes:(UICollectionViewLayoutAttributes *)attributes
+                    atIndexPath:(NSIndexPath *)indexPath
+                         inRect:(CGRect)rect {
+
+    return CGRectIntersectsRect(rect, attributes.frame);
+}
+
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
 
     NSMutableArray *allAttributes = [NSMutableArray arrayWithCapacity:self.layoutInfo.count];
@@ -173,7 +180,7 @@
         [elementsInfo enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath,
                                                           UICollectionViewLayoutAttributes *attributes,
                                                           BOOL *innerStop) {
-            if (CGRectIntersectsRect(rect, attributes.frame)) {
+            if ([self shouldIncludeAttributes:attributes atIndexPath:indexPath inRect:rect]) {
                 [allAttributes addObject:attributes];
             }
         }];

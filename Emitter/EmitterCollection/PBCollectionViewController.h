@@ -60,5 +60,22 @@ extern NSString * const kPBCollectionViewDecorationKind;
           completion:(void(^)(void))completionBlock;
 - (void)updateItemStates;
 - (void)collectionLayoutChanged;
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+            performUpdate:(BOOL)performUpdate
+               completion:(void(^)(void))completionBlock;
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+                atSection:(NSInteger)section
+            performUpdate:(BOOL)performUpdate
+               completion:(void(^)(void))completionBlock;
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem
+                 atSection:(NSInteger)section
+             performUpdate:(BOOL)performUpdate
+                completion:(void(^)(void))completionBlock;
+- (void)removeSectionItem:(PBSectionItem *)item
+            performUpdate:(BOOL)performUpdate
+                        completion:(void(^)(BOOL removed))completionBlock;
+- (void)removeSectionItemAtSection:(NSInteger)section
+                     performUpdate:(BOOL)performUpdate
+                        completion:(void(^)(void))completionBlock;
 
 @end

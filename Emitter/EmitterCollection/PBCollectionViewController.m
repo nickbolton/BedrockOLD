@@ -392,6 +392,159 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
     self.collectionView.collectionViewLayout = layout;
 }
 
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+            performUpdate:(BOOL)performUpdate
+               completion:(void(^)(void))completionBlock {
+
+    [self
+     insertSectionItem:sectionItem
+     atSection:self.dataSource.count
+     performUpdate:performUpdate
+     completion:completionBlock];
+}
+
+- (void)insertSectionItem:(PBSectionItem *)sectionItem
+                atSection:(NSInteger)section
+            performUpdate:(BOOL)performUpdate
+               completion:(void(^)(void))completionBlock {
+
+    NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+             @"dataSource not a PBSectionItem class (or subclass): %@",
+             NSStringFromClass([sectionItem class]));
+
+    NSMutableArray *dataSource = [self.dataSource mutableCopy];
+
+    section = MIN(section, dataSource.count);
+    [dataSource insertObject:sectionItem atIndex:section];
+    self.dataSource = dataSource;
+
+    [self updateItemStates];
+
+    if (performUpdate) {
+
+        [self.collectionView performBatchUpdates:^{
+
+            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:section];
+            [self.collectionView insertSections:indexSet];
+
+        } completion:^(BOOL finished) {
+
+            if (completionBlock != nil) {
+                completionBlock();
+            }
+        }];
+
+    } else {
+
+        if (completionBlock != nil) {
+            completionBlock();
+        }
+    }
+}
+
+- (void)replaceSectionItem:(PBSectionItem *)sectionItem
+                 atSection:(NSInteger)section
+             performUpdate:(BOOL)performUpdate
+                completion:(void(^)(void))completionBlock {
+
+    NSAssert([sectionItem isKindOfClass:[PBSectionItem class]],
+             @"dataSource not a PBSectionItem class (or subclass): %@",
+             NSStringFromClass([sectionItem class]));
+
+    NSMutableArray *dataSource = [self.dataSource mutableCopy];
+
+    section = MIN(section, dataSource.count);
+    [dataSource replaceObjectAtIndex:section withObject:sectionItem];
+
+    self.dataSource = dataSource;
+
+    [self updateItemStates];
+
+    if (performUpdate) {
+
+        [self.collectionView performBatchUpdates:^{
+
+            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:section];
+            [self.collectionView reloadSections:indexSet];
+
+        } completion:^(BOOL finished) {
+
+            if (completionBlock != nil) {
+                completionBlock();
+            }
+        }];
+        
+    } else {
+
+        if (completionBlock != nil) {
+            completionBlock();
+        }
+    }
+}
+
+- (void)removeSectionItem:(PBSectionItem *)item
+            performUpdate:(BOOL)performUpdate
+               completion:(void(^)(BOOL removed))completionBlock {
+
+    NSInteger section = [self.dataSource indexOfObject:item];
+
+    if (section != NSNotFound) {
+
+        [self
+         removeSectionItemAtSection:section
+         performUpdate:performUpdate
+         completion:^{
+
+             if (completionBlock != nil) {
+                 completionBlock(performUpdate);
+             }
+         }];
+
+    } else {
+
+        if (completionBlock != nil) {
+            completionBlock(NO);
+        }
+    }
+}
+
+- (void)removeSectionItemAtSection:(NSInteger)section
+                     performUpdate:(BOOL)performUpdate
+                        completion:(void(^)(void))completionBlock {
+
+    if (section < self.dataSource.count) {
+
+        NSMutableArray *dataSource = [self.dataSource mutableCopy];
+        [dataSource removeObjectAtIndex:section];
+
+        self.dataSource = dataSource;
+
+        if (performUpdate) {
+
+            [self.collectionView performBatchUpdates:^{
+
+                NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:section];
+                [self.collectionView deleteSections:indexSet];
+
+            } completion:^(BOOL finished) {
+
+                if (completionBlock != nil) {
+                    completionBlock();
+                }
+            }];
+        } else {
+
+            if (completionBlock != nil) {
+                completionBlock();
+            }
+        }
+
+    } else {
+        
+        PBLog(@"WARN : tried to remove non-existent section %ld", (long)section);
+    }
+}
+
 #pragma mark -
 
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section {

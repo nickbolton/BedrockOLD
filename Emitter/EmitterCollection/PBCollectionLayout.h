@@ -11,7 +11,7 @@
 @class PBCollectionViewController;
 @class PBCollectionItem;
 
-@interface PBCollectionLayout : UICollectionViewFlowLayout
+@interface PBCollectionLayout : UICollectionViewLayout
 
 @property (nonatomic, weak) PBCollectionViewController *viewController;
 
@@ -22,5 +22,8 @@
                    withItem:(PBCollectionItem *)item
                 atIndexPath:(NSIndexPath *)indexPath;
 - (void)prepareLayout;
+- (BOOL)shouldIncludeAttributes:(UICollectionViewLayoutAttributes *)attributes
+                    atIndexPath:(NSIndexPath *)indexPath
+                         inRect:(CGRect)rect;
 
 @end
