@@ -366,6 +366,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 }
 
 - (void)updateLayout:(PBCollectionLayout *)layout
+            animated:(BOOL)animated
          completion:(void(^)(void))completionBlock {
 
     NSAssert([layout isKindOfClass:[PBCollectionLayout class]],
@@ -375,7 +376,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     [self.collectionView
      setCollectionViewLayout:layout
-     animated:YES
+     animated:animated
      completion:^(BOOL finished) {
          if (completionBlock != nil) {
              completionBlock();

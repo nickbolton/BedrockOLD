@@ -57,6 +57,7 @@ extern NSString * const kPBCollectionViewDecorationKind;
 - (PBCollectionItem *)itemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)updateLayout:(PBCollectionLayout *)layout;
 - (void)updateLayout:(PBCollectionLayout *)layout
+            animated:(BOOL)animated
           completion:(void(^)(void))completionBlock;
 - (void)updateItemStates;
 - (void)collectionLayoutChanged;
