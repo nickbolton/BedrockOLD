@@ -35,8 +35,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     NSTimeInterval _lastScrollTime;
     CGFloat _lastScrollPosition;
     BOOL _decelerating;
-    BOOL _animatingCurrentMonth;
-    BOOL _animatingCurrentSelection;
     BOOL _isDragging;
     PBCalendarViewMonthIndicatorState _monthIndicatorState;
     NSTimeInterval _monthIndicatorStopTime;
@@ -417,31 +415,13 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 }
 
 - (void)showToday:(id)sender {
-
-    _animatingCurrentMonth = YES;
-//    self.currentMonthItem.enabled = NO;
-
+    self.currentMonthItem.enabled = NO;
 	[self.calendarView scrollToMonth:[NSDate date] animated:YES];
-
-    NSTimeInterval delayInSeconds = .3f;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        _animatingCurrentMonth = NO;
-    });
 }
 
 - (void)showCurrentSelection:(id)sender {
-
-    _animatingCurrentSelection = YES;
     self.currentSelectionItem.enabled = NO;
-
     [self.calendarView scrollToMonth:self.selectedDateRange.startDate animated:YES];
-
-    NSTimeInterval delayInSeconds = .3f;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        _animatingCurrentSelection = NO;
-    });
 }
 
 #pragma mark -
@@ -497,16 +477,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         }
     }];
 
-    if (_animatingCurrentMonth == NO) {
-
-        if (self.currentMonthItem.enabled != currentMonthItemEnabled) {
-            self.currentMonthItem.enabled = currentMonthItemEnabled;
-        }
-    }
-
-    if (_animatingCurrentSelection == NO) {
-        self.currentSelectionItem.enabled = currentSelectionItemEnabled;
-    }
+    self.currentMonthItem.enabled = currentMonthItemEnabled;
+    self.currentSelectionItem.enabled = currentSelectionItemEnabled;
 }
 
 - (void)toggleRangeMode {
