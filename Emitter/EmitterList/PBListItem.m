@@ -30,6 +30,7 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     item.backgroundColor = [UIColor clearColor];
     item.rowHeight = height;
     item.selectionStyle = UITableViewCellSelectionStyleNone;
+    item.highlightedAlpha = 1.0f;
 
     return item;
 }
@@ -49,6 +50,7 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     item.backgroundColor = [UIColor clearColor];
     item.rowHeight = height;
     item.selectionStyle = UITableViewCellSelectionStyleNone;
+    item.highlightedAlpha = 1.0f;
 
     [item setDefaultParagraphStyle];
 
@@ -198,6 +200,7 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     self.deselectable = YES;
     self.titleMargin = 20.0f;
     self.valueMargin = 20.0f;
+    self.highlightedAlpha = 1.0f;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 

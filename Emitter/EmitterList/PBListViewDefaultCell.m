@@ -14,6 +14,7 @@
 @interface PBListViewDefaultCell()
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic, strong) UIView *highlightedColorView;
 
 @end
 
@@ -42,6 +43,19 @@
     }
 
     return _backgroundImageView;
+}
+
+- (UIView *)highlightedColorView {
+
+    if (_highlightedColorView == nil) {
+
+        self.highlightedColorView = [[UIView alloc] init];
+        self.highlightedColorView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.contentView insertSubview:self.highlightedColorView atIndex:0];
+        [NSLayoutConstraint expandToSuperview:self.highlightedColorView];
+    }
+
+    return _highlightedColorView;
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
@@ -125,6 +139,31 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     [super setHighlighted:highlighted animated:animated];
     [self updateBackoundImage];
+    [self updateHightlightedState];
+}
+
+- (void)updateHightlightedState {
+
+    if (self.item != nil &&
+        self.item.highlightedAlpha < 1.0f &&
+        self.item.highlightedColor != nil) {
+
+        if (self.isHighlighted) {
+
+            self.highlightedColorView.hidden = NO;
+            self.highlightedColorView.backgroundColor =
+            self.item.highlightedColor;
+
+            [self.highlightedColorView.superview
+             bringSubviewToFront:self.highlightedColorView];
+
+            self.highlightedColorView.alpha = self.item.highlightedAlpha;
+
+        } else {
+            
+            self.highlightedColorView.hidden = YES;
+        }
+    }
 }
 
 - (void)updateBackoundImage {
