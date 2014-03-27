@@ -129,4 +129,46 @@
     self.startDate = [self.endDate dateByAddingTimeInterval:-duration];
 }
 
+- (NSTimeInterval)durationInRangeWithStartTime:(NSDate *)startTime
+                                       endTime:(NSDate *)endTime
+                                           now:(NSDate *)now {
+
+    NSDate *start = startTime;
+    NSDate *end = endTime;
+    NSDate *dateRangeEnd = self.endDate;
+
+    NSDate *midnight = self.startDate.midnight;
+    NSDate *nextMidnight = [midnight dateByAddingDays:1];
+    NSDate *endOfDay = [self.startDate endOfDay];
+
+    if (now == nil) {
+        now = [NSDate date];
+    }
+
+    if ([midnight isEqualToDate:self.startDate] &&
+        [endOfDay isEqualToDate:self.endDate]) {
+
+        dateRangeEnd = nextMidnight;
+    }
+
+    if (end == nil) {
+        end = now;
+    }
+
+    if ([start isLessThan:self.startDate]) {
+        start = self.startDate;
+    }
+
+    if ([end isGreaterThan:dateRangeEnd]) {
+        end = dateRangeEnd;
+    }
+
+    if ([end isLessThan:start]) {
+        return 0.0f;
+    }
+
+    NSTimeInterval result = [end timeIntervalSinceDate:start];
+    return result;
+}
+
 @end

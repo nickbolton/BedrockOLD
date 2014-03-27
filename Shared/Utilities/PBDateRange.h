@@ -27,5 +27,8 @@
 - (BOOL)dateWithinRange:(NSDate *)date;
 - (BOOL)componentsWithinRange:(NSDateComponents *)components;
 - (void)adjustDateRangeToDate:(NSDate *)date;
+- (NSTimeInterval)durationInRangeWithStartTime:(NSDate *)startTime
+                                       endTime:(NSDate *)endTime
+                                           now:(NSDate *)now;
 
 @end
