@@ -115,6 +115,16 @@
      otherComponents:endDateComponents];
 }
 
+- (NSInteger)daysInRange {
+
+    NSDateComponents *components =
+    [self.startDate
+     components:NSCalendarUnitDay
+     toDate:self.endDate];
+
+    return components.day;
+}
+
 - (void)adjustDateRangeToDate:(NSDate *)date {
 
     NSTimeInterval duration =
