@@ -160,7 +160,18 @@ static NSInteger const kPBListDefaultTag = 105;
         self.tableView.delegate = self;
 
         [self.view addSubview:self.tableView];
-        [NSLayoutConstraint expandToSuperview:self.tableView];
+
+        self.tableViewTopSpace =
+        [NSLayoutConstraint alignToTop:self.tableView withPadding:0.0f];
+
+        self.tableViewBottomSpace =
+        [NSLayoutConstraint alignToBottom:self.tableView withPadding:0.0f];
+
+        self.tableViewLeftSpace =
+        [NSLayoutConstraint alignToLeft:self.tableView withPadding:0.0f];
+
+        self.tableViewRightSpace =
+        [NSLayoutConstraint alignToRight:self.tableView withPadding:0.0f];
     }
 }
 

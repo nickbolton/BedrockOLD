@@ -28,6 +28,10 @@ extern NSString * const kPBListActionCellID;
 @interface PBListViewController : UIViewController <PBListViewControllerItemProtocol>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *tableViewLeftSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *tableViewRightSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *tableViewTopSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *tableViewBottomSpace;
 
 @property (nonatomic, readonly) NSArray *dataSource;
 @property (nonatomic, strong) PBActionDelegate *actionDelegate;
