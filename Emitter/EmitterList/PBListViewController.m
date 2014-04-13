@@ -894,23 +894,20 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)configureActionCell:(UITableViewCell *)cell
                    withItem:(PBListItem *)item {
 
-    if (cell.tag != kPBListActionTag) {
-
-        cell.tag = kPBListActionTag;
-
-        cell.textLabel.textColor =
-        item.titleColor != nil ? item.titleColor : self.actionColor;
-
-        cell.textLabel.font =
-        item.titleFont != nil ? item.titleFont : self.actionFont;
-
-        cell.backgroundColor =
-        item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
-
-        cell.selectionStyle = item.selectionStyle;
-
-        cell.textLabel.textAlignment = item.titleAlignment;
-    }
+    cell.tag = kPBListActionTag;
+    
+    cell.textLabel.textColor =
+    item.titleColor != nil ? item.titleColor : self.actionColor;
+    
+    cell.textLabel.font =
+    item.titleFont != nil ? item.titleFont : self.actionFont;
+    
+    cell.backgroundColor =
+    item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
+    
+    cell.selectionStyle = item.selectionStyle;
+    
+    cell.textLabel.textAlignment = item.titleAlignment;
 
     cell.separatorInset = item.separatorInsets;
     cell.textLabel.text = item.title;
@@ -950,44 +947,41 @@ static NSInteger const kPBListDefaultTag = 105;
 - (void)configureDefaultCell:(PBListCell *)cell
                     withItem:(PBListItem *)item {
 
-    if (cell.tag != kPBListDefaultTag) {
-
-        cell.tag = kPBListDefaultTag;
-
-        if ([cell isKindOfClass:[PBListCell class]]) {
-
-            cell.titleLabel.textColor =
-            item.titleColor != nil ? item.titleColor : self.titleColor;
-
-            cell.valueLabel.textColor =
-            item.valueColor != nil ? item.valueColor : self.valueColor;
-
-            cell.titleLabel.font =
-            item.titleFont != nil ? item.titleFont : self.titleFont;
-
-            cell.valueLabel.font =
-            item.valueFont != nil ? item.valueFont : self.valueFont;
-
-            cell.titleLabel.textAlignment = item.titleAlignment;
-
-            if (item.hasDisclosure == NO) {
-
-                CGRect frame = cell.valueLabel.frame;
-                frame.origin.x -= item.valueMargin;
-                cell.valueLabel.frame = frame;
-            }
+    cell.tag = kPBListDefaultTag;
+    
+    if ([cell isKindOfClass:[PBListCell class]]) {
+        
+        cell.titleLabel.textColor =
+        item.titleColor != nil ? item.titleColor : self.titleColor;
+        
+        cell.valueLabel.textColor =
+        item.valueColor != nil ? item.valueColor : self.valueColor;
+        
+        cell.titleLabel.font =
+        item.titleFont != nil ? item.titleFont : self.titleFont;
+        
+        cell.valueLabel.font =
+        item.valueFont != nil ? item.valueFont : self.valueFont;
+        
+        cell.titleLabel.textAlignment = item.titleAlignment;
+        
+        if (item.hasDisclosure == NO) {
+            
+            CGRect frame = cell.valueLabel.frame;
+            frame.origin.x -= item.valueMargin;
+            cell.valueLabel.frame = frame;
         }
-
-        cell.backgroundColor =
-        item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
-
-        cell.selectionStyle = item.selectionStyle;
-
-        if (item.hasDisclosure) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        } else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
+    }
+    
+    cell.backgroundColor =
+    item.backgroundColor != nil ? item.backgroundColor : self.cellBackgroundColor;
+    
+    cell.selectionStyle = item.selectionStyle;
+    
+    if (item.hasDisclosure) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
 
     cell.separatorInset = item.separatorInsets;
@@ -1059,7 +1053,7 @@ static NSInteger const kPBListDefaultTag = 105;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
-
+    
     UITableViewCell *cell;
     NSString *cellID = item.cellID;
 
@@ -1118,6 +1112,26 @@ static NSInteger const kPBListDefaultTag = 105;
             [self configureDefaultCell:(id)cell withItem:item];
             
         } break;
+    }
+    
+    if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
+        
+        PBListViewDefaultCell *defaultCell = (id)cell;
+        
+        if (item.configureBlock != nil) {
+            
+            if (defaultCell.cellConfigured == NO) {
+                item.configureBlock(self, item, cell);
+                defaultCell.cellConfigured = YES;
+            }
+        }
+        
+        defaultCell.item = item;
+        defaultCell.viewController = self;
+        
+        if (item.bindingBlock != nil) {
+            item.bindingBlock(self, indexPath, item, cell);
+        }
     }
 
     return cell;
@@ -1275,23 +1289,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
     if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
 
         PBListViewDefaultCell *defaultCell = (id)cell;
-
-        if (item.configureBlock != nil) {
-
-            if (defaultCell.cellConfigured == NO) {
-                item.configureBlock(self, item, cell);
-                defaultCell.cellConfigured = YES;
-            }
-        }
-
-        defaultCell.item = item;
-        defaultCell.viewController = self;
 
         if (item.bindingBlock != nil) {
             item.bindingBlock(self, indexPath, item, cell);
