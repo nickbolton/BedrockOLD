@@ -92,4 +92,8 @@ didDismissWithButtonIndex:(NSInteger)buttonIndex {
     [self performSelectorForButtonIndex:buttonIndex];
 }
 
+- (void)actionSheet:(id)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [self performSelectorForButtonIndex:buttonIndex];
+}
+
 @end
