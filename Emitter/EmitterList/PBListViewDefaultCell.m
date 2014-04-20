@@ -146,19 +146,19 @@
 
     if (self.item != nil) {
         
-        if (self.item.highlightedAlpha < 1.0f &&
-            self.item.highlightedColor != nil) {
+        if (self.item.highlightedOverlayAlpha < 1.0f &&
+            self.item.highlightedOverlayColor != nil) {
 
             if (self.isHighlighted) {
                 
                 self.highlightedColorView.hidden = NO;
                 self.highlightedColorView.backgroundColor =
-                self.item.highlightedColor;
+                self.item.highlightedOverlayColor;
                 
                 [self.highlightedColorView.superview
                  bringSubviewToFront:self.highlightedColorView];
                 
-                self.highlightedColorView.alpha = self.item.highlightedAlpha;
+                self.highlightedColorView.alpha = self.item.highlightedOverlayAlpha;
                 
             } else {
                 
