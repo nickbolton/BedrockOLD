@@ -57,6 +57,26 @@
     self.items = updatedItems;
 }
 
+- (void)insertItem:(id)item atIndex:(NSInteger)index {
+    
+    NSMutableArray *items = [self.items mutableCopy];
+    if (index < items.count) {
+        [items insertObject:item atIndex:index];
+    } else {
+        [items addObject:item];
+    }
+    self.items = items;    
+}
+
+- (void)removeItemAtIndex:(NSInteger)index {
+    
+    NSMutableArray *items = [self.items mutableCopy];
+    if (index < items.count) {
+        [items removeObjectAtIndex:index];
+    }
+    self.items = items;
+}
+
 - (void)replaceItem:(id)oldItem withItem:(id)item {
 
     NSInteger pos = [self.items indexOfObject:oldItem];

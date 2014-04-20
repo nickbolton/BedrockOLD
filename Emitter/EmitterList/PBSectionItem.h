@@ -24,6 +24,8 @@
 
 - (void)addItems:(NSArray *)items;
 - (void)removeItems:(NSArray *)items;
+- (void)insertItem:(id)item atIndex:(NSInteger)index;
+- (void)removeItemAtIndex:(NSInteger)index;
 - (void)replaceItem:(id)oldItem withItem:(id)item;
 
 @end
