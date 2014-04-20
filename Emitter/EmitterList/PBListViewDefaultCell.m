@@ -139,29 +139,42 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
     [super setHighlighted:highlighted animated:animated];
     [self updateBackoundImage];
-    [self updateHightlightedState];
+    [self updateHightlightedState:animated];
 }
 
-- (void)updateHightlightedState {
+- (void)updateHightlightedState:(BOOL)animated {
 
-    if (self.item != nil &&
-        self.item.highlightedAlpha < 1.0f &&
-        self.item.highlightedColor != nil) {
+    if (self.item != nil) {
+        
+        if (self.item.highlightedAlpha < 1.0f &&
+            self.item.highlightedColor != nil) {
 
-        if (self.isHighlighted) {
-
-            self.highlightedColorView.hidden = NO;
-            self.highlightedColorView.backgroundColor =
-            self.item.highlightedColor;
-
-            [self.highlightedColorView.superview
-             bringSubviewToFront:self.highlightedColorView];
-
-            self.highlightedColorView.alpha = self.item.highlightedAlpha;
-
-        } else {
+            if (self.isHighlighted) {
+                
+                self.highlightedColorView.hidden = NO;
+                self.highlightedColorView.backgroundColor =
+                self.item.highlightedColor;
+                
+                [self.highlightedColorView.superview
+                 bringSubviewToFront:self.highlightedColorView];
+                
+                self.highlightedColorView.alpha = self.item.highlightedAlpha;
+                
+            } else {
+                
+                self.highlightedColorView.hidden = YES;
+            }
+        } else if (self.item.highlightedContentAlpha < 1.0f) {
             
-            self.highlightedColorView.hidden = YES;
+            CGFloat alpha = self.isHighlighted ? .5f : 1.0f;
+            NSTimeInterval duration = animated ? .15f : 0.0f;
+            
+            [UIView
+             animateWithDuration:duration
+             animations:^{
+                 
+                 self.contentView.alpha = alpha;
+             }];
         }
     }
 }

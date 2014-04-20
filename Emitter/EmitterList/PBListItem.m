@@ -201,6 +201,7 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     self.titleMargin = 20.0f;
     self.valueMargin = 20.0f;
     self.highlightedAlpha = 1.0f;
+    self.highlightedContentAlpha = 1.0f;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 

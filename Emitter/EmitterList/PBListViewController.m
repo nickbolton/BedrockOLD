@@ -563,7 +563,7 @@ static NSInteger const kPBListDefaultTag = 105;
              NSStringFromClass([item class]));
     
     PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
-
+    
     if (sectionItem != nil) {
         
         item.sectionItem = sectionItem;
