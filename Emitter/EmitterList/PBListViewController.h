@@ -99,5 +99,6 @@ extern NSString * const kPBListActionCellID;
 - (void)removeItemsAtIndexPaths:(NSArray *)indexPathArray;
 - (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath;
 - (void)insertItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
+- (void)replaceItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
 
 @end

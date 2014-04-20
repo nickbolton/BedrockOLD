@@ -556,6 +556,29 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
+- (void)replaceItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath {
+    
+    NSAssert([item isKindOfClass:[PBListItem class]],
+             @"list view item is not a PBListItem: %@",
+             NSStringFromClass([item class]));
+    
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+
+    if (sectionItem != nil) {
+        
+        item.sectionItem = sectionItem;
+        
+        if (indexPath.row < sectionItem.items.count) {
+            [sectionItem replaceItem:sectionItem.items[indexPath.row] withItem:item];
+        } else {
+            [sectionItem addItems:@[item]];
+        }
+        
+        [self updateItemStates];
+        [self registerCustomCellIfNecessaryForItem:item];
+    }
+}
+
 - (BOOL)removeItemAtIndexPath:(NSIndexPath *)indexPath {
 
     PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];

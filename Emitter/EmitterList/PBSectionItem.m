@@ -65,6 +65,7 @@
 
         NSMutableArray *items = [self.items mutableCopy];
         [items replaceObjectAtIndex:pos withObject:item];
+        self.items = items;
     }
 }
 
