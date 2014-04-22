@@ -36,7 +36,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @property (nonatomic, strong) NSDictionary *todayAttributes;
 @property (nonatomic, strong) NSDictionary *selectedDayAttributes;
 @property (nonatomic, strong) NSDictionary *selectedTodayAttributes;
-@property (nonatomic, strong) UIColor *endPointBackgroundColor;
 @property (nonatomic, strong) UIColor *withinRangeBackgroundColor;
 @property (nonatomic, readwrite) NSDateComponents *monthComponents;
 @property (nonatomic, readwrite) NSInteger daysInMonth;
@@ -48,6 +47,15 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @implementation PBMonthView
 
 #pragma mark - Properties
+
+- (void)setTextColor:(UIColor *)textColor {
+    _textColor = textColor;
+    _monthTitleAttributes = nil;
+    _todayAttributes = nil;
+    _selectedDayAttributes = nil;
+    _selectedTodayAttributes = nil;
+    _dayAttributes = nil;
+}
 
 - (void)setMonth:(NSDate *)month {
 
@@ -107,7 +115,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         _monthTitleAttributes =
         @{
           NSFontAttributeName : self.monthTitleFont,
-          NSForegroundColorAttributeName : [UIColor blackColor],
+          NSForegroundColorAttributeName : self.textColor,
           };
     }
 
@@ -126,7 +134,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         _todayAttributes =
         @{
           NSFontAttributeName : self.todayFont,
-          NSForegroundColorAttributeName : [UIColor blackColor],
+          NSForegroundColorAttributeName : self.textColor,
           NSParagraphStyleAttributeName : paragraphStyle,
           };
     }
@@ -186,7 +194,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         _dayAttributes =
         @{
           NSFontAttributeName : self.dayFont,
-          NSForegroundColorAttributeName : [UIColor blackColor],
+          NSForegroundColorAttributeName : self.textColor,
           NSParagraphStyleAttributeName : paragraphStyle,
           };
     }
@@ -194,22 +202,35 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
     return _dayAttributes;
 }
 
-- (UIColor *)endPointBackgroundColor {
-
-    if (_endPointBackgroundColor == nil) {
-        _endPointBackgroundColor = [UIColor colorWithRGBHex:0x3060FA];
-    }
-
-    return _endPointBackgroundColor;
-}
-
 - (UIColor *)withinRangeBackgroundColor {
 
     if (_withinRangeBackgroundColor == nil) {
-        _withinRangeBackgroundColor = [UIColor colorWithRGBHex:0xDAE6FE];
+        _withinRangeBackgroundColor = [self.tintColor colorWithAlpha:.3f];
     }
 
     return _withinRangeBackgroundColor;
+}
+
+- (UIColor *)unsaturatedColor:(UIColor *)color {
+    
+    CGFloat hue;
+    CGFloat brightness;
+    CGFloat saturation = .3f;
+    
+    [color
+     getHue:&hue
+     saturation:NULL
+     brightness:&brightness
+     alpha:NULL];
+    
+    color =
+    [UIColor
+     colorWithHue:hue
+     saturation:saturation
+     brightness:brightness
+     alpha:1.0f];
+    
+    return color;
 }
 
 #pragma mark - Initialization
@@ -218,10 +239,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 {
     self = [super initWithFrame:frame];
     if (self != nil) {
-        self.opaque = NO;
-
-		self.month = [NSDate date];
-        self.backgroundColor = [UIColor whiteColor];
+        [self commonInit];
     }
 
     return self;
@@ -231,15 +249,19 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 {
     self = [super initWithCoder:coder];
     if (self != nil) {
-        self.opaque = NO;
-
-		self.month = [NSDate date];
-        self.backgroundColor = [UIColor whiteColor];
+        [self commonInit];
     }
 
     return self;
 }
 
+- (void)commonInit {
+    
+    self.backgroundColor = [UIColor whiteColor];
+    self.textColor = [UIColor blackColor];
+    self.opaque = NO;
+    self.month = [NSDate date];
+}
 
 #pragma mark - Sizing
 
@@ -508,6 +530,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 #pragma mark - Drawing
 
 - (void)drawRect:(CGRect)rect {
+//    [self _drawBackground];
     [self _drawDivider];
     [self _drawMonthTitle];
 	[self _drawDays];
@@ -558,12 +581,24 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	}
 }
 
+- (void)_drawBackground {
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context);
+    
+    [self.backgroundColor setFill];
+    
+    UIRectFill(self.bounds);
+    
+    CGContextRestoreGState(context);
+}
+
 - (void)_drawDivider {
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
 
-    UIColor *lineColor = [UIColor colorWithRGBHex:0xe0e0e0];
+    UIColor *lineColor = self.separatorColor;
     [lineColor setFill];
 
     CGFloat scale = [[UIScreen mainScreen] scale];
@@ -593,7 +628,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 - (void)_drawDays
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-
+    
 	NSDateComponents *today = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:[NSDate date]];
 	NSDateComponents *month = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self.month];
 
@@ -622,7 +657,9 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         (isStartingDay && self.startPointHidden == NO) ||
         (isEndingDay && self.endPointHidden == NO);
 
-        BOOL withinRange = [self.calendarView.selectedDateRange componentsWithinRange:day];
+        BOOL withinRange =
+        self.withinRangeBackgroundHidden == NO &&
+        [self.calendarView.selectedDateRange componentsWithinRange:day];
 
 		if (isToday) {
             if (showEndPoint) {
@@ -691,13 +728,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
                 fillRect.origin.x -= margins;
                 fillRect.size.width += margins * 2.0f;
-
-                if ([self isPoint:dayRectMidpoint inColumn:0]) {
-
-                    fillRect.origin.x = 0.0f;
-                    fillRect.size.width += kPBMonthViewWidthLeadingPadding;
-
-                } else if (day.day == 1) {
+                
+                if (day.day == 1) {
 
                     CGFloat minX = CGRectGetMinX(fillRect);
                     fillRect.origin.x = 0.0f;
@@ -710,10 +742,16 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 } else if ([self isPoint:dayRectMidpoint inColumn:[NSCalendar numberOfDaysInWeek]-1]) {
 
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
-
+                    
                 } else if (day.day == self.daysInMonth) {
                     
                     fillRect.size.width = CGRectGetMaxX(self.frame) - CGRectGetMinX(fillRect);
+                }
+                
+                if ([self isPoint:dayRectMidpoint inColumn:0] && day.day != 1) {
+                    
+                    fillRect.origin.x = 0.0f;
+                    fillRect.size.width += kPBMonthViewWidthLeadingPadding;
                 }
             }
 
@@ -728,19 +766,30 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
         if (isStartingDay || isEndingDay) {
 
-            UIColor *fillColor = self.endPointBackgroundColor;
+            UIColor *fillColor = self.tintColor;
+            BOOL doFill = YES;
 
             if ((isStartingDay && self.startPointHidden) ||
                 (isEndingDay && self.endPointHidden)) {
                 
                 fillColor = self.withinRangeBackgroundColor;
+                doFill = self.withinRangeBackgroundHidden == NO;
             }
 
-            CGPathRef path = CGPathCreateWithEllipseInRect(dayRect, NULL);
-            CGContextAddPath(context, path);
-            CGContextClip(context);
-            [fillColor setFill];
-            CGContextFillRect(context, dayRect);
+            if (doFill) {
+                CGPathRef path = CGPathCreateWithEllipseInRect(dayRect, NULL);
+                CGContextAddPath(context, path);
+                CGContextClip(context);
+                
+                CGContextSaveGState(context);
+                CGContextSetBlendMode(context, kCGBlendModeCopy);
+                [self.backgroundColor setFill];
+                CGContextFillRect(context, dayRect);
+                CGContextRestoreGState(context);
+                
+                [fillColor setFill];
+                CGContextFillRect(context, dayRect);
+            }
         }
 
         dayRect.origin.y += kPBMonthViewDayTextTopSpace;

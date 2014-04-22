@@ -22,6 +22,12 @@
 @interface PBCalendarSelectionViewController : UIViewController
 
 @property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
+@property (nonatomic, strong) UIColor *barTintColor;
+@property (nonatomic, strong) UIColor *tintColor;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *separatorColor;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic) UIBarStyle barStyle;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
                    modeSwitchOn:(BOOL)modeSwitchOn;

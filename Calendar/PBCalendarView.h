@@ -21,10 +21,15 @@
 @interface PBCalendarView : UIScrollView
 
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
+@property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic) CGRect visibleBounds;
 @property (nonatomic) UIEdgeInsets contentMargins;
 @property (nonatomic) BOOL startPointHidden;
 @property (nonatomic) BOOL endPointHidden;
+@property (nonatomic) BOOL withinRangeBackgroundHidden;
+@property (nonatomic, strong) UIColor *separatorColor;
+
+- (id)initWithFrame:(CGRect)frame month:(NSDate *)month;
 
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;

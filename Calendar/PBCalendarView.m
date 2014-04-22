@@ -21,7 +21,11 @@
 #pragma mark - Initialization
 
 - (id)initWithFrame:(CGRect)frame {
+    return [self initWithFrame:frame month:[NSDate date]];
+}
 
+- (id)initWithFrame:(CGRect)frame month:(NSDate *)month {
+    
     self = [super initWithFrame:frame];
     if (self != nil) {
 		self.scrollEnabled = YES;
@@ -31,10 +35,13 @@
 
 		self.monthViews = [[NSMutableArray alloc] init];
 		self.monthViewQueue = [[NSMutableSet alloc] init];
+        self.textColor = [UIColor blackColor];
+        self.separatorColor = [UIColor colorWithRGBHex:0xe0e0e0];
+        self.backgroundColor = [UIColor whiteColor];
 
 		PBMonthView *monthView = [self _dequeueMonthView];
 
-		monthView.month = [NSDate date];
+		monthView.month = month;
 		monthView.frame = CGRectMake(0.0,
 									 -1.0,
 									 self.frame.size.width,
@@ -43,7 +50,7 @@
 		[self.monthViews addObject:monthView];
 
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[self scrollToMonth:[NSDate date]];
+			[self scrollToMonth:month];
 		});
     }
     
@@ -72,6 +79,7 @@
 
         monthView.startPointHidden = self.startPointHidden;
         monthView.endPointHidden = self.endPointHidden;
+        monthView.withinRangeBackgroundHidden = self.withinRangeBackgroundHidden;
 
         [UIView
          transitionWithView:monthView
@@ -102,6 +110,30 @@
     }
 
     return date;
+}
+
+- (void)setTextColor:(UIColor *)textColor {
+    _textColor = textColor;
+    
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+        monthView.textColor = textColor;
+    }];
+}
+
+- (void)setSeparatorColor:(UIColor *)separatorColor {
+    _separatorColor = separatorColor;
+    
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+        monthView.separatorColor = separatorColor;
+    }];
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    [super setBackgroundColor:backgroundColor];
+    
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+        monthView.backgroundColor = backgroundColor;
+    }];
 }
 
 #pragma mark - End Point
@@ -222,6 +254,12 @@
 		[self.monthViewQueue removeObject:monthView];
 	}
 
+    monthView.backgroundColor = self.backgroundColor;
+    monthView.textColor = self.textColor;
+    monthView.separatorColor = self.separatorColor;
+    monthView.startPointHidden = NO;
+    monthView.endPointHidden = NO;
+    monthView.withinRangeBackgroundHidden = NO;
     [monthView setNeedsDisplay];
 
 	return monthView;
