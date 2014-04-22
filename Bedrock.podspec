@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Calendar' do |cal|
-    cal.dependency = 'iOS-MagnifyingGlass'
+    cal.dependency 'iOS-MagnifyingGlass', '~> 0.0'
     cal.ios.source_files  = 'Calendar/**/*.{h,m}'
   end
 
