@@ -29,7 +29,8 @@
 @property (nonatomic) BOOL withinRangeBackgroundHidden;
 @property (nonatomic, strong) UIColor *separatorColor;
 
-- (id)initWithFrame:(CGRect)frame month:(NSDate *)month;
+- (id)initWithFrame:(CGRect)frame
+  selectedDateRange:(PBDateRange *)selectedDateRange;
 
 - (void)scrollToMonth:(NSDate *)month;
 - (void)scrollToMonth:(NSDate *)month animated:(BOOL)animated;

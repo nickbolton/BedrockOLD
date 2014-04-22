@@ -21,11 +21,17 @@
 #pragma mark - Initialization
 
 - (id)initWithFrame:(CGRect)frame {
-    return [self initWithFrame:frame month:[NSDate date]];
+    
+    NSDate *now = [NSDate date];
+    PBDateRange *dateRange =
+    [PBDateRange dateRangeWithStartDate:now endDate:now];
+    
+    return [self initWithFrame:frame selectedDateRange:dateRange];
 }
 
-- (id)initWithFrame:(CGRect)frame month:(NSDate *)month {
-    
+- (id)initWithFrame:(CGRect)frame
+  selectedDateRange:(PBDateRange *)selectedDateRange {
+
     self = [super initWithFrame:frame];
     if (self != nil) {
 		self.scrollEnabled = YES;
@@ -38,10 +44,35 @@
         self.textColor = [UIColor blackColor];
         self.separatorColor = [UIColor colorWithRGBHex:0xe0e0e0];
         self.backgroundColor = [UIColor whiteColor];
+        self.selectedDateRange = selectedDateRange;
+        
+        NSDate *initialMonth;
+        NSDate *now = [NSDate date];
+        
+        if ([selectedDateRange dateWithinRange:now]) {
+            
+            initialMonth = now;
+            
+        } else {
+        
+            NSTimeInterval distanceToStartDate =
+            ABS(now.timeIntervalSinceReferenceDate -
+                selectedDateRange.startDate.timeIntervalSinceReferenceDate);
+            
+            NSTimeInterval distanceToEndDate =
+            ABS(now.timeIntervalSinceReferenceDate -
+                selectedDateRange.endDate.timeIntervalSinceReferenceDate);
+            
+            if (distanceToStartDate <= distanceToEndDate) {
+                initialMonth = selectedDateRange.startDate;
+            } else {
+                initialMonth = selectedDateRange.endDate;
+            }
+        }
 
 		PBMonthView *monthView = [self _dequeueMonthView];
 
-		monthView.month = month;
+		monthView.month = initialMonth;
 		monthView.frame = CGRectMake(0.0,
 									 -1.0,
 									 self.frame.size.width,
@@ -50,7 +81,7 @@
 		[self.monthViews addObject:monthView];
 
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[self scrollToMonth:month];
+			[self scrollToMonth:initialMonth];
 		});
     }
     

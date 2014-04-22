@@ -254,7 +254,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     self.calendarView =
     [[PBCalendarView alloc]
      initWithFrame:self.view.bounds
-     month:self.initialSelectedDateRange.startDate];
+     selectedDateRange:self.initialSelectedDateRange];
     
     self.calendarView.delegate = self;
 	self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
