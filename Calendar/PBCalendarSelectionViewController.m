@@ -1202,8 +1202,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     
     if (speed > 0.0f) {
         
-        self.endPointMarkerView.hidden = NO;
-        self.endPointLabel.hidden = YES;
+        self.endPointMarkerView.hidden = YES;
 
         if (_autoScrollAmount == 0.0f) {
             [self showMonthIndicatorContainer];
@@ -1216,7 +1215,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     } else if (_autoScrollAmount != 0.0f) {
         
         [self hideMonthIndicatorContainer];
-        self.endPointLabel.hidden = NO;
+        self.endPointMarkerView.hidden = NO;
         self.calendarView.withinRangeBackgroundHidden = NO;
         [self handlePanChanged:nil];
         

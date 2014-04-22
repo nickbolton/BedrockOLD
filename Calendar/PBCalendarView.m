@@ -257,9 +257,9 @@
     monthView.backgroundColor = self.backgroundColor;
     monthView.textColor = self.textColor;
     monthView.separatorColor = self.separatorColor;
-    monthView.startPointHidden = NO;
-    monthView.endPointHidden = NO;
-    monthView.withinRangeBackgroundHidden = NO;
+    monthView.startPointHidden = self.startPointHidden;
+    monthView.endPointHidden = self.endPointHidden;
+    monthView.withinRangeBackgroundHidden = self.withinRangeBackgroundHidden;
     [monthView setNeedsDisplay];
 
 	return monthView;
