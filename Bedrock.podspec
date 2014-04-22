@@ -21,9 +21,9 @@ Pod::Spec.new do |s|
     al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
   end
 
-  s.subspec 'Calendar' do |al|
-    al.dependency = 'iOS-MagnifyingGlass', '~> 0.0'
-    al.ios.source_files  = 'Calendar/**/*.{h,m}'
+  s.subspec 'Calendar' do |cal|
+    cal.dependency = 'iOS-MagnifyingGlass', '~> 0.0'
+    cal.ios.source_files  = 'Calendar/**/*.{h,m}'
   end
 
   s.subspec 'Emitter' do |em|
