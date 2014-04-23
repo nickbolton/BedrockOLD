@@ -10,6 +10,7 @@
 #import "PBCalendarView.h"
 #import "PBMonthView.h"
 #import "PBRunningAverageValue.h"
+#import "PBCalendarEndPointView.h"
 
 typedef NS_ENUM(NSInteger, PBCalendarViewMonthIndicatorState) {
 
@@ -24,7 +25,6 @@ static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
 static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
 static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 1.4f;
 static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold = 300.0f;
-static CGFloat const kPBCalendarSelectionViewEndPointRadius = 16.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsAdvancement = 10.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsThreshold = 22.0f;
 static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
@@ -66,12 +66,9 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic) CADisplayLink *displayLink;
-@property (nonatomic, strong) UIView *endPointMarkerView;
-@property (nonatomic, strong) UILabel *endPointLabel;
-@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerLeadingSpace;
-@property (nonatomic, strong) NSLayoutConstraint *endPointMarkerTopSpace;
-@property (nonatomic, strong) NSLayoutConstraint *endPointLabelLeadingSpace;
-@property (nonatomic, strong) NSLayoutConstraint *endPointLabelTopSpace;
+@property (nonatomic, strong) PBCalendarEndPointView *endPointLoupe;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLoupeWidth;
+@property (nonatomic, strong) NSLayoutConstraint *endPointLoupeHeight;
 
 @end
 
@@ -343,46 +340,29 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     self.displayLink.paused = YES;
 }
 
-- (void)setupEndPointMarkerView {
+- (void)setupEndPointLoupe {
 
-    self.endPointMarkerView = [[UIView alloc] init];
-    self.endPointMarkerView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.endPointMarkerView.alpha = .9f;
-    self.endPointMarkerView.clipsToBounds = YES;
+    self.endPointLoupe = [[PBCalendarEndPointView alloc] initLarge];
+    self.endPointLoupe.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.view addSubview:self.endPointMarkerView];
+    [self.view addSubview:self.endPointLoupe];
 
-    self.endPointMarkerView.layer.cornerRadius = kPBCalendarSelectionViewEndPointRadius;
+    CGFloat diameter = self.endPointLoupe.radius * 2.0f;
 
-    CGFloat diameter = kPBCalendarSelectionViewEndPointRadius * 2.0f;
+    self.endPointLoupeWidth =
+    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointLoupe];
+    
+    self.endPointLoupeHeight =
+    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointLoupe];
 
-    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointMarkerView];
-    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointMarkerView];
+    self.endPointLoupe.topSpace =
+    [NSLayoutConstraint alignToTop:self.endPointLoupe withPadding:0.0f];
 
-    self.endPointMarkerTopSpace =
-    [NSLayoutConstraint alignToTop:self.endPointMarkerView withPadding:0.0f];
+    self.endPointLoupe.leadingSpace =
+    [NSLayoutConstraint alignToLeft:self.endPointLoupe withPadding:0.0f];
 
-    self.endPointMarkerLeadingSpace =
-    [NSLayoutConstraint alignToLeft:self.endPointMarkerView withPadding:0.0f];
-
-    self.endPointMarkerView.backgroundColor = self.tintColor;
-    self.endPointMarkerView.hidden = YES;
-
-    self.endPointLabel = [[UILabel alloc] init];
-    self.endPointLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.endPointLabel.textAlignment = NSTextAlignmentCenter;
-    self.endPointLabel.textColor = [UIColor whiteColor];
-
-    [self.endPointMarkerView addSubview:self.endPointLabel];
-
-    [NSLayoutConstraint addHeightConstraint:diameter toView:self.endPointLabel];
-    [NSLayoutConstraint addWidthConstraint:diameter toView:self.endPointLabel];
-
-    self.endPointLabelTopSpace =
-    [NSLayoutConstraint alignToTop:self.endPointLabel withPadding:-1.0f];
-
-    self.endPointLabelLeadingSpace =
-    [NSLayoutConstraint alignToLeft:self.endPointLabel withPadding:0.0f];
+    self.endPointLoupe.backgroundColor = self.tintColor;
+    self.endPointLoupe.hidden = YES;
 }
 
 #pragma mark - View Lifecycle
@@ -394,7 +374,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self setupGestures];
 	[self setupCalendarView];
     [self setupMonthIndicatorLabel];
-    [self setupEndPointMarkerView];
     [self setupNavigationBar];
     [self setupToolbar];
 
@@ -438,7 +417,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     _tintColor = tintColor;
 //    self.view.tintColor = tintColor;
     self.monthIndicatorBackgroundView.backgroundColor = tintColor;
-    self.endPointMarkerView.backgroundColor = tintColor;
+    self.endPointLoupe.backgroundColor = tintColor;
 }
 
 - (void)setTextColor:(UIColor *)textColor {
@@ -744,21 +723,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     return CGPointMake(MAXFLOAT, MAXFLOAT);
 }
 
-- (void)updateEndPointLabel:(NSDate *)date {
-
-    if ([date.midnight isEqualToDate:[[NSDate date] midnight]]) {
-        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
-        self.endPointLabelTopSpace.constant = .5f;
-    } else {
-        self.endPointLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0f];
-        self.endPointLabelTopSpace.constant = -1.0f;
-    }
-
-    NSDateComponents *day = [date components:NSCalendarUnitDay];
-
-    self.endPointLabel.text = [NSString stringWithFormat:@"%d", day.day];
-}
-
 - (void)updateFloatingStartPointMarker:(CGPoint)point forDate:(NSDate *)date {
 
     CGPoint pointInCalendarView = [self endPointMarkingInCalendar];
@@ -768,19 +732,17 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         CGPoint pointInView =
         [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
 
-        self.endPointMarkerView.hidden = NO;
+        self.endPointLoupe.hidden = NO;
         
-        self.endPointMarkerTopSpace.constant = pointInView.y;
+        self.endPointLoupe.topSpace.constant =
+        point.y - (2.0f * self.endPointLoupe.radius);
 
-        self.endPointMarkerLeadingSpace.constant =
-        point.x - kPBCalendarSelectionViewEndPointRadius;
+        self.endPointLoupe.leadingSpace.constant =
+        point.x - self.endPointLoupe.radius;
 
-        self.endPointLabelLeadingSpace.constant =
-        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+        [self.endPointLoupe updateEndPointLabel:date];
 
-        [self updateEndPointLabel:date];
-
-        [self.endPointMarkerView layoutIfNeeded];
+        [self.endPointLoupe layoutIfNeeded];
     }
 }
 
@@ -793,18 +755,17 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         CGPoint pointInView =
         [self.view convertPoint:pointInCalendarView fromView:self.calendarView];
 
-        self.endPointMarkerView.hidden = NO;
-        self.endPointMarkerTopSpace.constant = pointInView.y;
+        self.endPointLoupe.hidden = NO;
 
-        self.endPointMarkerLeadingSpace.constant =
-        point.x - kPBCalendarSelectionViewEndPointRadius;
+        self.endPointLoupe.topSpace.constant =
+        point.y - (2.0f * self.endPointLoupe.radius);
 
-        self.endPointLabelLeadingSpace.constant =
-        pointInView.x - self.endPointMarkerLeadingSpace.constant;
+        self.endPointLoupe.leadingSpace.constant =
+        point.x - self.endPointLoupe.radius;
 
-        [self updateEndPointLabel:date];
+        [self.endPointLoupe updateEndPointLabel:date];
 
-        [self.endPointMarkerView layoutIfNeeded];
+        [self.endPointLoupe layoutIfNeeded];
     }
 }
 
@@ -1055,6 +1016,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         if (self.draggingStartDate != nil || self.draggingEndDate != nil) {
 
+            [self setupEndPointLoupe];
             self.calendarView.scrollEnabled = NO;
             self.displayLink.paused = NO;
             self.calendarView.startPointHidden = self.draggingStartDate != nil;
@@ -1202,7 +1164,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     
     if (speed > 0.0f) {
         
-        self.endPointMarkerView.hidden = YES;
+        self.endPointLoupe.hidden = YES;
 
         if (_autoScrollAmount == 0.0f) {
             [self showMonthIndicatorContainer];
@@ -1215,7 +1177,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     } else if (_autoScrollAmount != 0.0f) {
         
         [self hideMonthIndicatorContainer];
-        self.endPointMarkerView.hidden = NO;
+        self.endPointLoupe.hidden = NO;
         self.calendarView.withinRangeBackgroundHidden = NO;
         [self handlePanChanged:nil];
         
@@ -1237,35 +1199,42 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      convertPoint:markerViewFinalPoint
      fromView:self.calendarView];
 
-    [self.endPointMarkerView setNeedsLayout];
+    [self.endPointLoupe setNeedsLayout];
+
+    if (self.draggingStartDate != nil || self.draggingEndDate != nil) {
+            
+        if (_rangeMode &&
+            self.modeSwitchOn &&
+            [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
+            [self toggleRangeMode];
+        }
+    }
 
     [UIView
      animateWithDuration:.3
      animations:^{
+         
+         CGAffineTransform transform = CGAffineTransformMakeScale(.5f, .5f);
+         
+         self.endPointLoupe.transform = transform;
+         
+         self.endPointLoupe.topSpace.constant = markerViewFinalPoint.y;
+         self.endPointLoupe.leadingSpace.constant = markerViewFinalPoint.x;
+         self.endPointLoupe.labelLeadingSpace.constant = 0.0f;
 
-         self.endPointMarkerTopSpace.constant = markerViewFinalPoint.y;
-         self.endPointMarkerLeadingSpace.constant = markerViewFinalPoint.x;
-         self.endPointLabelLeadingSpace.constant = 0.0f;
-
-         [self.endPointMarkerView layoutIfNeeded];
+         [self.endPointLoupe layoutIfNeeded];
+         
+         if (self.draggingStartDate != nil || self.draggingEndDate != nil) {
+             
+             self.calendarView.startPointHidden = NO;
+             self.calendarView.endPointHidden = NO;
+             [self.calendarView updateMonthViews:NO];
+         }
 
      } completion:^(BOOL finished) {
-
-         self.endPointMarkerView.hidden = YES;
-
-         if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
-             return;
-         }
-
-         self.calendarView.startPointHidden = NO;
-         self.calendarView.endPointHidden = NO;
-         [self.calendarView updateMonthViews:NO];
-
-         if (_rangeMode &&
-             self.modeSwitchOn &&
-             [self.selectedDateRange.startDate isEqualToDate:self.selectedDateRange.endDate.midnight]) {
-             [self toggleRangeMode];
-         }
+         
+         [self.endPointLoupe removeFromSuperview];
+         self.endPointLoupe = nil;
          
          self.draggingStartDate = nil;
          self.draggingEndDate = nil;
