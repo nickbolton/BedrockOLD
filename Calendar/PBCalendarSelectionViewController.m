@@ -61,7 +61,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 @property (nonatomic, strong) NSArray *visibleMonthViews;
 @property (nonatomic) CGRect visibleRect;
 @property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
-@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
@@ -314,16 +314,17 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     [self.view addGestureRecognizer:self.tapGesture];
 
-    self.panGesture =
-    [[UIPanGestureRecognizer alloc]
+    self.longPressGesture =
+    [[UILongPressGestureRecognizer alloc]
      initWithTarget:self
-     action:@selector(handlePan:)];
+     action:@selector(handleLongPress:)];
 
-    self.panGesture.delegate = self;
+    self.longPressGesture.delegate = self;
 
-    [self.view addGestureRecognizer:self.panGesture];
+    [self.view addGestureRecognizer:self.longPressGesture];
 
-    [self.tapGesture requireGestureRecognizerToFail:self.panGesture];
+    [self.tapGesture requireGestureRecognizerToFail:self.longPressGesture];
+    [self.calendarView.panGestureRecognizer requireGestureRecognizerToFail:self.longPressGesture];
 }
 
 - (void)setupDisplayLink {
@@ -370,8 +371,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [super viewDidLoad];
     self.view.tintColor = self.tintColor;
     [self setupDisplayLink];
-    [self setupGestures];
 	[self setupCalendarView];
+    [self setupGestures];
     [self setupMonthIndicatorLabel];
     [self setupNavigationBar];
     [self setupToolbar];
@@ -967,7 +968,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     }
 }
 
-- (void)handlePan:(UIPanGestureRecognizer *)gesture {
+- (void)handleLongPress:(UIPanGestureRecognizer *)gesture {
     [self handleRangeModePan:gesture];
 }
 
@@ -1037,10 +1038,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
             
             [self.endPointLoupe setNeedsLayout];
             
+            
             [UIView
-             animateWithDuration:.3
+             animateWithDuration:.3f
              animations:^{
                  
+                 [self updateFloatingEndPointMarker:_lastPanningLocation forDate:date];
                  self.endPointLoupe.transform = CGAffineTransformIdentity;
                  self.endPointLoupe.alpha = 1.0f;
                  
@@ -1275,10 +1278,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     return [touch.view isDescendantOfView:self.toolbar] == NO;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return gestureRecognizer != self.tapGesture || otherGestureRecognizer != self.panGesture;
 }
 
 @end
