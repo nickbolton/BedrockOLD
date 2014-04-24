@@ -358,15 +358,52 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	return point;
 }
 
-- (NSDateComponents *)dayAtPoint:(CGPoint)point
-{
+- (NSDateComponents *)dayAtPoint:(CGPoint)point {
+    return [self dayAtPoint:point endPointsOnly:NO];
+}
+
+- (NSDateComponents *)startOrEndPointAtPoint:(CGPoint)point {
+    return [self dayAtPoint:point endPointsOnly:YES];
+}
+
+- (NSDateComponents *)dayAtPoint:(CGPoint)point endPointsOnly:(BOOL)endPointsOnly {
+
+    static CGFloat const touchPadding = 20.0f;
+    
 	__block NSDateComponents *dayComponents = nil;
+    __block CGFloat distanceToNearestDay = MAXFLOAT;
 
 	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
-		if (CGRectContainsPoint(dayRect, point)) {
-			dayComponents = [day copy];
-
-			*stop = YES;
+        
+        CGRect expandedRect = dayRect;
+        expandedRect.origin.x -= touchPadding;
+        expandedRect.origin.y -= touchPadding;
+        expandedRect.size.width += 2.0f * touchPadding;
+        expandedRect.size.height += 2.0f * touchPadding;
+        
+        BOOL endPointCriteria =
+        endPointsOnly == NO ||
+        [self isStartingDay:day] ||
+        [self isEndingDay:day];
+        
+		if (CGRectContainsPoint(expandedRect, point) &&
+            endPointCriteria) {
+            
+            CGPoint midPoint =
+            CGPointMake(CGRectGetMidX(dayRect), CGRectGetMidY(dayRect));
+            
+            CGFloat xDelta = midPoint.x - point.x;
+            CGFloat yDelta = midPoint.y - point.y;
+            
+            CGFloat distanceSquared =
+            (xDelta * xDelta) + (yDelta * yDelta);
+            
+            if (dayComponents == nil ||
+                distanceSquared < distanceToNearestDay) {
+                
+                dayComponents = [day copy];
+                distanceToNearestDay = distanceSquared;
+            }
 		}
 	}];
 

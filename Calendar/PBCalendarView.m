@@ -169,6 +169,24 @@
 
 #pragma mark - End Point
 
+- (NSDateComponents *)startOrEndPointAtPoint:(CGPoint)point {
+    
+    PBMonthView *monthView = [self monthViewAtPoint:point];
+    
+    point =
+    [monthView
+     convertPoint:point
+     fromView:self];
+    
+    NSDateComponents *components = [monthView startOrEndPointAtPoint:point];
+    
+    return
+    [NSDate
+     dateWithYear:components.year
+     month:components.month
+     day:components.day];
+}
+
 - (NSDate *)dateAtPoint:(CGPoint)point {
 
     PBMonthView *monthView = [self monthViewAtPoint:point];

@@ -706,6 +706,12 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     return [self.calendarView dateAtPoint:point];
 }
 
+- (NSDate *)startOrEndPointAtPoint:(CGPoint)point {
+    
+    point = [self.calendarView convertPoint:point fromView:self.view];
+    return [self.calendarView startOrEndPointAtPoint:point];
+}
+
 - (NSDate *)nearestDateAtPoint:(CGPoint)point {
 
     point = [self.calendarView convertPoint:point fromView:self.view];
@@ -739,6 +745,13 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         self.endPointLoupe.leadingSpace.constant =
         point.x - self.endPointLoupe.radius;
+        
+        self.endPointLoupe.leadingSpace.constant =
+        MAX(0.0f, self.endPointLoupe.leadingSpace.constant);
+        
+        self.endPointLoupe.leadingSpace.constant =
+        MIN(CGRectGetMaxX(self.view.frame) - CGRectGetWidth(self.endPointLoupe.frame),
+            self.endPointLoupe.leadingSpace.constant);
 
         [self.endPointLoupe updateEndPointLabel:date];
 
@@ -762,6 +775,13 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
         self.endPointLoupe.leadingSpace.constant =
         point.x - self.endPointLoupe.radius;
+
+        self.endPointLoupe.leadingSpace.constant =
+        MAX(0.0f, self.endPointLoupe.leadingSpace.constant);
+        
+        self.endPointLoupe.leadingSpace.constant =
+        MIN(CGRectGetMaxX(self.view.frame) - CGRectGetWidth(self.endPointLoupe.frame),
+            self.endPointLoupe.leadingSpace.constant);
 
         [self.endPointLoupe updateEndPointLabel:date];
 
@@ -1000,7 +1020,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     
     if ([self pointInNavbarOrToolbar:_lastPanningLocation] == NO) {
 
-        NSDate *date = [self dateAtPoint:_lastPanningLocation];
+        NSDate *date = [self startOrEndPointAtPoint:_lastPanningLocation];
 
         self.draggingStartDate = nil;
         self.draggingEndDate = nil;
@@ -1068,6 +1088,8 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 - (void)handlePanChanged:(UIGestureRecognizer *)gesture {
 
     if (self.draggingStartDate == nil && self.draggingEndDate == nil) {
+        gesture.enabled = NO;
+        gesture.enabled = YES;
         return;
     }
     

@@ -37,6 +37,7 @@
 - (void)centerCurrentMonth;
 - (void)scrollToMonthAtPoint:(CGPoint)point;
 - (NSDate *)dateAtPoint:(CGPoint)point;
+- (NSDateComponents *)startOrEndPointAtPoint:(CGPoint)point;
 - (NSDate *)nearestDateAtPoint:(CGPoint)point;
 - (CGPoint)endPointMarkingInCalendar:(BOOL)isStartDate;
 - (CGPoint)centeredContentOffsetAtPoint:(CGPoint)point;
