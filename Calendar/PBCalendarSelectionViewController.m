@@ -362,7 +362,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [NSLayoutConstraint alignToLeft:self.endPointLoupe withPadding:0.0f];
 
     self.endPointLoupe.backgroundColor = self.tintColor;
-    self.endPointLoupe.hidden = YES;
 }
 
 #pragma mark - View Lifecycle
@@ -735,7 +734,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         self.endPointLoupe.hidden = NO;
         
         self.endPointLoupe.topSpace.constant =
-        point.y - (2.0f * self.endPointLoupe.radius);
+        point.y - (3.0f * self.endPointLoupe.radius);
 
         self.endPointLoupe.leadingSpace.constant =
         point.x - self.endPointLoupe.radius;
@@ -758,7 +757,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         self.endPointLoupe.hidden = NO;
 
         self.endPointLoupe.topSpace.constant =
-        point.y - (2.0f * self.endPointLoupe.radius);
+        point.y - (3.0f * self.endPointLoupe.radius);
 
         self.endPointLoupe.leadingSpace.constant =
         point.x - self.endPointLoupe.radius;
@@ -1017,6 +1016,37 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
         if (self.draggingStartDate != nil || self.draggingEndDate != nil) {
 
             [self setupEndPointLoupe];
+
+            self.endPointLoupe.transform = CGAffineTransformMakeScale(.5f, .5f);
+
+            CGPoint markerViewStartPoint = [self endPointMarkingInCalendar];
+            
+            markerViewStartPoint =
+            [self.view
+             convertPoint:markerViewStartPoint
+             fromView:self.calendarView];
+            
+            self.endPointLoupe.topSpace.constant = markerViewStartPoint.y;
+            self.endPointLoupe.leadingSpace.constant = markerViewStartPoint.x;
+            self.endPointLoupe.labelLeadingSpace.constant = 0.0f;
+            self.endPointLoupe.alpha = 0.0f;
+            
+            [self.endPointLoupe layoutIfNeeded];
+                        
+            NSDate *date = [self nearestDateAtPoint:_lastPanningLocation];
+            
+            [self.endPointLoupe setNeedsLayout];
+            
+            [UIView
+             animateWithDuration:.3
+             animations:^{
+                 
+                 self.endPointLoupe.transform = CGAffineTransformIdentity;
+                 self.endPointLoupe.alpha = 1.0f;
+                 
+             } completion:^(BOOL finished) {
+             }];
+
             self.calendarView.scrollEnabled = NO;
             self.displayLink.paused = NO;
             self.calendarView.startPointHidden = self.draggingStartDate != nil;
