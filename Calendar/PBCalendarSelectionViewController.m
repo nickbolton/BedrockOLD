@@ -345,7 +345,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     self.endPointLoupe = [[PBCalendarEndPointView alloc] initLarge];
     self.endPointLoupe.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.view addSubview:self.endPointLoupe];
+    [self.view.window addSubview:self.endPointLoupe];
 
     CGFloat diameter = self.endPointLoupe.radius * 2.0f;
 
