@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, PBCalendarViewMonthIndicatorState) {
 };
 
 static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
-static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 40.0f;
+static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 44.0f;
 static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
 static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 1.4f;
 static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold = 300.0f;
@@ -210,23 +210,22 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      target:nil
      action:nil];
 
-    UIBarButtonItem *spacer =
+    UIBarButtonItem *flexSpacer2 =
     [[UIBarButtonItem alloc]
-     initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+     initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
      target:nil
      action:nil];
-    spacer.width = 12.0f;
 
     self.currentMonthItem =
     [[UIBarButtonItem alloc]
-     initWithTitle:PBLoc(@"Today")
+     initWithTitle:PBLoc(@"Jump To…")
      style:UIBarButtonItemStylePlain
      target:self
      action:@selector(showToday:)];
 
     self.currentSelectionItem =
     [[UIBarButtonItem alloc]
-     initWithTitle:PBLoc(@"Selection")
+     initWithTitle:PBLoc(@"Presets")
      style:UIBarButtonItemStylePlain
      target:self
      action:@selector(showCurrentSelection:)];
@@ -239,7 +238,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     
     [items addObject:flexSpacer];
     [items addObject:self.currentSelectionItem];
-    [items addObject:spacer];
+    [items addObject:flexSpacer2];
     [items addObject:self.currentMonthItem];
 
     self.toolbar.items = items;
@@ -273,13 +272,16 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     [self.view addSubview:self.monthIndicatorContainer];
 
+    CGFloat statusBarHeight =
+    CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
+
     [NSLayoutConstraint
      alignToTop:self.monthIndicatorContainer
-     withPadding:kPBCalendarSelectionViewControllerNavigationBarHeight];
+     withPadding:0.0f];
 
     [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorContainer];
     [NSLayoutConstraint
-     addHeightConstraint:40.0f
+     addHeightConstraint:kPBCalendarSelectionViewControllerNavigationBarHeight
      toView:self.monthIndicatorContainer];
 
     UIView *backgroundView = [[UIView alloc] init];
@@ -294,13 +296,15 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     self.monthIndicatorLabel = [[UILabel alloc] init];
     self.monthIndicatorLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.monthIndicatorLabel.textColor = [UIColor blackColor];
+    self.monthIndicatorLabel.textColor = self.monthIndicatorTextColor;
     self.monthIndicatorLabel.textAlignment = NSTextAlignmentCenter;
     self.monthIndicatorLabel.font =
-    [UIFont fontWithName:@"HelveticaNeue" size:16.0f];
+    [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
 
     [self.monthIndicatorContainer addSubview:self.monthIndicatorLabel];
-    [NSLayoutConstraint expandToSuperview:self.monthIndicatorLabel];
+    [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorLabel];
+    [NSLayoutConstraint alignToTop:self.monthIndicatorLabel withPadding:statusBarHeight];
+    [NSLayoutConstraint alignToBottom:self.monthIndicatorLabel withPadding:0.0f];
 }
 
 - (void)setupGestures {
@@ -577,6 +581,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      animateWithDuration:.3f
      animations:^{
          self.monthIndicatorContainer.alpha = 1.0f;
+         self.navigationController.navigationBar.alpha = 0.0f;
      } completion:^(BOOL finished) {
          _monthIndicatorState = PBCalendarViewMonthIndicatorStateVisible;
      }];
@@ -590,6 +595,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      animateWithDuration:.3f
      animations:^{
          self.monthIndicatorContainer.alpha = 0.0f;
+         self.navigationController.navigationBar.alpha = 1.0f;
      } completion:^(BOOL finished) {
          _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
      }];
