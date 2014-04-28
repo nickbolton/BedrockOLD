@@ -167,6 +167,29 @@
     }];
 }
 
+- (void)reloadWithCurrentMonth:(NSDate *)month {
+
+    [self.monthViews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
+        [view removeFromSuperview];
+    }];
+    
+    [self.monthViews removeAllObjects];
+    
+    self.contentOffset = CGPointZero;
+    
+    PBMonthView *monthView = [self _dequeueMonthView];
+    
+    monthView.month = month;
+    monthView.frame = CGRectMake(0.0,
+                                 -1.0,
+                                 self.frame.size.width,
+                                 monthView.frame.size.height);
+    [self insertSubview:monthView atIndex:0];
+    [self.monthViews addObject:monthView];
+    
+    [self scrollToMonth:month];
+}
+
 #pragma mark - End Point
 
 - (NSDateComponents *)startOrEndPointAtPoint:(CGPoint)point {

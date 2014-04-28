@@ -16,6 +16,10 @@
 - (void)calendarSelectionViewController:(PBCalendarSelectionViewController *)viewController
                        didSelectedRange:(PBDateRange *)selectedRange;
 - (void)calendarSelectionViewControllerCancelled:(PBCalendarSelectionViewController *)viewController;
+- (void)calendarSelectionViewControllerPresentJumpToActionSheet:(PBCalendarSelectionViewController *)viewController
+                                                          title:(NSString *)title
+                                                   buttonTitles:(NSArray *)buttonTitles
+                                                 actionDelegate:(PBActionDelegate *)actionDelegate;
 
 @end
 

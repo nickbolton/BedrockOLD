@@ -48,4 +48,6 @@
                  completelyVisible:(BOOL)completelyVisible;
 - (void)updateMonthViews:(BOOL)animated;
 
+- (void)reloadWithCurrentMonth:(NSDate *)month;
+
 @end

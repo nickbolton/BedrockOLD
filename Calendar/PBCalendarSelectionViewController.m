@@ -28,6 +28,7 @@ static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStart
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsAdvancement = 10.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsThreshold = 22.0f;
 static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
+static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
 @interface PBCalendarSelectionViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
@@ -46,12 +47,13 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 }
 
 @property (nonatomic, strong) UIToolbar *toolbar;
+@property (nonatomic, strong) UIToolbar *topToolbar;
 @property (nonatomic, strong) UINavigationBar *navbar;
 @property (nonatomic, strong) PBCalendarView *calendarView;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
 @property (nonatomic, strong) UIBarButtonItem *rangeToggleItem;
-@property (nonatomic, strong) UIBarButtonItem *currentMonthItem;
-@property (nonatomic, strong) UIBarButtonItem *currentSelectionItem;
+@property (nonatomic, strong) UIBarButtonItem *jumpToItem;
+@property (nonatomic, strong) UIBarButtonItem *presetsItem;
 @property (nonatomic, readonly) PBDateRange *selectedDateRange;
 @property (nonatomic, strong) PBDateRange *initialSelectedDateRange;
 @property (nonatomic, strong) UIView *monthIndicatorContainer;
@@ -69,6 +71,7 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 @property (nonatomic, strong) PBCalendarEndPointView *endPointLoupe;
 @property (nonatomic, strong) NSLayoutConstraint *endPointLoupeWidth;
 @property (nonatomic, strong) NSLayoutConstraint *endPointLoupeHeight;
+@property (nonatomic, strong) PBActionDelegate *actionDelegate;
 
 @end
 
@@ -196,6 +199,26 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [NSLayoutConstraint expandWidthToSuperview:self.toolbar];
 
     [NSLayoutConstraint alignToBottom:self.toolbar withPadding:0.0f];
+    
+    self.topToolbar = [[UIToolbar alloc] init];
+    self.topToolbar.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(1, 1), NO, 0.0);
+    UIImage *blank = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    [self.topToolbar setBackgroundImage:blank forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+    
+    [self.view addSubview:self.topToolbar];
+    
+    [NSLayoutConstraint
+     addHeightConstraint:kPBCalendarSelectionViewControllerToolbarHeight
+     toView:self.topToolbar];
+    
+    [NSLayoutConstraint horizontallyCenterView:self.topToolbar];
+    [NSLayoutConstraint addWidthConstraint:90.0f toView:self.topToolbar];
+    
+    [NSLayoutConstraint alignToBottom:self.topToolbar withPadding:0.0f];
 
     self.rangeToggleItem =
     [[UIBarButtonItem alloc]
@@ -210,20 +233,14 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
      target:nil
      action:nil];
 
-    UIBarButtonItem *flexSpacer2 =
-    [[UIBarButtonItem alloc]
-     initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-     target:nil
-     action:nil];
-
-    self.currentMonthItem =
+    self.jumpToItem =
     [[UIBarButtonItem alloc]
      initWithTitle:PBLoc(@"Jump To…")
      style:UIBarButtonItemStylePlain
      target:self
-     action:@selector(showToday:)];
+     action:@selector(jumpToPressed:)];
 
-    self.currentSelectionItem =
+    self.presetsItem =
     [[UIBarButtonItem alloc]
      initWithTitle:PBLoc(@"Presets")
      style:UIBarButtonItemStylePlain
@@ -237,11 +254,11 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     }
     
     [items addObject:flexSpacer];
-    [items addObject:self.currentSelectionItem];
-    [items addObject:flexSpacer2];
-    [items addObject:self.currentMonthItem];
+    [items addObject:self.jumpToItem];
 
     self.toolbar.items = items;
+    self.topToolbar.items = @[flexSpacer, self.presetsItem, flexSpacer];
+    
     [self updateToolbarItems];
 }
 
@@ -456,18 +473,140 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     [self.delegate calendarSelectionViewController:self didSelectedRange:self.selectedDateRange];
 }
 
+- (void)jumpToPressed:(id)sender {
+
+    __weak typeof(self) this = self;
+    
+    NSInteger buttonIndex = 0;
+    
+    self.actionDelegate = [[PBActionDelegate alloc] init];
+    NSMutableArray *buttonTitles = [NSMutableArray array];
+    
+    [buttonTitles addObject:PBLoc(@"Today")];
+    
+    [self.actionDelegate
+     addBlock:^(id userContext) {
+         [this showToday:nil];
+     }
+     userContext:nil
+     toButton:buttonIndex++];
+    
+    NSInteger daysInRange =
+    [self.selectedDateRange.startDate
+     daysInBetweenDate:self.selectedDateRange.endDate];
+    
+    if (daysInRange <= 60) {
+        
+        if (_rangeMode) {
+            
+            [buttonTitles addObject:PBLoc(@"Selected Range")];
+
+        } else {
+            
+            [buttonTitles addObject:PBLoc(@"Selected Day")];
+        }
+        
+        [self.actionDelegate
+         addBlock:^(id userContext) {
+
+             NSInteger distance =
+             [this.currentMonth
+              daysInBetweenDate:this.selectedDateRange.startDate];
+             
+             if (ABS(distance) <= kPBCalendarSelectionMaxAnimationRange) {
+                 
+                 [this.calendarView
+                  scrollToMonth:this.selectedDateRange.startDate
+                  animated:YES];
+                 
+             } else {
+                 
+                 [this.calendarView reloadWithCurrentMonth:this.selectedDateRange.startDate];
+             }
+         }
+         userContext:nil
+         toButton:buttonIndex++];
+        
+    } else {
+        
+        [buttonTitles addObject:PBLoc(@"Start of Selection")];
+        
+        [self.actionDelegate
+         addBlock:^(id userContext) {
+             
+             NSInteger distance =
+             [this.currentMonth
+              daysInBetweenDate:this.selectedDateRange.startDate];
+
+             if (ABS(distance) <= kPBCalendarSelectionMaxAnimationRange) {
+                 
+                 [this.calendarView
+                  scrollToMonth:this.selectedDateRange.startDate
+                  animated:YES];
+                 
+             } else {
+                 
+                 [this.calendarView reloadWithCurrentMonth:this.selectedDateRange.startDate];
+             }
+         }
+         userContext:nil
+         toButton:buttonIndex++];
+
+        [buttonTitles addObject:PBLoc(@"End of Selection")];
+        
+        [self.actionDelegate
+         addBlock:^(id userContext) {
+             
+             NSInteger distance =
+             [this.currentMonth
+              daysInBetweenDate:this.selectedDateRange.endDate];
+             
+             if (ABS(distance) <= kPBCalendarSelectionMaxAnimationRange) {
+                 
+                 [this.calendarView
+                  scrollToMonth:this.selectedDateRange.endDate
+                  animated:YES];
+                 
+             } else {
+                 
+                 [this.calendarView reloadWithCurrentMonth:this.selectedDateRange.endDate];
+             }
+         }
+         userContext:nil
+         toButton:buttonIndex++];
+    }
+    
+    [self.delegate
+     calendarSelectionViewControllerPresentJumpToActionSheet:self
+     title:PBLoc(@"Jump To…")
+     buttonTitles:buttonTitles
+     actionDelegate:self.actionDelegate];
+}
+
 - (void)showToday:(id)sender {
-    self.currentMonthItem.enabled = NO;
-	[self.calendarView scrollToMonth:[NSDate date] animated:YES];
-}
+    
+    NSDate *today = [NSDate date];
+    
+    NSInteger distance =
+    [self.currentMonth
+     daysInBetweenDate:today];
+    
+    if (ABS(distance) <= kPBCalendarSelectionMaxAnimationRange) {
+        
+        [self.calendarView
+         scrollToMonth:today
+         animated:YES];
+        
+    } else {
+        
+        [self.calendarView reloadWithCurrentMonth:today];
+    }
 
-- (void)showCurrentSelection:(id)sender {
-    [self doShowCurrentSelection:YES];
-}
-
-- (void)doShowCurrentSelection:(BOOL)animated {
-    self.currentSelectionItem.enabled = NO;
-    [self.calendarView scrollToMonth:self.selectedDateRange.startDate animated:animated];
+	[self.calendarView
+     scrollToMonth:today
+     animated:ABS(distance) <= kPBCalendarSelectionMaxAnimationRange];
+    
+    [self doUpdateCurrentMonth:today];
 }
 
 #pragma mark -
@@ -485,46 +624,6 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
     }
 
     self.rangeToggleItem.title = title;
-
-    __block BOOL currentMonthItemEnabled = YES;
-    __block BOOL currentSelectionItemEnabled = YES;
-    
-    [self.visibleMonthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
-
-        NSDateComponents *monthComponents =
-        [monthView.month components:NSCalendarUnitYear|NSCalendarUnitMonth];
-
-        NSInteger days =
-        [monthView.month
-         rangeOfUnit:NSCalendarUnitDay
-         inUnit:NSCalendarUnitMonth].length;
-
-        NSDate *endDate =
-        [NSDate
-         dateWithYear:monthComponents.year
-         month:monthComponents.month
-         day:days];
-
-        BOOL overlapping =
-        [self.selectedDateRange.startDate isLessThanOrEqualTo:endDate] &&
-        [self.selectedDateRange.endDate isGreaterThanOrEqualTo:monthView.month];
-
-        if (overlapping) {
-            currentSelectionItemEnabled = NO;
-        }
-
-        PBDateRange *currentMonthRange =
-        [PBDateRange
-         dateRangeWithStartDate:monthView.month
-         endDate:endDate];
-
-        if ([currentMonthRange dateWithinRange:[NSDate date]]) {
-            currentMonthItemEnabled = NO;
-        }
-    }];
-    
-    self.currentMonthItem.enabled = currentMonthItemEnabled;
-    self.currentSelectionItem.enabled = currentSelectionItemEnabled;
 }
 
 - (void)toggleRangeMode {
@@ -652,28 +751,43 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
     NSDate *currentMonth = [self.calendarView currentMonth];
 
-    if ([currentMonth isEqualToDate:self.currentMonth] == NO) {
+    [self doUpdateCurrentMonth:currentMonth];
 
+    if (visibleMonthsChanged) {
+        [self updateToolbarItems];
+    }
+}
+
+- (void)doUpdateCurrentMonth:(NSDate *)date {
+    
+    NSDateComponents *monthComponents =
+    [date components:NSCalendarUnitYear|NSCalendarUnitMonth];
+    monthComponents.day = 1;
+    
+	NSDate *currentMonth =
+    [NSDate
+     dateWithYear:monthComponents.year
+     month:monthComponents.month
+     day:1];
+
+    if (date != nil && [currentMonth isEqualToDate:self.currentMonth] == NO) {
+        
         NSLocale *locale = [NSLocale currentLocale];
-
+        
         NSString *dateComponents = @"MMMMy";
-
+        
         NSString *dateFormat =
         [NSDateFormatter
          dateFormatFromTemplate:dateComponents
          options:0
          locale:locale];
-
+        
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = dateFormat;
-
+        
         self.monthIndicatorLabel.text = [dateFormatter stringFromDate:currentMonth];
-
+        
         self.currentMonth = currentMonth;
-    }
-
-    if (visibleMonthsChanged) {
-        [self updateToolbarItems];
     }
 }
 
@@ -872,8 +986,11 @@ static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     _decelerating = NO;
-    [self updateCurrentMonth];
     [self hideMonthIndicatorContainer];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateCurrentMonth];
+    });
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView
