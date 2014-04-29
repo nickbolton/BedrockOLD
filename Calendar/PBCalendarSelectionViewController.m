@@ -275,7 +275,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     [button
      addTarget:self
      action:@selector(presetsPressed:)
-     forControlEvents:UIControlEventTouchUpInside];
+     forControlEvents:UIControlEventTouchDown];
     
     [button
      setTitleColor:self.tintColor
@@ -388,8 +388,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         self.doubleTapGesture.delegate = self;
         
         [self.view addGestureRecognizer:self.doubleTapGesture];
-        
-        [self.tapGesture requireGestureRecognizerToFail:self.doubleTapGesture];
     }
 }
 
