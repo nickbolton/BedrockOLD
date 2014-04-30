@@ -21,6 +21,11 @@
                                                    buttonTitles:(NSArray *)buttonTitles
                                                  actionDelegate:(PBActionDelegate *)actionDelegate;
 
+- (void)calendarSelectionViewControllerPresentPresetSelectionModal:(PBCalendarSelectionViewController *)viewController
+                                                             title:(NSString *)title
+                                                       timePeriods:(NSArray *)timePeriods
+                                                       actionBlock:(void(^)(NSNumber *timePeriod))actionBlock;
+
 @end
 
 @interface PBCalendarSelectionViewController : UIViewController
@@ -35,8 +40,10 @@
 @property (nonatomic) UIBarStyle barStyle;
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
+              presetTimePeriods:(NSArray *)presetTimePeriods
                    modeSwitchOn:(BOOL)modeSwitchOn;
 - (id)initWithSelectedDate:(NSDate *)date
+         presetTimePeriods:(NSArray *)presetTimePeriods
               modeSwitchOn:(BOOL)modeSwitchOn;
 
 - (void)showToday:(id)sender;
