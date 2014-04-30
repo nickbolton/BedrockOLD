@@ -66,6 +66,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 @property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
 @property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, strong) NSDate *draggingStartDate;
 @property (nonatomic, strong) NSDate *draggingEndDate;
 @property (nonatomic) CADisplayLink *displayLink;
@@ -363,7 +364,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     self.tapGesture.delegate = self;
 
     [self.view addGestureRecognizer:self.tapGesture];
-
+    
     self.longPressGesture =
     [[UILongPressGestureRecognizer alloc]
      initWithTarget:self
@@ -375,6 +376,21 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
     [self.tapGesture requireGestureRecognizerToFail:self.longPressGesture];
     [self.calendarView.panGestureRecognizer requireGestureRecognizerToFail:self.longPressGesture];
+    
+    if (self.modeSwitchOn) {
+        
+        self.doubleTapGesture =
+        [[UITapGestureRecognizer alloc]
+         initWithTarget:self
+         action:@selector(handleDoubleTap:)];
+        
+        self.doubleTapGesture.numberOfTapsRequired = 2;
+        self.doubleTapGesture.delegate = self;
+        
+        [self.view addGestureRecognizer:self.doubleTapGesture];
+        
+        [self.tapGesture requireGestureRecognizerToFail:self.doubleTapGesture];
+    }
 }
 
 - (void)setupDisplayLink {
@@ -1190,6 +1206,22 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
                 [self handleSingleSelectionTap:gesture];
             }
         }
+    }
+}
+
+- (void)handleDoubleTap:(UITapGestureRecognizer *)gesture {
+ 
+    if (self.draggingStartDate != nil || self.draggingEndDate != nil || _isDragging) {
+        return;
+    }
+    
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        
+        if (_rangeMode == NO) {
+            [self toggleRangeMode];
+        }
+        
+        [self handleRangeModeTap:gesture];
     }
 }
 
