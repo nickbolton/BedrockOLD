@@ -12,5 +12,6 @@
 
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 @property (nonatomic, weak) IBOutlet UILabel *valueLabel;
+@property (nonatomic) BOOL valueMarginAdjusted;
 
 @end

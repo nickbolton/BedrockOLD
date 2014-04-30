@@ -988,11 +988,13 @@ static NSInteger const kPBListDefaultTag = 105;
         
         cell.titleLabel.textAlignment = item.titleAlignment;
         
-        if (item.hasDisclosure == NO) {
+        if (item.hasDisclosure == NO && cell.valueMarginAdjusted == NO) {
             
             CGRect frame = cell.valueLabel.frame;
             frame.origin.x -= item.valueMargin;
             cell.valueLabel.frame = frame;
+            
+            cell.valueMarginAdjusted = YES;
         }
     }
     
