@@ -426,7 +426,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     self.endPointLoupe.leadingSpace =
     [NSLayoutConstraint alignToLeft:self.endPointLoupe withPadding:0.0f];
 
-    self.endPointLoupe.backgroundColor = self.tintColor;
+    self.endPointLoupe.backgroundColor = [self.tintColor colorWithAlpha:.7f];
 }
 
 #pragma mark - View Lifecycle

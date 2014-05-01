@@ -803,7 +803,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
         if (isStartingDay || isEndingDay) {
 
-            UIColor *fillColor = self.tintColor;
+            UIColor *fillColor = [self.tintColor colorWithAlpha:.7f];
             BOOL doFill = YES;
 
             if ((isStartingDay && self.startPointHidden) ||
