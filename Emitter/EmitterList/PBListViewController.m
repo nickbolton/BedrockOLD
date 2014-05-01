@@ -727,10 +727,15 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (BOOL)itemExistsAtIndexPath:(NSIndexPath *)indexPath {
 
-    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
-    PBListItem *item = [self itemAtRow:indexPath.row inSectionItem:sectionItem];
-
-    return item != nil;
+    if (indexPath != nil) {
+        
+        PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
+        PBListItem *item = [self itemAtRow:indexPath.row inSectionItem:sectionItem];
+        
+        return item != nil;
+    }
+    
+    return NO;
 }
 
 - (PBListItem *)itemAtIndexPath:(NSIndexPath *)indexPath {
