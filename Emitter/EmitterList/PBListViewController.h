@@ -67,6 +67,7 @@ extern NSString * const kPBListActionCellID;
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section;
 
 - (void)commonInit;
+- (void)cleanUp;
 - (void)setupNotifications;
 - (void)setupTableView;
 - (NSArray *)buildDataSource;

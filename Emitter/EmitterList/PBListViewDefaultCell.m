@@ -225,6 +225,7 @@
 }
 
 - (void)didEndDisplayingCell {
+    self.item = nil;
 }
 
 - (void) layoutSubviews {

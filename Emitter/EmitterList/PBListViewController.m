@@ -90,6 +90,32 @@ static NSInteger const kPBListDefaultTag = 105;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)cleanUp {
+    
+    [self.tableView.visibleCells enumerateObjectsUsingBlock:^(PBListViewDefaultCell *cell, NSUInteger idx, BOOL *stop) {
+        
+        if ([cell isKindOfClass:[PBListViewDefaultCell class]]) {
+            cell.item = nil;
+        }
+    }];
+    
+    [self.dataSource enumerateObjectsUsingBlock:^(PBSectionItem *sectionItem, NSUInteger idx, BOOL *stop) {
+        
+        [sectionItem.items enumerateObjectsUsingBlock:^(PBListItem *item, NSUInteger idx, BOOL *stop) {
+            
+            item.cellNib = nil;
+            item.selectionAccessoryNib = nil;
+            item.userContext = nil;
+        }];
+    }];
+    
+    _dataSource = nil;
+    self.providedDataSource = nil;
+    self.selectAllItem = nil;
+    self.actionDelegate = nil;
+    self.renderers = nil;
+}
+
 #pragma mark - Setup
 
 - (void)setupNotifications {
@@ -651,12 +677,13 @@ static NSInteger const kPBListDefaultTag = 105;
 #pragma mark - Actions
 
 - (IBAction)cancelPressed:(id)sender {
-
+    
     if (self.navigationController != nil && self.navigationController.viewControllers.count > 1) {
         [self.navigationController popViewControllerAnimated:YES];
     } else {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
+    [self cleanUp];
 }
 
 #pragma mark -
