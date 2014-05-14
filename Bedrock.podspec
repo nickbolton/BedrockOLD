@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'AutoLayout' do |al|
     al.ios.source_files  = 'AutoLayout/**/*.{h,m}'
-    s.prefix_header_file = ''
+    al.prefix_header_file = ''
   end
 
   s.subspec 'Calendar' do |cal|
