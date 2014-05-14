@@ -9,7 +9,6 @@ Pod::Spec.new do |s|
   s.author    = { 'nickbolton' => 'nick@deucent.com' }             
   s.source    = { :git => 'https://github.com/nickbolton/Bedrock.git',
                   :branch => 'master'}
-  s.prefix_header_file = 'Shared/Bedrock.h'
   s.license = 'MIT'
 
   s.subspec 'Core' do |c|
