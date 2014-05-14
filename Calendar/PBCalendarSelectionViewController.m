@@ -53,8 +53,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 @property (nonatomic, strong) PBCalendarView *calendarView;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
 @property (nonatomic, strong) UIBarButtonItem *rangeToggleItem;
-@property (nonatomic, strong) UIBarButtonItem *jumpToItem;
-@property (nonatomic, strong) UIBarButtonItem *presetsItem;
+@property (nonatomic, strong) UIBarButtonItem *scrollToItem;
 @property (nonatomic, readonly) PBDateRange *selectedDateRange;
 @property (nonatomic, strong) PBDateRange *initialSelectedDateRange;
 @property (nonatomic, strong) UIView *monthIndicatorContainer;
@@ -220,9 +219,9 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
      target:nil
      action:nil];
 
-    self.jumpToItem =
+    self.scrollToItem =
     [[UIBarButtonItem alloc]
-     initWithTitle:PBLoc(@"Jump To…")
+     initWithTitle:PBLoc(@"Scroll To…")
      style:UIBarButtonItemStylePlain
      target:self
      action:@selector(jumpToPressed:)];
@@ -234,7 +233,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     }
     
     [items addObject:flexSpacer];
-    [items addObject:self.jumpToItem];
+    [items addObject:self.scrollToItem];
 
     self.toolbar.items = items;
     
@@ -629,7 +628,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     
     [self.delegate
      calendarSelectionViewControllerPresentJumpToActionSheet:self
-     title:PBLoc(@"Jump To…")
+     title:PBLoc(@"Scroll To…")
      buttonTitles:buttonTitles
      actionDelegate:self.actionDelegate];
 }
@@ -653,22 +652,14 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         if (timePeriod >= TimePeriod_All &&
             timePeriod <= TimePeriod_PreviousYear) {
             
-            if (timePeriod != TimePeriod_Today &&
-                timePeriod != TimePeriod_Yesterday) {
-                
-                [timePeriods addObject:timePeriodNumber];
-                
-                [self.actionDelegate
-                 addBlock:^(id userContext) {
-                     [this selectPreset:timePeriod];
-                 }
-                 userContext:nil
-                 toButton:buttonIndex++];
-                
-            } else {
-                
-                PBLog(@"Warning : Skipping single day time periods in presents");
-            }
+            [timePeriods addObject:timePeriodNumber];
+            
+            [self.actionDelegate
+             addBlock:^(id userContext) {
+                 [this selectPreset:timePeriod];
+             }
+             userContext:nil
+             toButton:buttonIndex++];
             
         } else {
             
@@ -690,11 +681,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
              if (timePeriod >= TimePeriod_All &&
                  timePeriod <= TimePeriod_PreviousYear) {
                  
-                 if (timePeriod != TimePeriod_Today &&
-                     timePeriod != TimePeriod_Yesterday) {
-                     
-                     [this selectPreset:timePeriod];
-                 }
+                 [this selectPreset:timePeriod];
              }
          }];
         
