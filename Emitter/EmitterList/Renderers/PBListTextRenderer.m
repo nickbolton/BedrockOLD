@@ -47,6 +47,9 @@
         textField.translatesAutoresizingMaskIntoConstraints = NO;
         textField.tag = textFieldTag;
         textField.clearButtonMode = UITextFieldViewModeNever;
+        textField.keyboardType = item.keyboardType;
+        textField.secureTextEntry = item.isSecure;
+        textField.autocapitalizationType = item.autocapitalizationType;
 
         [cell.contentView addSubview:textField];
 
@@ -70,8 +73,8 @@
     textField.text = item.text;
     textField.textColor = item.textColor;
     textField.font = item.font;
-
     textField.placeholder = item.placeholder;
+    cell.backgroundColor = item.backgroundColor;
 
     [self renderControl:textField withItem:item];
 }

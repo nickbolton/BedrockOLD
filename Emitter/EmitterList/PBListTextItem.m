@@ -31,6 +31,8 @@
     item.placeholder = placeholder;
     item.textColor = textColor;
     item.font = font;
+    item.keyboardType = UIKeyboardTypeDefault;
+    item.autocapitalizationType = UITextAutocapitalizationTypeSentences;
     item.itemType = PBItemTypeCustom;
     item.cellID = NSStringFromClass([self class]);
     item.cellClass = [PBListViewDefaultCell class];

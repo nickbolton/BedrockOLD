@@ -16,6 +16,9 @@
 @property (nonatomic, strong) NSString *placeholder;
 @property (nonatomic) UITextField *textField;
 @property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic) UIKeyboardType keyboardType;
+@property (nonatomic) UITextAutocapitalizationType autocapitalizationType;
+@property (nonatomic, getter = isSecure) BOOL secure;
 
 + (PBListTextItem *)textItemWithText:(NSString *)text
                            textColor:(UIColor *)textColor
