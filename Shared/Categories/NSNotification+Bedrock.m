@@ -22,6 +22,11 @@
     return [userInfo objectForKey:NSUpdatedObjectsKey];
 }
 
+- (NSSet *)refreshedManagedObjects {
+    NSDictionary *userInfo = [self userInfo];
+    return [userInfo objectForKey:NSRefreshedObjectsKey];
+}
+
 - (NSSet *)deletedManagedObjects {
     NSDictionary *userInfo = [self userInfo];
     return [userInfo objectForKey:NSDeletedObjectsKey];
@@ -82,7 +87,17 @@
         }
     }
     return result;
+}
 
+- (NSArray *)refreshedManagedObjectsOfType:(Class)type {
+    NSMutableArray *result = [NSMutableArray array];
+    
+    for (id obj in [self refreshedManagedObjects]) {
+        if (type == nil || [obj isKindOfClass:type]) {
+            [result addObject:obj];
+        }
+    }
+    return result;
 }
 
 - (NSArray *)deletedManagedObjectsOfType:(Class)type {
@@ -108,6 +123,15 @@
 
 - (BOOL)updatedManagedObjectsContainsType:(Class)type {
     for (id obj in [self updatedManagedObjects]) {
+        if (type == nil || [obj isKindOfClass:type]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (BOOL)refreshedManagedObjectsContainsType:(Class)type {
+    for (id obj in [self refreshedManagedObjects]) {
         if (type == nil || [obj isKindOfClass:type]) {
             return YES;
         }
