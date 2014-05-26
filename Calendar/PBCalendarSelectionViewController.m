@@ -9,22 +9,12 @@
 #import "PBCalendarSelectionViewController.h"
 #import "PBCalendarView.h"
 #import "PBMonthView.h"
-#import "PBRunningAverageValue.h"
 #import "PBCalendarEndPointView.h"
-
-typedef NS_ENUM(NSInteger, PBCalendarViewMonthIndicatorState) {
-
-    PBCalendarViewMonthIndicatorStateHidden = 0,
-    PBCalendarViewMonthIndicatorStateShowing,
-    PBCalendarViewMonthIndicatorStateHiding,
-    PBCalendarViewMonthIndicatorStateVisible,
-};
+#import "PBIndicatorView.h"
 
 static CGFloat const kPBCalendarSelectionViewControllerNavigationBarHeight = 64.0f;
 static CGFloat const kPBCalendarSelectionViewControllerToolbarHeight = 44.0f;
 static CGFloat const kPBCalendarSelectionViewCurrentMonthAlpha = .7f;
-static CGFloat const kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold = 1.4f;
-static CGFloat const kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold = 300.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsAdvancement = 10.0f;
 static CGFloat const kPBCalendarSelectionPanningOutOfBoundsThreshold = 22.0f;
 static NSTimeInterval const kPBCalendarSelectionOutOfBoundsUpdatePeriod = .3f;
@@ -33,15 +23,9 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 @interface PBCalendarSelectionViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _rangeMode;
-    NSTimeInterval _lastScrollTime;
-    CGFloat _lastScrollPosition;
     CGFloat _autoScrollAmount;
     BOOL _autoScrolling;
-    BOOL _decelerating;
     BOOL _isDragging;
-    PBCalendarViewMonthIndicatorState _monthIndicatorState;
-    NSTimeInterval _monthIndicatorStopTime;
-    NSTimeInterval _lastMonthIndicatorTrigger;
     CGPoint _lastPanningLocation;
     NSTimeInterval _lastOutOfBoundsUpdate;
 }
@@ -56,13 +40,10 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 @property (nonatomic, strong) UIBarButtonItem *scrollToItem;
 @property (nonatomic, readonly) PBDateRange *selectedDateRange;
 @property (nonatomic, strong) PBDateRange *initialSelectedDateRange;
-@property (nonatomic, strong) UIView *monthIndicatorContainer;
-@property (nonatomic, strong) UIView *monthIndicatorBackgroundView;
-@property (nonatomic, strong) UILabel *monthIndicatorLabel;
+@property (nonatomic, strong) PBIndicatorView *indicatorView;
 @property (nonatomic, strong) NSDate *currentMonth;
 @property (nonatomic, strong) NSArray *visibleMonthViews;
 @property (nonatomic) CGRect visibleRect;
-@property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
 @property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
@@ -89,7 +70,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         [PBDateRange dateRangeWithStartDate:date endDate:date];
         self.modeSwitchOn = modeSwitchOn;
         self.presetTimePeriods = presetTimePeriods;
-        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
         [self initializeTheme];
     }
     return self;
@@ -107,7 +87,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
         _rangeMode =
         [dateRange.endDate.midnight isGreaterThan:dateRange.startDate];
-        self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
         [self initializeTheme];
     }
     return self;
@@ -309,48 +288,28 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     self.calendarView.selectedDateRange = self.initialSelectedDateRange;
 }
 
-- (void)setupMonthIndicatorLabel {
+- (void)setupIndicatorView {
 
-    self.monthIndicatorContainer = [[UIView alloc] init];
-    self.monthIndicatorContainer.translatesAutoresizingMaskIntoConstraints = NO;
-    self.monthIndicatorContainer.alpha = 0.0f;
-    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
+    self.indicatorView =
+    [[PBIndicatorView alloc]
+     initWithBackgroundAlpha:kPBCalendarSelectionViewCurrentMonthAlpha];
+    
+    self.indicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.indicatorView.navigationController = self.navigationController;
 
-    [self.view addSubview:self.monthIndicatorContainer];
+    [self.view addSubview:self.indicatorView];
 
     CGFloat statusBarHeight =
     CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
 
     [NSLayoutConstraint
-     alignToTop:self.monthIndicatorContainer
+     alignToTop:self.indicatorView
      withPadding:0.0f];
 
-    [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorContainer];
+    [NSLayoutConstraint expandWidthToSuperview:self.indicatorView];
     [NSLayoutConstraint
      addHeightConstraint:kPBCalendarSelectionViewControllerNavigationBarHeight
-     toView:self.monthIndicatorContainer];
-
-    UIView *backgroundView = [[UIView alloc] init];
-    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
-    backgroundView.backgroundColor = self.tintColor;
-    backgroundView.alpha = kPBCalendarSelectionViewCurrentMonthAlpha;
-    
-    self.monthIndicatorBackgroundView = backgroundView;
-
-    [self.monthIndicatorContainer addSubview:backgroundView];
-    [NSLayoutConstraint expandToSuperview:backgroundView];
-
-    self.monthIndicatorLabel = [[UILabel alloc] init];
-    self.monthIndicatorLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.monthIndicatorLabel.textColor = self.monthIndicatorTextColor;
-    self.monthIndicatorLabel.textAlignment = NSTextAlignmentCenter;
-    self.monthIndicatorLabel.font =
-    [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
-
-    [self.monthIndicatorContainer addSubview:self.monthIndicatorLabel];
-    [NSLayoutConstraint expandWidthToSuperview:self.monthIndicatorLabel];
-    [NSLayoutConstraint alignToTop:self.monthIndicatorLabel withPadding:statusBarHeight];
-    [NSLayoutConstraint alignToBottom:self.monthIndicatorLabel withPadding:0.0f];
+     toView:self.indicatorView];
 }
 
 - (void)setupGestures {
@@ -436,7 +395,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     [self setupDisplayLink];
 	[self setupCalendarView];
     [self setupGestures];
-    [self setupMonthIndicatorLabel];
+    [self setupIndicatorView];
     [self setupNavigationBar];
     [self setupToolbar];
 
@@ -478,8 +437,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
 - (void)setTintColor:(UIColor *)tintColor {
     _tintColor = tintColor;
-//    self.view.tintColor = tintColor;
-    self.monthIndicatorBackgroundView.backgroundColor = tintColor;
+    self.indicatorView.tintColor = tintColor;
     self.endPointLoupe.backgroundColor = tintColor;
     
     [self.presetsButton
@@ -493,7 +451,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
 - (void)setTextColor:(UIColor *)textColor {
     _textColor = textColor;
-    self.monthIndicatorLabel.textColor = textColor;
+    self.indicatorView.textColor = textColor;
     self.calendarView.textColor = textColor;
 }
 
@@ -770,72 +728,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
      endDate:self.selectedDateRange.startDate];
 }
 
-- (BOOL)willMonthIndicatorBeVisible {
-    return
-    _monthIndicatorState == PBCalendarViewMonthIndicatorStateShowing ||
-    _monthIndicatorState == PBCalendarViewMonthIndicatorStateVisible;
-}
-
-- (BOOL)willMonthIndicatorBeHidden {
-    return
-    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHiding ||
-    _monthIndicatorState == PBCalendarViewMonthIndicatorStateHidden;
-}
-
-- (void)showMonthIndicatorContainer {
-
-    self.monthIndicatorContainer.alpha = 0.0f;
-    _monthIndicatorState = PBCalendarViewMonthIndicatorStateShowing;
-
-    [UIView
-     animateWithDuration:.3f
-     animations:^{
-         self.monthIndicatorContainer.alpha = 1.0f;
-         self.navigationController.navigationBar.alpha = 0.0f;
-     } completion:^(BOOL finished) {
-         _monthIndicatorState = PBCalendarViewMonthIndicatorStateVisible;
-     }];
-}
-
-- (void)hideMonthIndicatorContainer {
-
-    _monthIndicatorState = PBCalendarViewMonthIndicatorStateHiding;
-
-    [UIView
-     animateWithDuration:.3f
-     animations:^{
-         self.monthIndicatorContainer.alpha = 0.0f;
-         self.navigationController.navigationBar.alpha = 1.0f;
-     } completion:^(BOOL finished) {
-         _monthIndicatorState = PBCalendarViewMonthIndicatorStateHidden;
-     }];
-}
-
-- (void)ensureMonthIndicatorHides {
-
-    if ([self willMonthIndicatorBeVisible] && _autoScrolling == NO) {
-
-        static CGFloat const epsilon = .0001f;
-        static CGFloat const threshold = .3f;
-
-        __weak typeof(self) this = self;
-
-        NSTimeInterval delayInSeconds = threshold;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void){
-
-            NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-            NSTimeInterval timeDelta = now - _lastScrollTime;
-
-            if (timeDelta > (threshold-epsilon)) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [this hideMonthIndicatorContainer];
-                });
-            }
-        });
-    }
-}
-
 - (void)updateCurrentMonth {
 
     CGFloat height =
@@ -896,7 +788,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = dateFormat;
         
-        self.monthIndicatorLabel.text = [dateFormatter stringFromDate:currentMonth];
+        self.indicatorView.text = [dateFormatter stringFromDate:currentMonth];
         
         self.currentMonth = currentMonth;
     }
@@ -1065,39 +957,21 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 #pragma mark - UIScrollViewDelegate Conformance
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-
     _isDragging = YES;
-
-    NSTimeInterval beginDraggingTime = [NSDate timeIntervalSinceReferenceDate];
-
-    NSTimeInterval delayInSeconds = .3f;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-
-        if (_lastMonthIndicatorTrigger < beginDraggingTime) {
-            [self hideMonthIndicatorContainer];
-        }
-    });
+    [self.indicatorView scrollViewWillBeginDragging:scrollView];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    _decelerating = decelerate;
-
     _isDragging = NO;
+    [self.indicatorView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
 
     if (decelerate) {
         self.currentMonth = nil;
-        _lastScrollPosition = scrollView.contentOffset.y;
-        _lastScrollTime = [NSDate timeIntervalSinceReferenceDate];
-        [self.averageScrollSpeed clearRunningValues];
-    } else {
-        [self hideMonthIndicatorContainer];
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-    _decelerating = NO;
-    [self hideMonthIndicatorContainer];
+    [self.indicatorView scrollViewDidEndScrollingAnimation:scrollView];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateCurrentMonth];
@@ -1108,61 +982,16 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
                      withVelocity:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset {
 
-    if ([self willMonthIndicatorBeHidden] &&
-        ABS(velocity.y) > kPBCalendarSelectionViewShowCurrentMonthScrollVelocityThreshold) {
-
-        [self showMonthIndicatorContainer];
-        scrollView.decelerationRate = UIScrollViewDecelerationRateNormal * 2.0f;
-
-        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-
-        _lastMonthIndicatorTrigger = now;
-        _monthIndicatorStopTime = (3.0f * .8f) + now;
-    }
-
-//    if (velocity.y != 0.0f && [self willMonthIndicatorBeVisible]) {
-//
-//        CGPoint point = *targetContentOffset;
-//        point.y += kPBCalendarSelectionViewControllerNavigationBarHeight;
-//        point.y += (CGRectGetHeight(self.visibleRect) / 2.0f);
-//
-//        *targetContentOffset =
-//        [self.calendarView centeredContentOffsetAtPoint:point];
-//
-//        NSLog(@"targetContentOffset: %@", NSStringFromCGPoint(*targetContentOffset));
-//    }
+    [self.indicatorView
+     scrollViewWillEndDragging:scrollView
+     withVelocity:velocity
+     targetContentOffset:targetContentOffset];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
     [self updateCurrentMonth];
-
-    if (_decelerating) {
-
-        CGFloat scrollPosition = scrollView.contentOffset.y;
-        NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-
-        NSTimeInterval deltaT = now - _lastScrollTime;
-        CGFloat deltaY = scrollPosition - _lastScrollPosition;
-        CGFloat speed = ABS(deltaY / deltaT);
-
-        if (speed < 50000.0f ) {
-
-            self.averageScrollSpeed.value = speed;
-        }
-
-        if (now >= _monthIndicatorStopTime &&
-            self.averageScrollSpeed.value < kPBCalendarSelectionViewHideCurrentMonthScrollVelocityStartThreshold) {
-            [self hideMonthIndicatorContainer];
-        } else {
-            _lastMonthIndicatorTrigger = now;
-        }
-
-        _lastScrollPosition = scrollPosition;
-        _lastScrollTime = now;
-    }
-
-    [self ensureMonthIndicatorHides];
+    [self.indicatorView scrollViewDidScroll:scrollView];
 }
 
 - (void)calendarViewSelected:(PBCalendarView *)calendarView
@@ -1466,13 +1295,14 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     _lastPanningLocation.y += scrollAmount;
     _lastOutOfBoundsUpdate = now;
     _autoScrolling = speed != 0.0f;
+    self.indicatorView.autoScrolling = _autoScrolling;
     
     if (speed > 0.0f) {
         
         self.endPointLoupe.hidden = YES;
 
         if (_autoScrollAmount == 0.0f) {
-            [self showMonthIndicatorContainer];
+            [self.indicatorView showMonthIndicatorContainer];
             self.calendarView.withinRangeBackgroundHidden = YES;
             [self.calendarView updateMonthViews:YES];
         }
@@ -1481,7 +1311,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         
     } else if (_autoScrollAmount != 0.0f) {
         
-        [self hideMonthIndicatorContainer];
+        [self.indicatorView hideMonthIndicatorContainer];
         self.endPointLoupe.hidden = NO;
         self.calendarView.withinRangeBackgroundHidden = NO;
         [self handlePanChanged:nil];

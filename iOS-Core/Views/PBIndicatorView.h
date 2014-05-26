@@ -16,11 +16,20 @@ typedef NS_ENUM(NSInteger, PBIndicatorState) {
     PBIndicatorStateVisible,
 };
 
-@interface PBIndicatorView : UIView
+@interface PBIndicatorView : UIView <UIScrollViewDelegate>
 
 - (instancetype)initWithBackgroundAlpha:(CGFloat)alpha;
 
 @property (nonatomic) CGFloat backgroundAlpha;
+@property (nonatomic, strong) NSString *text;
 @property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, getter = isAutoScrolling) BOOL autoScrolling;
+@property (nonatomic, weak) UINavigationController *navigationController;
+
+- (BOOL)willMonthIndicatorBeVisible;
+- (BOOL)willMonthIndicatorBeHidden;
+- (void)showMonthIndicatorContainer;
+- (void)hideMonthIndicatorContainer;
+- (void)ensureMonthIndicatorHides;
 
 @end
