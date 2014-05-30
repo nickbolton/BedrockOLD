@@ -19,6 +19,8 @@ typedef NS_ENUM(NSInteger, PBIndicatorState) {
 @interface PBIndicatorView : UIView <UIScrollViewDelegate>
 
 - (instancetype)initWithBackgroundAlpha:(CGFloat)alpha;
+- (instancetype)initWithBackgroundAlpha:(CGFloat)alpha
+                            labelInsets:(UIEdgeInsets)labelInsets;
 
 @property (nonatomic) CGFloat backgroundAlpha;
 @property (nonatomic, strong) NSString *text;

@@ -528,7 +528,10 @@ static NSMutableDictionary * PBDateValueCache = nil;
             break;            
         case TimePeriod_Yesterday:
             fromDate = toDate = [self dateByAddingDays:-1 withCal:cal];
-            break;            
+            break;
+        case TimePeriod_Tomorrow:
+            fromDate = toDate = [self dateByAddingDays:1 withCal:cal];
+            break;
         case TimePeriod_LastWeek:
             toDate = [self dateByAddingDays:-[self dayOfTheWeek:cal] withCal:cal];
             fromDate = [toDate dateByAddingDays:-6];
@@ -607,7 +610,9 @@ static NSMutableDictionary * PBDateValueCache = nil;
 //            break;            
         case TimePeriod_Yesterday:
             label = NSLocalizedString(@"yesterday", nil);
-            break;            
+            break;
+        case TimePeriod_Tomorrow:
+            label = NSLocalizedString(@"tomorrow", nil);
 //        case TimePeriod_LastWeek:
 //            label = NSLocalizedString(@"last week", nil);
 //            break;            

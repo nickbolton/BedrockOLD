@@ -23,6 +23,7 @@ static CGFloat const kPBIndicatorViewHideIndicatorScrollVelocityStartThreshold =
 @property (nonatomic, getter = isDecelerating) BOOL decelerating;
 @property (nonatomic) CGFloat lastScrollPosition;
 @property (nonatomic, strong) PBRunningAverageValue *averageScrollSpeed;
+@property (nonatomic) UIEdgeInsets labelInsets;
 
 @end
 
@@ -45,8 +46,14 @@ static CGFloat const kPBIndicatorViewHideIndicatorScrollVelocityStartThreshold =
 }
 
 - (instancetype)initWithBackgroundAlpha:(CGFloat)alpha {
+    return [self initWithBackgroundAlpha:alpha labelInsets:UIEdgeInsetsZero];
+}
+
+- (instancetype)initWithBackgroundAlpha:(CGFloat)alpha
+                            labelInsets:(UIEdgeInsets)labelInsets {
     self = [super init];
     if (self) {
+        self.labelInsets = labelInsets;
         self.backgroundAlpha = alpha;
         [self commonInit];
     }
@@ -78,9 +85,9 @@ static CGFloat const kPBIndicatorViewHideIndicatorScrollVelocityStartThreshold =
     CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
     
     [self addSubview:self.indicatorLabel];
-    [NSLayoutConstraint expandWidthToSuperview:self.indicatorLabel];
-    [NSLayoutConstraint alignToTop:self.indicatorLabel withPadding:statusBarHeight];
-    [NSLayoutConstraint alignToBottom:self.indicatorLabel withPadding:0.0f];
+    [NSLayoutConstraint expandWidthToSuperview:self.indicatorLabel withInsets:self.labelInsets];
+    [NSLayoutConstraint alignToTop:self.indicatorLabel withPadding:statusBarHeight+self.labelInsets.top];
+    [NSLayoutConstraint alignToBottom:self.indicatorLabel withPadding:self.labelInsets.bottom];
     
     self.averageScrollSpeed = [[PBRunningAverageValue alloc] init];
 }
