@@ -502,6 +502,14 @@ static NSMutableDictionary * PBDateValueCache = nil;
     NSDateComponents *dateComponents;
     NSInteger year;
     NSDate *now = [NSDate date];
+    PBDateRange *dateRange;
+    NSInteger firstDayOffset = 1-[NSCalendar firstWeekday];
+    
+    NSInteger dayOfTheWeek = [self dayOfTheWeek:cal] + firstDayOffset;
+    
+    if (dayOfTheWeek <= 0) {
+        dayOfTheWeek += 7;
+    }
 
     switch (timePeriod) {
         case TimePeriod_All:
@@ -509,7 +517,7 @@ static NSMutableDictionary * PBDateValueCache = nil;
             toDate = [NSDate distantFuture];
             break;
         case TimePeriod_ThisWeek:
-            fromDate = [self dateByAddingDays:(1-[self dayOfTheWeek:cal]) withCal:cal];
+            fromDate = [self dateByAddingDays:(1-dayOfTheWeek) withCal:cal];
             toDate = [fromDate dateByAddingDays:6 withCal:cal];
             break;
         case TimePeriod_ThisMonth:
@@ -533,9 +541,10 @@ static NSMutableDictionary * PBDateValueCache = nil;
             fromDate = toDate = [self dateByAddingDays:1 withCal:cal];
             break;
         case TimePeriod_LastWeek:
-            toDate = [self dateByAddingDays:-[self dayOfTheWeek:cal] withCal:cal];
-            fromDate = [toDate dateByAddingDays:-6];
-            break;            
+            
+            fromDate = [self dateByAddingDays:(1-dayOfTheWeek-7) withCal:cal];
+            toDate = [fromDate dateByAddingDays:6 withCal:cal];
+            break;
         case TimePeriod_LastMonth:
             toDate = [self dateByAddingDays:-[self dayOfTheMonth:cal] withCal:cal];
             dateComponents = [cal components:NSDayCalendarUnit fromDate:toDate];
