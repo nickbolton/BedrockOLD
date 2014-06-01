@@ -17,7 +17,8 @@
 
 @property (nonatomic, weak) PBCalendarView *calendarView;
 @property (nonatomic, strong) NSDate *month;
-@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *weekdayTextColor;
+@property (nonatomic, strong) UIColor *weekendTextColor;
 @property (nonatomic, readonly) NSDateComponents *monthComponents;
 @property (nonatomic) BOOL startPointHidden;
 @property (nonatomic) BOOL endPointHidden;

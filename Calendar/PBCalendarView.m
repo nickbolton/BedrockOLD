@@ -41,7 +41,8 @@
 
 		self.monthViews = [[NSMutableArray alloc] init];
 		self.monthViewQueue = [[NSMutableSet alloc] init];
-        self.textColor = [UIColor blackColor];
+        self.weekdayTextColor = [UIColor blackColor];
+        self.weekendTextColor = [UIColor grayColor];
         self.separatorColor = [UIColor colorWithRGBHex:0xe0e0e0];
         self.backgroundColor = [UIColor whiteColor];
         self.selectedDateRange = selectedDateRange;
@@ -143,11 +144,19 @@
     return date;
 }
 
-- (void)setTextColor:(UIColor *)textColor {
-    _textColor = textColor;
+- (void)setWeekdayTextColor:(UIColor *)weekdayTextColor {
+    _weekdayTextColor = weekdayTextColor;
     
     [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
-        monthView.textColor = textColor;
+        monthView.weekdayTextColor = weekdayTextColor;
+    }];
+}
+
+- (void)setWeekendTextColor:(UIColor *)weekendTextColor {
+    _weekendTextColor = weekendTextColor;
+    
+    [self.monthViews enumerateObjectsUsingBlock:^(PBMonthView *monthView, NSUInteger idx, BOOL *stop) {
+        monthView.weekendTextColor = weekendTextColor;
     }];
 }
 
@@ -327,7 +336,8 @@
 	}
 
     monthView.backgroundColor = self.backgroundColor;
-    monthView.textColor = self.textColor;
+    monthView.weekendTextColor = self.weekendTextColor;
+    monthView.weekdayTextColor = self.weekdayTextColor;
     monthView.separatorColor = self.separatorColor;
     monthView.startPointHidden = self.startPointHidden;
     monthView.endPointHidden = self.endPointHidden;

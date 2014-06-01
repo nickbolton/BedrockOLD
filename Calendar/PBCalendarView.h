@@ -21,7 +21,8 @@
 @interface PBCalendarView : UIScrollView
 
 @property (nonatomic, strong) PBDateRange *selectedDateRange;
-@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *weekdayTextColor;
+@property (nonatomic, strong) UIColor *weekendTextColor;
 @property (nonatomic) CGRect visibleBounds;
 @property (nonatomic) UIEdgeInsets contentMargins;
 @property (nonatomic) BOOL startPointHidden;

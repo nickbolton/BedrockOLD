@@ -33,7 +33,8 @@
 @property (nonatomic) id <PBCalendarSelectionDelegate> delegate;
 @property (nonatomic, strong) UIColor *barTintColor;
 @property (nonatomic, strong) UIColor *tintColor;
-@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *weekdayTextColor;
+@property (nonatomic, strong) UIColor *weekendTextColor;
 @property (nonatomic, strong) UIColor *monthIndicatorTextColor;
 @property (nonatomic, strong) UIColor *separatorColor;
 @property (nonatomic, strong) UIColor *backgroundColor;

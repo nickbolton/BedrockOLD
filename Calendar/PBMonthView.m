@@ -32,7 +32,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @property (nonatomic, strong) UIFont *dayFont;
 @property (nonatomic, strong) UIFont *todayFont;
 @property (nonatomic, strong) NSDictionary *monthTitleAttributes;
-@property (nonatomic, strong) NSDictionary *dayAttributes;
+@property (nonatomic, strong) NSDictionary *weekdayAttributes;
+@property (nonatomic, strong) NSDictionary *weekendAttributes;
 @property (nonatomic, strong) NSDictionary *todayAttributes;
 @property (nonatomic, strong) NSDictionary *selectedDayAttributes;
 @property (nonatomic, strong) NSDictionary *selectedTodayAttributes;
@@ -48,13 +49,19 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 #pragma mark - Properties
 
-- (void)setTextColor:(UIColor *)textColor {
-    _textColor = textColor;
+- (void)setWeekdayTextColor:(UIColor *)weekdayTextColor {
+    
+    _weekdayTextColor = weekdayTextColor;
     _monthTitleAttributes = nil;
     _todayAttributes = nil;
     _selectedDayAttributes = nil;
     _selectedTodayAttributes = nil;
-    _dayAttributes = nil;
+    _weekdayAttributes = nil;
+}
+
+- (void)setWeekendTextColor:(UIColor *)weekendTextColor {
+    _weekendTextColor = weekendTextColor;
+    _weekendAttributes = nil;
 }
 
 - (void)setMonth:(NSDate *)month {
@@ -75,8 +82,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
      day:1];
 
     [self updateMonthTitle];
-	_firstDayOffset = -1;
-	_lastDayOffset = -1;
+	_firstDayOffset = -100;
+	_lastDayOffset = -100;
 	[self sizeToFit];
 	[self setNeedsDisplay];
 }
@@ -115,7 +122,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         _monthTitleAttributes =
         @{
           NSFontAttributeName : self.monthTitleFont,
-          NSForegroundColorAttributeName : self.textColor,
+          NSForegroundColorAttributeName : self.weekdayTextColor,
           };
     }
 
@@ -134,7 +141,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         _todayAttributes =
         @{
           NSFontAttributeName : self.todayFont,
-          NSForegroundColorAttributeName : self.textColor,
+          NSForegroundColorAttributeName : self.weekdayTextColor,
           NSParagraphStyleAttributeName : paragraphStyle,
           };
     }
@@ -182,24 +189,44 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
     return _selectedTodayAttributes;
 }
 
-- (NSDictionary *)dayAttributes {
+- (NSDictionary *)weekdayAttributes {
 
-    if (_dayAttributes == nil) {
+    if (_weekdayAttributes == nil) {
 
         NSMutableParagraphStyle *paragraphStyle =
         [[NSMutableParagraphStyle alloc] init];
 
         paragraphStyle.alignment = NSTextAlignmentCenter;
 
-        _dayAttributes =
+        _weekdayAttributes =
         @{
           NSFontAttributeName : self.dayFont,
-          NSForegroundColorAttributeName : self.textColor,
+          NSForegroundColorAttributeName : self.weekdayTextColor,
           NSParagraphStyleAttributeName : paragraphStyle,
           };
     }
     
-    return _dayAttributes;
+    return _weekdayAttributes;
+}
+
+- (NSDictionary *)weekendAttributes {
+    
+    if (_weekendAttributes == nil) {
+        
+        NSMutableParagraphStyle *paragraphStyle =
+        [[NSMutableParagraphStyle alloc] init];
+        
+        paragraphStyle.alignment = NSTextAlignmentCenter;
+        
+        _weekendAttributes =
+        @{
+          NSFontAttributeName : self.dayFont,
+          NSForegroundColorAttributeName : self.weekendTextColor,
+          NSParagraphStyleAttributeName : paragraphStyle,
+          };
+    }
+    
+    return _weekendAttributes;
 }
 
 - (UIColor *)withinRangeBackgroundColor {
@@ -258,7 +285,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 - (void)commonInit {
     
     self.backgroundColor = [UIColor whiteColor];
-    self.textColor = [UIColor blackColor];
+    self.weekdayTextColor = [UIColor blackColor];
+    self.weekendTextColor = [UIColor grayColor];
     self.opaque = NO;
     self.month = [NSDate date];
 }
@@ -269,8 +297,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 {
 	[super setFrame:frame];
 
-	_firstDayOffset = -1;
-	_lastDayOffset = -1;
+	_firstDayOffset = -100;
+	_lastDayOffset = -100;
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -320,7 +348,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 - (NSInteger)_firstDayOffset
 {
-	if (_firstDayOffset == -1) {
+	if (_firstDayOffset == -100) {
 		_firstDayOffset = self.month.firstDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
 	}
 
@@ -329,7 +357,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 - (NSInteger)_lastDayOffset
 {
-	if (_lastDayOffset == -1) {
+	if (_lastDayOffset == -100) {
 		_lastDayOffset = self.month.lastDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
 	}
 
@@ -519,6 +547,15 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
     return self.endingMarkerRect.origin;
 }
 
+- (BOOL)isWeekday:(NSDateComponents *)day {
+    
+    NSDate *date = [[NSCalendar currentCalendar] dateFromComponents:day];
+    
+    NSInteger weekday = date.weekday;
+    
+    return weekday > 1 && weekday < 7;
+}
+
 - (BOOL)isStartingDay:(NSDateComponents *)day {
 
     NSDateComponents *components =
@@ -596,10 +633,18 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 	NSRange weeks = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:self.month];
 	NSRange days = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit forDate:self.month];
+    
 	NSDateComponents *day = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self.month];
 	day.day = days.location;
 	CGRect dayRect;
-	dayRect.origin.x = [self _firstDayOffset] * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
+    
+    NSInteger firstDayOffset = [self _firstDayOffset];
+    
+    if (firstDayOffset < 0) {
+        weeks = NSMakeRange(weeks.location-1, weeks.length+1);
+        firstDayOffset = 7 + firstDayOffset;
+    }
+	dayRect.origin.x = firstDayOffset * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
 	dayRect.size = CGSizeMake(diameter, diameter);
 	BOOL stop = NO;
 
@@ -675,6 +720,10 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
 		CGContextSaveGState(context);
+        
+        if (day.month == 6 && day.day == 1) {
+            NSLog(@"ZZZ");
+        }
 
 		NSString *dayString = [NSString stringWithFormat:@"%d", day.day];
         NSDictionary *textAttributes;
@@ -709,7 +758,11 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
             if (showEndPoint) {
                 textAttributes = self.selectedDayAttributes;
             } else {
-                textAttributes = self.dayAttributes;
+                if ([self isWeekday:day]) {
+                    textAttributes = self.weekdayAttributes;
+                } else {
+                    textAttributes = self.weekendAttributes;
+                }
             }
         }
 

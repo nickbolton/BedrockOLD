@@ -280,7 +280,8 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     self.calendarView.delegate = self;
 	self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.calendarView.backgroundColor = self.backgroundColor;
-    self.calendarView.textColor = self.textColor;
+    self.calendarView.weekendTextColor = self.weekendTextColor;
+    self.calendarView.weekdayTextColor = self.weekdayTextColor;
     self.calendarView.separatorColor = self.separatorColor;
 
 	[self.view addSubview:_calendarView];
@@ -449,10 +450,15 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
      forState:UIControlStateHighlighted];
 }
 
-- (void)setTextColor:(UIColor *)textColor {
-    _textColor = textColor;
-    self.indicatorView.textColor = textColor;
-    self.calendarView.textColor = textColor;
+- (void)setWeekdayTextColor:(UIColor *)weekdayTextColor {
+    _weekdayTextColor = weekdayTextColor;
+    self.indicatorView.textColor = weekdayTextColor;
+    self.calendarView.weekdayTextColor = weekdayTextColor;
+}
+
+- (void)setWeekendTextColor:(UIColor *)weekendTextColor {
+    _weekendTextColor = weekendTextColor;
+    self.calendarView.weekendTextColor = weekendTextColor;
 }
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
