@@ -636,4 +636,47 @@ static NSMutableDictionary * PBDateValueCache = nil;
     return label;
 }
 
++ (NSString *)labelForDayOfTheWeek:(NSCalendarUnit)dayOfTheWeek {
+    
+    if (dayOfTheWeek < 1 || dayOfTheWeek > 7) return nil;
+
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+
+    NSDate *date = [NSDate dateWithYear:2014 month:6 day:1];
+    date = [date dateByAddingDays:dayOfTheWeek-1];
+        
+    NSLocale *locale = [NSLocale currentLocale];
+    
+    NSString *dateFormat =
+    [NSDateFormatter
+     dateFormatFromTemplate:@"EEEE"
+     options:0
+     locale:locale];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = locale;
+    dateFormatter.dateFormat = dateFormat;
+    
+    return [dateFormatter stringFromDate:date];
+}
+
++ (NSString *)labelForTime:(NSCalendarUnit)hour {
+    
+    if (hour < 0 || hour > 23) return nil;
+    
+    NSCalendar *calendar = [NSCalendar calendarForCurrentThread];
+    
+    NSDate *date =
+    [NSDate dateWithYear:2014 month:6 day:1 hours:hour minutes:0];
+    
+    NSLocale *locale = [NSLocale currentLocale];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = locale;
+    dateFormatter.dateStyle = NSDateFormatterNoStyle;
+    dateFormatter.timeStyle = NSDateFormatterShortStyle;
+    
+    return [dateFormatter stringFromDate:date];
+}
+
 @end

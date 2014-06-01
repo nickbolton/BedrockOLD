@@ -787,6 +787,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = dateFormat;
+        dateFormatter.locale = locale;
         
         self.indicatorView.text = [dateFormatter stringFromDate:currentMonth];
         

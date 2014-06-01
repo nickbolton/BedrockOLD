@@ -25,7 +25,7 @@ extern NSString * const kPBListCellID;
 extern NSString * const kPBListSpacerCellID;
 extern NSString * const kPBListActionCellID;
 
-@interface PBListViewController : UIViewController <PBListViewControllerItemProtocol>
+@interface PBListViewController : UIViewController <PBListViewControllerItemProtocol, UITableViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint *tableViewLeftSpace;
@@ -37,6 +37,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic, strong) PBActionDelegate *actionDelegate;
 @property (nonatomic) BOOL initialized;
 @property (nonatomic, getter = isModal) BOOL modal;
+@property (nonatomic, readonly, getter = isDragging) BOOL dragging;
 @property (nonatomic, assign) id doneTarget;
 @property (nonatomic) SEL doneSelector;
 @property (nonatomic) BOOL dismissOnDone;
@@ -62,6 +63,7 @@ extern NSString * const kPBListActionCellID;
 @property (nonatomic, weak) id firstResponder;
 
 - (id)initWithItems:(NSArray *)items;
+- (id)initWithItems:(NSArray *)items separatorColor:(UIColor *)separatorColor;
 - (id)initWithNib;
 
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section;

@@ -24,7 +24,7 @@ static NSInteger const kPBListActionTag = 101;
 static NSInteger const kPBListCheckedTag = 103;
 static NSInteger const kPBListDefaultTag = 105;
 
-@interface PBListViewController () <UITableViewDataSource, UITableViewDelegate> {
+@interface PBListViewController () <UITableViewDataSource> {
 
     BOOL _setupNotificationsCalled;
     BOOL _setupNavigationBarCalled;
@@ -37,6 +37,8 @@ static NSInteger const kPBListDefaultTag = 105;
 @property (nonatomic, strong) PBListItem *selectAllItem;
 @property (nonatomic, strong) NSArray *selectedRowIndexes;
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
+@property (nonatomic, strong) UIColor *separatorColor;
+@property (nonatomic, readwrite, getter = isDragging) BOOL dragging;
 
 @end
 
@@ -62,9 +64,14 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (id)initWithItems:(NSArray *)items {
+    return [self initWithItems:items separatorColor:nil];
+}
+
+- (id)initWithItems:(NSArray *)items separatorColor:(UIColor *)separatorColor {
 
     self = [super init];
     if (self) {
+        self.separatorColor = separatorColor;
         self.providedDataSource = items;
         self.reloadDataOnViewLoad = YES;
         [self commonInit];
@@ -235,6 +242,10 @@ static NSInteger const kPBListDefaultTag = 105;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    
+    if (self.separatorColor != nil) {
+        self.tableView.separatorColor = self.separatorColor;
+    }
 }
 
 #pragma mark - View Lifecycle
@@ -1201,7 +1212,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
-    if (item.itemType == PBItemTypeSpacer) {
+    if (item.itemType == PBItemTypeSpacer || _dragging) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         return;
     }
@@ -1273,7 +1284,7 @@ static NSInteger const kPBListDefaultTag = 105;
 
         if (item.isSelected) {
 
-            if (item.isDeselectable == NO) {
+            if (item.isDeselectable == NO || _dragging) {
                 return nil;
             }
 
@@ -1390,6 +1401,18 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
             }
         }
     }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    _dragging = YES;
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    _dragging = decelerate;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    _dragging = NO;
 }
 
 #pragma mark - Headers and Footers

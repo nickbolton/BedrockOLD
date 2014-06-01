@@ -89,6 +89,9 @@ typedef NSInteger TimePeriod;
 - (NSDate*)beginningOfWeek;
 - (NSDate*)beginningOfWeekForDate:(NSDate *)date;
 
++ (NSString *)labelForDayOfTheWeek:(NSCalendarUnit)dayOfTheWeek;
++ (NSString *)labelForTime:(NSCalendarUnit)hour;
+
 #if TARGET_OS_IPHONE
 - (BOOL)isGreaterThan:(id)object;
 - (BOOL)isLessThan:(id)object;

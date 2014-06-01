@@ -551,6 +551,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = dateFormat;
+    dateFormatter.locale = locale;
 
     self.monthTitle = [dateFormatter stringFromDate:self.month];
 
