@@ -688,4 +688,14 @@ static NSMutableDictionary * PBDateValueCache = nil;
     return [dateFormatter stringFromDate:date];
 }
 
+- (NSString *)description {
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.locale = [NSLocale currentLocale];
+    
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss aaa";
+    
+    return [dateFormatter stringFromDate:self];
+}
+
 @end
