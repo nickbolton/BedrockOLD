@@ -418,6 +418,8 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
                      0.0f,
                      kPBCalendarSelectionViewControllerToolbarHeight,
                      0.0f);
+
+    [self applyTheme];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -685,6 +687,16 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 }
 
 #pragma mark -
+
+- (void)applyTheme {
+    self.barTintColor = self.barTintColor;
+    self.tintColor = self.tintColor;
+    self.weekdayTextColor = self.weekdayTextColor;
+    self.weekendTextColor = self.weekendTextColor;
+    self.backgroundColor = self.backgroundColor;
+    self.separatorColor = self.separatorColor;
+    self.barStyle = self.barStyle;
+}
 
 - (void)updateToolbarItems {
 
