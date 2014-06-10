@@ -61,12 +61,8 @@
 }
 
 - (void)setSelected:(BOOL)selected {
-
-    if (self.isSelected != selected) {
-
-        [super setSelected:selected];
-        [self updateForSelectedState];
-    }
+    [super setSelected:selected];
+    [self updateForSelectedState];
 }
 
 - (void)setHighlighted:(BOOL)highlighted {

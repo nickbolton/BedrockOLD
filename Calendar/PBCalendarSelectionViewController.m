@@ -31,8 +31,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 }
 
 @property (nonatomic, strong) UIToolbar *toolbar;
-@property (nonatomic, strong) UIView *topToolbarView;
-@property (nonatomic, strong) UIButton *presetsButton;
 @property (nonatomic, strong) UINavigationBar *navbar;
 @property (nonatomic, strong) PBCalendarView *calendarView;
 @property (nonatomic, readwrite) BOOL modeSwitchOn;
@@ -54,14 +52,12 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 @property (nonatomic, strong) NSLayoutConstraint *endPointLoupeWidth;
 @property (nonatomic, strong) NSLayoutConstraint *endPointLoupeHeight;
 @property (nonatomic, strong) PBActionDelegate *actionDelegate;
-@property (nonatomic, strong) NSArray *presetTimePeriods;
 
 @end
 
 @implementation PBCalendarSelectionViewController
 
 - (id)initWithSelectedDate:(NSDate *)date
-         presetTimePeriods:(NSArray *)presetTimePeriods
               modeSwitchOn:(BOOL)modeSwitchOn {
 
     self = [super init];
@@ -69,21 +65,18 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
         self.initialSelectedDateRange =
         [PBDateRange dateRangeWithStartDate:date endDate:date];
         self.modeSwitchOn = modeSwitchOn;
-        self.presetTimePeriods = presetTimePeriods;
         [self initializeTheme];
     }
     return self;
 }
 
 - (id)initWithSelectedDateRange:(PBDateRange *)dateRange
-              presetTimePeriods:(NSArray *)presetTimePeriods
                    modeSwitchOn:(BOOL)modeSwitchOn {
 
     self = [super init];
     if (self) {
         self.initialSelectedDateRange = dateRange;
         self.modeSwitchOn = modeSwitchOn;
-        self.presetTimePeriods = presetTimePeriods;
 
         _rangeMode =
         [dateRange.endDate.midnight isGreaterThan:dateRange.startDate];
@@ -135,19 +128,24 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     navigationBar.barTintColor = self.barTintColor;
     navigationBar.barStyle = self.barStyle;
 
-    UIBarButtonItem *cancelItem =
-    [[UIBarButtonItem alloc]
-     initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-     target:self
-     action:@selector(cancelPressed:)];
+    if (self.showCancel) {
+        
+        UIBarButtonItem *cancelItem =
+        [[UIBarButtonItem alloc]
+         initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+         target:self
+         action:@selector(cancelPressed:)];
+        
+        navigationItem.leftBarButtonItem = cancelItem;
+    }
 
     UIBarButtonItem *doneItem =
     [[UIBarButtonItem alloc]
      initWithBarButtonSystemItem:UIBarButtonSystemItemDone
      target:self
      action:@selector(donePressed:)];
+    
 
-    navigationItem.leftBarButtonItem = cancelItem;
     navigationItem.rightBarButtonItem = doneItem;
 
     if (self.modeSwitchOn) {
@@ -216,58 +214,7 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
 
     self.toolbar.items = items;
     
-    if (self.presetTimePeriods.count > 0) {
-        [self setupTopToolbarView];
-    }
-    
     [self updateToolbarItems];
-}
-
-- (void)setupTopToolbarView {
- 
-    self.topToolbarView = [[UIView alloc] init];
-    self.topToolbarView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [self.view addSubview:self.topToolbarView];
-    
-    [NSLayoutConstraint
-     addHeightConstraint:kPBCalendarSelectionViewControllerToolbarHeight
-     toView:self.topToolbarView];
-    
-    [NSLayoutConstraint horizontallyCenterView:self.topToolbarView];
-    [NSLayoutConstraint addWidthConstraint:90.0f toView:self.topToolbarView];
-    
-    [NSLayoutConstraint alignToBottom:self.topToolbarView withPadding:0.0f];
-
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [self.topToolbarView addSubview:button];
-    
-    button.titleLabel.font = [UIFont systemFontOfSize:17.0f];
-    
-    [button
-     setTitle:PBLoc(@"Presets")
-     forState:UIControlStateNormal];
-
-    [button
-     addTarget:self
-     action:@selector(presetsPressed:)
-     forControlEvents:UIControlEventTouchDown];
-    
-    [button
-     setTitleColor:self.tintColor
-     forState:UIControlStateNormal];
-    
-    [button
-     setTitleColor:[self.tintColor colorWithAlpha:.3f]
-     forState:UIControlStateHighlighted];
-    
-    [NSLayoutConstraint
-     expandToSuperview:button
-     withInsets:UIEdgeInsetsMake(1.0f, 0.0f, 0.0f, 0.0f)];
-    
-    self.presetsButton = button;
 }
 
 - (void)setupCalendarView {
@@ -442,14 +389,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
     _tintColor = tintColor;
     self.indicatorView.tintColor = tintColor;
     self.endPointLoupe.backgroundColor = tintColor;
-    
-    [self.presetsButton
-     setTitleColor:tintColor
-     forState:UIControlStateNormal];
-    
-    [self.presetsButton
-     setTitleColor:[self.tintColor colorWithAlpha:.5f]
-     forState:UIControlStateHighlighted];
 }
 
 - (void)setWeekdayTextColor:(UIColor *)weekdayTextColor {
@@ -599,64 +538,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
      actionDelegate:self.actionDelegate];
 }
 
-- (void)presetsPressed:(id)sender {
-    
-    __weak typeof(self) this = self;
-    
-    NSInteger buttonIndex = 0;
-    
-    self.actionDelegate = [[PBActionDelegate alloc] init];
-    NSMutableArray *timePeriods = [NSMutableArray array];
-
-    for (NSNumber *timePeriodNumber in self.presetTimePeriods) {
-        
-        NSAssert([timePeriodNumber isKindOfClass:[NSNumber class]],
-                 @"presetTimePeriods value is not an NSNumber");
-        
-        TimePeriod timePeriod = timePeriodNumber.integerValue;
-        
-        if (timePeriod >= TimePeriod_All &&
-            timePeriod <= TimePeriod_PreviousYear) {
-            
-            [timePeriods addObject:timePeriodNumber];
-            
-            [self.actionDelegate
-             addBlock:^(id userContext) {
-                 [this selectPreset:timePeriod];
-             }
-             userContext:nil
-             toButton:buttonIndex++];
-            
-        } else {
-            
-            PBLog(@"Warning : timePeriod (%@) is out of TimePeriod enum range",
-                  timePeriodNumber);
-        }
-    }
-    
-    if (timePeriods.count > 0) {
-        
-        [self.delegate
-         calendarSelectionViewControllerPresentPresetSelectionModal:self
-         title:PBLoc(@"Presets")
-         timePeriods:timePeriods
-         actionBlock:^(NSNumber *timePeriodNumber) {
-             
-             TimePeriod timePeriod = timePeriodNumber.integerValue;
-             
-             if (timePeriod >= TimePeriod_All &&
-                 timePeriod <= TimePeriod_PreviousYear) {
-                 
-                 [this selectPreset:timePeriod];
-             }
-         }];
-        
-    } else {
-        
-        PBLog(@"Warning : no time period presets to present");
-    }
-}
-
 - (void)showToday:(id)sender {
     
     NSDate *today = [NSDate date];
@@ -681,9 +562,6 @@ static NSInteger const kPBCalendarSelectionMaxAnimationRange = 365;
      animated:ABS(distance) <= kPBCalendarSelectionMaxAnimationRange];
     
     [self doUpdateCurrentMonth:today];
-}
-
-- (void)selectPreset:(TimePeriod)timePeriod {
 }
 
 #pragma mark -

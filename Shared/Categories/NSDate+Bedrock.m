@@ -364,6 +364,10 @@ static NSMutableDictionary * PBDateValueCache = nil;
     return [self dateIntervalForTimePeriod:TimePeriod_ThisYear];
 }
 
+- (PBDateRange *)lastYear {
+    return [self dateIntervalForTimePeriod:TimePeriod_LastYear];
+}
+
 - (NSDate *)endOfDay {
     return [self endOfDay:[NSCalendar calendarForCurrentThread]];
 }
@@ -587,14 +591,27 @@ static NSMutableDictionary * PBDateValueCache = nil;
              */
             toDate = [self yesterday].startDate;
             fromDate = [toDate dateByAddingDays:-364 withCal:cal];
-            break;            
-        default:
+            break;
+            
+        case TimePeriod_Today:
             fromDate = toDate = now;
+            break;
+            
+        default:
+            
+            if (timePeriod < 0) {
+                toDate = now;
+                fromDate = [toDate dateByAddingDays:timePeriod withCal:cal];
+            }
+            
             break;
     }
     
-    return [PBDateRange dateRangeWithStartDate:fromDate
-                                       endDate:toDate];
+    if (toDate != nil && fromDate != nil) {
+        return [PBDateRange dateRangeWithStartDate:fromDate endDate:toDate];
+    }
+    
+    return nil;
 }
 
 + (NSString *)labelForTimePeriod:(TimePeriod)timePeriod {
@@ -622,6 +639,7 @@ static NSMutableDictionary * PBDateValueCache = nil;
             break;
         case TimePeriod_Tomorrow:
             label = NSLocalizedString(@"tomorrow", nil);
+            break;
 //        case TimePeriod_LastWeek:
 //            label = NSLocalizedString(@"last week", nil);
 //            break;            
@@ -642,6 +660,134 @@ static NSMutableDictionary * PBDateValueCache = nil;
 //            break;
     }
     
+    return label;
+}
+
++ (NSString *)properLabelForTimePeriod:(TimePeriod)timePeriod {
+    
+    NSString *label = nil;
+    
+    switch (timePeriod) {
+        case TimePeriod_All:
+            label = PBLoc(@"All Time");
+            break;
+        case TimePeriod_Today:
+            label = PBLoc(@"Today");
+            break;
+        case TimePeriod_ThisWeek:
+            label = PBLoc(@"This Week");
+            break;
+        case TimePeriod_ThisMonth:
+            label = PBLoc(@"This Month");
+            break;
+        case TimePeriod_ThisYear:
+            label = PBLoc(@"This Year");
+            break;
+        case TimePeriod_Yesterday:
+            label = PBLoc(@"Yesterday");
+            break;
+        case TimePeriod_Tomorrow:
+            label = PBLoc(@"Tomorrow");
+            break;
+        case TimePeriod_LastWeek:
+            label = PBLoc(@"Last Week");
+            break;
+        case TimePeriod_LastMonth:
+            label = PBLoc(@"Last Month");
+            break;
+        case TimePeriod_LastYear:
+            label = PBLoc(@"Last Year");
+            break;
+        case TimePeriod_PreviousWeek:
+            label = PBLoc(@"Previous Week");
+            break;
+        case TimePeriod_PreviousMonth:
+            label = PBLoc(@"Previous Month");
+            break;
+        case TimePeriod_PreviousYear:
+            label = PBLoc(@"Previous Year");
+            break;
+        case TimePeriod_OtherDay:
+            label = PBLoc(@"Other Day");
+            break;
+        case TimePeriod_OtherDateRange:
+            label = PBLoc(@"Other Range");
+            break;
+        default:
+            if (timePeriod == 0) {
+                label = PBLoc(@"None");
+            } else if (timePeriod < 0) {
+                label = PBLoc(@"Days Back");
+            } else {
+                label = PBLoc(@"Unknown");
+            }
+            break;
+    }
+    
+    return label;
+}
+
++ (NSString *)properLabelForSingleDayTimePeriod:(TimePeriod)timePeriod {
+    
+    NSString *label = nil;
+    
+    switch (timePeriod) {
+        case TimePeriod_All:
+            label = PBLoc(@"First Time Entry");
+            break;
+        case TimePeriod_Today:
+            label = PBLoc(@"Today");
+            break;
+        case TimePeriod_ThisWeek:
+            label = PBLoc(@"Start of This Week");
+            break;
+        case TimePeriod_ThisMonth:
+            label = PBLoc(@"Start of This Month");
+            break;
+        case TimePeriod_ThisYear:
+            label = PBLoc(@"Start of This Year");
+            break;
+        case TimePeriod_Yesterday:
+            label = PBLoc(@"Yesterday");
+            break;
+        case TimePeriod_Tomorrow:
+            label = PBLoc(@"Tomorrow");
+            break;
+        case TimePeriod_LastWeek:
+            label = PBLoc(@"Start of Last Week");
+            break;
+        case TimePeriod_LastMonth:
+            label = PBLoc(@"Start of Last Month");
+            break;
+        case TimePeriod_LastYear:
+            label = PBLoc(@"Start of Last Year");
+            break;
+        case TimePeriod_PreviousWeek:
+            label = PBLoc(@"Start of Previous Week");
+            break;
+        case TimePeriod_PreviousMonth:
+            label = PBLoc(@"Start of Previous Month");
+            break;
+        case TimePeriod_PreviousYear:
+            label = PBLoc(@"Start of Previous Year");
+            break;
+        case TimePeriod_OtherDay:
+            label = PBLoc(@"Other Day");
+            break;
+        case TimePeriod_OtherDateRange:
+            label = PBLoc(@"Other Range");
+            break;
+        default:
+            if (timePeriod == 0) {
+                label = PBLoc(@"None");
+            } else if (timePeriod < 0) {
+                label = PBLoc(@"Days Back");
+            } else {
+                label = PBLoc(@"Unknown");
+            }
+            break;
+    }
+
     return label;
 }
 

@@ -573,6 +573,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
     for (PBCollectionItem *item in items) {
 
+        item.selected = NO;
+        
         PBSectionItem *sectionItem = [self sectionItemAtSection:section];
 
         NSInteger index =
@@ -580,6 +582,11 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 
         NSIndexPath *indexPath =
         [NSIndexPath indexPathForRow:index inSection:section];
+        
+        UICollectionViewCell *cell =
+        [self.collectionView cellForItemAtIndexPath:indexPath];
+        
+        cell.selected = NO;
 
         [self.collectionView
          deselectItemAtIndexPath:indexPath
@@ -982,11 +989,8 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 - (void)collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (collectionView.allowsMultipleSelection == NO) {
-        [collectionView deselectItemAtIndexPath:indexPath animated:YES];
-    }
-
     PBCollectionItem *item = [self itemAtIndexPath:indexPath];
+    PBSectionItem *sectionItem = [self sectionItemAtSection:indexPath.section];
 
     if (item == self.selectAllItem) {
 
@@ -1012,6 +1016,19 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
         } else {
             [self deselectItems:@[self.selectAllItem] inSection:indexPath.section];
         }
+        
+    } else {
+        
+        NSMutableArray *deselectedItems = [NSMutableArray array];
+        
+        [sectionItem.items enumerateObjectsUsingBlock:^(PBCollectionItem *otherItem, NSUInteger idx, BOOL *stop) {
+        
+            if (item != otherItem && otherItem.isSelected) {
+                [deselectedItems addObject:otherItem];
+            }
+        }];
+        
+        [self deselectItems:deselectedItems inSection:indexPath.section];
     }
 }
 

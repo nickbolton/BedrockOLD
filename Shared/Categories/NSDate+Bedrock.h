@@ -51,6 +51,7 @@ typedef NSInteger TimePeriod;
 - (PBDateRange *)lastMonth;
 - (PBDateRange *)nextMonth;
 - (PBDateRange *)thisYear;
+- (PBDateRange *)lastYear;
 
 - (BOOL)isMidnight;
 
@@ -91,6 +92,8 @@ typedef NSInteger TimePeriod;
 
 + (NSString *)labelForDayOfTheWeek:(NSCalendarUnit)dayOfTheWeek;
 + (NSString *)labelForTime:(NSCalendarUnit)hour;
++ (NSString *)properLabelForTimePeriod:(TimePeriod)timePeriod;
++ (NSString *)properLabelForSingleDayTimePeriod:(TimePeriod)timePeriod;
 
 #if TARGET_OS_IPHONE
 - (BOOL)isGreaterThan:(id)object;
