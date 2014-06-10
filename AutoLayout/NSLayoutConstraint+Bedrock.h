@@ -64,7 +64,7 @@
 + (NSLayoutConstraint *)alignToRight:(NSView *)view withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)verticallySpaceTopView:(NSView *)topView toBottomView:(NSView *)bottomView withPadding:(CGFloat)padding;
 + (NSLayoutConstraint *)horizontallySpaceLeftView:(NSView *)leftView toRightView:(NSView *)rightView withPadding:(CGFloat)padding;
-+ (NSLayoutConstraint *)alignBottomOfView:(UIView *)view1 toBaselineOfView:(UIView *)view2 withPadding:(CGFloat)padding;
++ (NSLayoutConstraint *)alignBottomOfView:(NSView *)view1 toBaselineOfView:(NSView *)view2 withPadding:(CGFloat)padding;
 #endif
 
 
