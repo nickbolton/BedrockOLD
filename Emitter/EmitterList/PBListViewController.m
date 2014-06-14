@@ -861,7 +861,9 @@ static NSInteger const kPBListDefaultTag = 105;
         if (views.count > 0) {
             UIView *cell = views[0];
 
-            item.rowHeight = CGRectGetHeight(cell.frame);
+            if (item.rowHeightSetting < 0.0f) {
+                item.rowHeight = CGRectGetHeight(cell.frame);
+            }
         }
 
     } else if (item.cellID != nil && item.cellClass != NULL) {

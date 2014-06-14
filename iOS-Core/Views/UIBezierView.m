@@ -28,6 +28,16 @@
     [_blurImage drawInRect:rect];
 }
 
+- (void)setPathFillColor:(UIColor *)pathFillColor {
+    _pathFillColor = pathFillColor;
+    [self setNeedsDisplay];
+}
+
+- (void)setPathStrokeColor:(UIColor *)pathStrokeColor {
+    _pathStrokeColor = pathStrokeColor;
+    [self setNeedsDisplay];
+}
+
 - (void)drawRect:(CGRect)rect {
 
     [self fillBackgroundPath];
