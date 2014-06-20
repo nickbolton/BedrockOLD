@@ -72,6 +72,7 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic, strong) id userContext;
 @property (nonatomic, strong) NSIndexPath *indexPath;
 @property (nonatomic, copy) void(^selectActionBlock)(id sender);
+@property (nonatomic, copy) void(^deselectActionBlock)(id sender);
 @property (nonatomic, copy) void(^deleteActionBlock)(id sender);
 @property (nonatomic, copy) void(^configureBlock)(id sender, PBListItem *item, id cell);
 @property (nonatomic, copy) void(^bindingBlock)(id sender, NSIndexPath *indexPath, PBListItem *item, id cell);
@@ -124,5 +125,6 @@ extern CGFloat const kPBListActionRowHeight;
 - (void)commonInit;
 - (void)resignFirstResponder;
 - (void)becomeFirstResponder;
+- (void)setDefaultParagraphStyle;
 
 @end

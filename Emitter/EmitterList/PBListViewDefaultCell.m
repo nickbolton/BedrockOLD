@@ -110,18 +110,36 @@
         [self setNeedsDisplay];
     }
 
-    if ((self.isSelected || self.viewController.multiSelect) &&
-        self.item.selectionDisabled == NO &&
-        self.item.selectActionBlock != nil) {
+    if (self.item.selectionDisabled == NO) {
 
-        [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
-
-        NSTimeInterval delayInSeconds = .1f;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
-            self.item.selectActionBlock(self);
-        });
+        if (self.isSelected) {
+            
+            if (self.item.selectActionBlock != nil) {
+                    
+                    [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+                    
+                    NSTimeInterval delayInSeconds = .1f;
+                    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+                    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+                        self.item.selectActionBlock(self);
+                    });
+                }
+            
+        } else {
+            
+            if (self.item.deselectActionBlock != nil) {
+                
+                [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+                
+                NSTimeInterval delayInSeconds = .1f;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+                    self.item.deselectActionBlock(self);
+                });
+            }
+        }
     }
 
     self.item.selectionDisabled = NO;

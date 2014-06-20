@@ -1240,42 +1240,35 @@ static NSInteger const kPBListDefaultTag = 105;
         [self sectionItemAtSection:indexPath.section];
 
         for (PBListItem *item in sectionItem.items) {
-
-            if (item.isSelected) {
+            
+            if (item != self.selectAllItem && item.isSelected) {
                 selectionCount++;
             }
         }
 
-        if (selectionCount == 0) {
+        if (selectionCount == sectionItem.items.count - 1) {
+            
             [self selectItems:@[self.selectAllItem] inSection:indexPath.section];
+
+            NSMutableArray *deselectedItems = [NSMutableArray array];
+            
+            for (PBListItem *item in sectionItem.items) {
+                
+                if (item != self.selectAllItem) {
+                    [deselectedItems addObject:item];
+                }
+            }
+            
+            [self deselectItems:deselectedItems inSection:indexPath.section];
+
         } else {
+            
             [self deselectItems:@[self.selectAllItem] inSection:indexPath.section];
         }
     }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    if (self.selectAllItem != nil) {
-
-        NSInteger selectionCount = 0;
-
-        PBSectionItem *sectionItem =
-        [self sectionItemAtSection:indexPath.section];
-
-        for (PBListItem *item in sectionItem.items) {
-
-            if (item.isSelected) {
-                selectionCount++;
-            }
-        }
-
-        if (selectionCount == 0) {
-            [self selectItems:@[self.selectAllItem] inSection:indexPath.section];
-        } else {
-            [self deselectItems:@[self.selectAllItem] inSection:indexPath.section];
-        }
-    }
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
