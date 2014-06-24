@@ -75,6 +75,7 @@ extern NSString * const kPBListActionCellID;
 - (NSArray *)buildDataSource;
 - (void)reloadDataSource;
 - (void)reloadData;
+- (void)updateItemStates;
 - (void)preRegisterCellNibsAndClasses;
 - (void)setupNavigationBar;
 - (void)reloadTableRowAtIndexPath:(NSIndexPath *)indexPath
