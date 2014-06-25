@@ -685,6 +685,46 @@ static NSInteger const kPBListDefaultTag = 105;
     }
 }
 
+- (void)deleteEntity:(id)entity
+    entityDataSource:(NSArray *)entityDataSource
+        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock {
+    
+    NSIndexPath *indexPath = nil;
+    NSInteger index = [entityDataSource indexOfObject:entity];
+    
+    if (entityDataSource.count > 1 && index != NSNotFound) {
+        
+        indexPath =
+        [NSIndexPath
+         indexPathForRow:index
+         inSection:0];
+    }
+    
+    __weak typeof(self) this = self;
+    
+    if (deleteBlock != nil) {
+        deleteBlock(entity, ^{
+         
+            if (indexPath != nil) {
+                
+                [this.tableView beginUpdates];
+                
+                [this reloadDataSource];
+                
+                [this.tableView
+                 deleteRowsAtIndexPaths:@[indexPath]
+                 withRowAnimation:UITableViewRowAnimationFade];
+                
+                [this.tableView endUpdates];
+                
+            } else {
+                
+                [this reloadData];
+            }
+        });
+    }
+}
+
 #pragma mark - Actions
 
 - (IBAction)cancelPressed:(id)sender {

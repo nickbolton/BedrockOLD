@@ -105,4 +105,8 @@ extern NSString * const kPBListActionCellID;
 - (void)insertItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
 - (void)replaceItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
 
+- (void)deleteEntity:(id)entity
+    entityDataSource:(NSArray *)entityDataSource
+        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock;
+
 @end
