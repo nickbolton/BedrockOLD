@@ -414,4 +414,42 @@
     return constraint;
 }
 
+#if TARGET_OS_IPHONE
++ (NSLayoutConstraint *)alignTopView:(UIView *)topView toBottomView:(UIView *)bottomView withPadding:(CGFloat)padding {
+#else
++ (NSLayoutConstraint *)alignTopView:(NSView *)topView toBottomView:(NSView *)bottomView withPadding:(CGFloat)padding {
+#endif
+        
+    NSLayoutConstraint *constraint =
+    [NSLayoutConstraint
+     constraintWithItem:topView
+     attribute:NSLayoutAttributeBottom
+     relatedBy:NSLayoutRelationEqual
+     toItem:bottomView
+     attribute:NSLayoutAttributeTop
+     multiplier:1.0f
+     constant:padding];
+    [topView.superview addConstraint:constraint];
+    return constraint;
+}
+    
+#if TARGET_OS_IPHONE
++ (NSLayoutConstraint *)alignRightView:(UIView *)rightView toLeftView:(UIView *)leftView withPadding:(CGFloat)padding {
+#else
++ (NSLayoutConstraint *)alignRightView:(NSView *)rightView toLeftView:(NSView *)leftView withPadding:(CGFloat)padding {
+#endif
+        
+    NSLayoutConstraint *constraint =
+    [NSLayoutConstraint
+     constraintWithItem:rightView
+     attribute:NSLayoutAttributeLeft
+     relatedBy:NSLayoutRelationEqual
+     toItem:leftView
+     attribute:NSLayoutAttributeRight
+     multiplier:1.0f
+     constant:padding];
+    [rightView.superview addConstraint:constraint];
+    return constraint;
+}
+
 @end
