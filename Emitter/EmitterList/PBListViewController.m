@@ -687,10 +687,11 @@ static NSInteger const kPBListDefaultTag = 105;
 
 - (void)deleteEntity:(id)entity
     entityDataSource:(NSArray *)entityDataSource
+    dataSourceOffset:(NSInteger)dataSourceOffset
         deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock {
     
     NSIndexPath *indexPath = nil;
-    NSInteger index = [entityDataSource indexOfObject:entity];
+    NSInteger index = [entityDataSource indexOfObject:entity] + dataSourceOffset;
     
     if (entityDataSource.count > 1 && index != NSNotFound) {
         
@@ -705,7 +706,7 @@ static NSInteger const kPBListDefaultTag = 105;
     if (deleteBlock != nil) {
         deleteBlock(entity, ^{
          
-            if (indexPath != nil) {
+            if (entityDataSource.count > 1 && indexPath != nil) {
                 
                 [this.tableView beginUpdates];
                 
@@ -719,7 +720,23 @@ static NSInteger const kPBListDefaultTag = 105;
                 
             } else {
                 
-                [this reloadData];
+                [UIView
+                 animateWithDuration:.15f
+                 animations:^{
+                     
+                     self.tableView.alpha = 0.0f;
+                     
+                 } completion:^(BOOL finished) {
+                     
+                     [this reloadData];
+
+                     [UIView
+                      animateWithDuration:.15f
+                      animations:^{
+                         
+                          this.tableView.alpha = 1.0f;
+                      }];
+                 }];
             }
         });
     }

@@ -164,35 +164,42 @@
 
     if (self.item != nil) {
         
-        if (self.item.highlightedOverlayAlpha < 1.0f &&
-            self.item.highlightedOverlayColor != nil) {
-
-            if (self.isHighlighted) {
+        if (self.item.isEnabled) {
+            
+            if (self.item.highlightedOverlayAlpha < 1.0f &&
+                self.item.highlightedOverlayColor != nil) {
                 
-                self.highlightedColorView.hidden = NO;
-                self.highlightedColorView.backgroundColor =
-                self.item.highlightedOverlayColor;
+                if (self.isHighlighted) {
+                    
+                    self.highlightedColorView.hidden = NO;
+                    self.highlightedColorView.backgroundColor =
+                    self.item.highlightedOverlayColor;
+                    
+                    [self.highlightedColorView.superview
+                     bringSubviewToFront:self.highlightedColorView];
+                    
+                    self.highlightedColorView.alpha = self.item.highlightedOverlayAlpha;
+                    
+                } else {
+                    
+                    self.highlightedColorView.hidden = YES;
+                }
+            } else if (self.item.highlightedContentAlpha < 1.0f) {
                 
-                [self.highlightedColorView.superview
-                 bringSubviewToFront:self.highlightedColorView];
+                CGFloat alpha = self.isHighlighted ? .5f : 1.0f;
+                NSTimeInterval duration = animated ? .15f : 0.0f;
                 
-                self.highlightedColorView.alpha = self.item.highlightedOverlayAlpha;
-                
-            } else {
-                
-                self.highlightedColorView.hidden = YES;
+                [UIView
+                 animateWithDuration:duration
+                 animations:^{
+                     
+                     self.contentView.alpha = alpha;
+                 }];
             }
-        } else if (self.item.highlightedContentAlpha < 1.0f) {
             
-            CGFloat alpha = self.isHighlighted ? .5f : 1.0f;
-            NSTimeInterval duration = animated ? .15f : 0.0f;
+        } else {
             
-            [UIView
-             animateWithDuration:duration
-             animations:^{
-                 
-                 self.contentView.alpha = alpha;
-             }];
+            self.contentView.alpha = .5f;
         }
     }
 }

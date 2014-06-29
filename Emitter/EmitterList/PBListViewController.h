@@ -107,6 +107,7 @@ extern NSString * const kPBListActionCellID;
 
 - (void)deleteEntity:(id)entity
     entityDataSource:(NSArray *)entityDataSource
+    dataSourceOffset:(NSInteger)dataSourceOffset
         deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock;
 
 @end

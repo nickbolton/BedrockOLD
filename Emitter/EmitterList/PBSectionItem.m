@@ -44,7 +44,7 @@
     if (self) {
         self.headerTitle = headerTitle;
         self.footerTitle = footerTitle;
-        self.items = items;
+        self.items = items != nil ? items : @[];
     }
     return self;
 }

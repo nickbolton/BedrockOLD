@@ -720,10 +720,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
 		CGContextSaveGState(context);
-        
-        if (day.month == 6 && day.day == 1) {
-            NSLog(@"ZZZ");
-        }
 
 		NSString *dayString = [NSString stringWithFormat:@"%d", day.day];
         NSDictionary *textAttributes;

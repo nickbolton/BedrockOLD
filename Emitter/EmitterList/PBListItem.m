@@ -202,6 +202,7 @@ CGFloat const kPBListActionRowHeight = 44.0f;
     self.deselectable = YES;
     self.titleMargin = 20.0f;
     self.valueMargin = 20.0f;
+    self.enabled = YES;
     self.highlightedOverlayAlpha = 1.0f;
     self.highlightedContentAlpha = 1.0f;
 
