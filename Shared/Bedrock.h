@@ -35,6 +35,7 @@
 
 #if TARGET_OS_IPHONE
 #import "PBActionDelegate.h"
+#import "PBGradientView.h"
 #import "UIAlertView+Bedrock.h"
 #import "UIColor+Bedrock.h"
 #import "UIImage+Bedrock.h"
