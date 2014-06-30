@@ -1048,17 +1048,14 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     self.dragging = YES;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     self.dragging = decelerate;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     self.dragging = NO;
 }
 
