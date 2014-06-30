@@ -17,7 +17,7 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellClass:(Class)cellClass
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(id cell))selectActionBlock {
+selectAction:(void(^)(id cell, BOOL selected))selectActionBlock {
 
     PBCollectionItem *item =
     [[PBCollectionItem alloc]
@@ -37,7 +37,7 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellNib:(UINib *)cellNib
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(id cell))selectActionBlock {
+selectAction:(void(^)(id cell, BOOL selected))selectActionBlock {
 
     PBCollectionItem *item =
     [[PBCollectionItem alloc]
@@ -57,7 +57,7 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellClass:(Class)cellClass
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(id cell))selectActionBlock {
+selectAction:(void(^)(id cell, BOOL selected))selectActionBlock {
 
     self = [super init];
     if (self) {
@@ -80,7 +80,7 @@ reuseIdentifier:(NSString *)reuseIdentifier
 cellNib:(UINib *)cellNib
 configure:(void(^)(PBCollectionViewController *viewController, PBCollectionItem *item, id cell))configureBlock
 binding:(void(^)(PBCollectionViewController *viewController, NSIndexPath *indexPath, PBCollectionItem *item, id cell))bindingBlock
-selectAction:(void(^)(id cell))selectActionBlock {
+selectAction:(void(^)(id cell, BOOL selected))selectActionBlock {
 
     self = [super init];
     if (self) {

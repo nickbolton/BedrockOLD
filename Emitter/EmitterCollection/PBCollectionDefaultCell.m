@@ -50,10 +50,9 @@
 
     [self updateBackoundImage];
 
-    if (self.item.isSelected &&
-        self.item.selectionDisabled == NO &&
+    if (self.item.selectionDisabled == NO &&
         self.item.selectActionBlock != nil) {
-        self.item.selectActionBlock(self);
+        self.item.selectActionBlock(self, self.item.isSelected);
     }
 
     self.item.selectionDisabled = NO;
