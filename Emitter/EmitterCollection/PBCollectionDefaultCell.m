@@ -9,6 +9,7 @@
 #import "PBCollectionDefaultCell.h"
 #import "PBCollectionItem.h"
 #import "PBCollectionSupplimentaryImageItem.h"
+#import "PBCollectionViewController.h"
 
 @interface PBCollectionDefaultCell() {
 }
@@ -49,9 +50,7 @@
 
     [self updateBackoundImage];
 
-    self.item.selected = self.isSelected;
-
-    if (self.isSelected &&
+    if (self.item.isSelected &&
         self.item.selectionDisabled == NO &&
         self.item.selectActionBlock != nil) {
         self.item.selectActionBlock(self);
@@ -61,8 +60,15 @@
 }
 
 - (void)setSelected:(BOOL)selected {
-    [super setSelected:selected];
-    [self updateForSelectedState];
+    
+    if (self.viewController.isDragging == NO) {
+    
+        if (self.viewController.isMultiSelect && selected) {
+            self.item.selected = self.item.isSelected == NO;
+        }
+        [super setSelected:selected];
+        [self updateForSelectedState];
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted {
@@ -74,7 +80,7 @@
 
     if (self.isHighlighted) {
 
-        if (self.isSelected) {
+        if (self.item.isSelected) {
 
             if (self.item.highlightedSelectedBackgroundImage != nil) {
 
@@ -93,7 +99,7 @@
 
     } else {
 
-        if (self.isSelected) {
+        if (self.item.isSelected) {
 
             if (self.item.selectedBackgroundImage != nil) {
 

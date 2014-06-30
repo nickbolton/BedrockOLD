@@ -32,6 +32,8 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, weak) id doneTarget;
 @property (nonatomic) SEL doneSelector;
 @property (nonatomic) BOOL dismissOnDone;
+@property (nonatomic, getter = isMultiSelect) BOOL multiSelect;
+@property (nonatomic, getter = isDragging, readonly) BOOL dragging;
 @property (nonatomic) BOOL addSwipeDownToDismissKeyboard;
 @property (nonatomic, readonly) IBOutlet PBCollectionLayout *collectionLayout;
 

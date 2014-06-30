@@ -147,10 +147,13 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
 
-    if (self.isSelected != selected) {
-
-        [super setSelected:selected animated:animated];
-        [self updateForSelectedState];
+    if (self.viewController.isDragging == NO) {
+        
+        if (self.isSelected != selected) {
+            
+            [super setSelected:selected animated:animated];
+            [self updateForSelectedState];
+        }
     }
 }
 

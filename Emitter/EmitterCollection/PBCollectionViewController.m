@@ -30,6 +30,7 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
 @property (nonatomic, strong) UISwipeGestureRecognizer *swipeGesture;
 @property (nonatomic, strong) NSMutableArray *selectedItemIndexes;
 @property (nonatomic, strong) PBCollectionItem *selectAllItem;
+@property (nonatomic, getter = isDragging, readwrite) BOOL dragging;
 
 @end
 
@@ -1029,18 +1030,36 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
         }
         
     } else {
-        
-        NSMutableArray *deselectedItems = [NSMutableArray array];
-        
-        [sectionItem.items enumerateObjectsUsingBlock:^(PBCollectionItem *otherItem, NSUInteger idx, BOOL *stop) {
-        
-            if (item != otherItem && otherItem.isSelected) {
-                [deselectedItems addObject:otherItem];
-            }
-        }];
-        
-        [self deselectItems:deselectedItems inSection:indexPath.section];
+
+        if (self.isMultiSelect == NO) {
+            
+            NSMutableArray *deselectedItems = [NSMutableArray array];
+            
+            [sectionItem.items enumerateObjectsUsingBlock:^(PBCollectionItem *otherItem, NSUInteger idx, BOOL *stop) {
+                
+                if (item != otherItem && otherItem.isSelected) {
+                    [deselectedItems addObject:otherItem];
+                }
+            }];
+            
+            [self deselectItems:deselectedItems inSection:indexPath.section];
+        }
     }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    self.dragging = YES;
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    self.dragging = decelerate;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    self.dragging = NO;
 }
 
 @end
