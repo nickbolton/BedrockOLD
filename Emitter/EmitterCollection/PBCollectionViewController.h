@@ -22,6 +22,11 @@ extern NSString * const kPBCollectionViewDecorationKind;
 @property (nonatomic, readonly) NSArray *dataSource;
 @property (nonatomic, strong) NSArray *providedDataSource;
 
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *collectionViewLeftSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *collectionViewRightSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *collectionViewTopSpace;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *collectionViewBottomSpace;
+
 @property (nonatomic) BOOL reloadDataOnViewLoad;
 @property (nonatomic) BOOL hasCancelNavigationBarItem;
 @property (nonatomic, weak) id doneTarget;

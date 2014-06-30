@@ -139,7 +139,18 @@ NSString * const kPBCollectionViewDecorationKind = @"kPBCollectionViewDecoration
         self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
 
         [self.view addSubview:self.collectionView];
-        [NSLayoutConstraint expandToSuperview:self.collectionView];
+        
+        self.collectionViewTopSpace =
+        [NSLayoutConstraint alignToTop:self.collectionView withPadding:0.0f];
+        
+        self.collectionViewBottomSpace =
+        [NSLayoutConstraint alignToBottom:self.collectionView withPadding:0.0f];
+        
+        self.collectionViewLeftSpace =
+        [NSLayoutConstraint alignToLeft:self.collectionView withPadding:0.0f];
+        
+        self.collectionViewRightSpace =
+        [NSLayoutConstraint alignToRight:self.collectionView withPadding:0.0f];
     }
 }
 
