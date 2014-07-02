@@ -81,6 +81,7 @@
                 
             } else {
                 
+                self.item.selected = selected;
                 [super setSelected:selected];
                 [self updateForSelectedState];
             }
