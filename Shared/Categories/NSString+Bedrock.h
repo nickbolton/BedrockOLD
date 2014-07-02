@@ -10,6 +10,7 @@
 
 @interface NSString (Bedrock)
 
++ (NSString *)applicationDocumentsDirectory;
 + (NSString *)uuidString;
 + (NSString *)deviceIdentifier;
 + (NSString *)timestampedGuid;
