@@ -12,6 +12,8 @@
 #import "PBCollectionViewController.h"
 
 @interface PBCollectionDefaultCell() {
+    
+    NSTimeInterval _lastSelectedTime;
 }
 
 @property (nonatomic, readwrite) IBOutlet UIImageView *backgroundImageView;
@@ -60,13 +62,29 @@
 
 - (void)setSelected:(BOOL)selected {
     
-    if (self.viewController.isDragging == NO) {
+    static NSTimeInterval const doubleTapThreshold = .01f;
     
-        if (self.viewController.isMultiSelect && selected) {
-            self.item.selected = self.item.isSelected == NO;
+    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval diff = now - _lastSelectedTime;
+
+    _lastSelectedTime = now;
+    
+    if (diff > doubleTapThreshold) {
+        if (self.viewController.isDragging == NO) {
+            
+            if (self.viewController.isMultiSelect) {
+                
+                if (selected) {
+                    self.item.selected = self.item.isSelected == NO;
+                    [self updateForSelectedState];
+                }
+                
+            } else {
+                
+                [super setSelected:selected];
+                [self updateForSelectedState];
+            }
         }
-        [super setSelected:selected];
-        [self updateForSelectedState];
     }
 }
 
