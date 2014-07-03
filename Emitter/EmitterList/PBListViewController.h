@@ -106,8 +106,10 @@ extern NSString * const kPBListActionCellID;
 - (void)replaceItem:(PBListItem *)item atIndexPath:(NSIndexPath *)indexPath;
 
 - (void)deleteEntity:(id)entity
+           inSection:(NSInteger)section
     entityDataSource:(NSArray *)entityDataSource
     dataSourceOffset:(NSInteger)dataSourceOffset
-        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock;
+        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock
+didRemoveRowCompletion:(void(^)(void))completionBlock;
 
 @end

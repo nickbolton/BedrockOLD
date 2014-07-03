@@ -686,9 +686,11 @@ static NSInteger const kPBListDefaultTag = 105;
 }
 
 - (void)deleteEntity:(id)entity
+           inSection:(NSInteger)section
     entityDataSource:(NSArray *)entityDataSource
     dataSourceOffset:(NSInteger)dataSourceOffset
-        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock {
+        deleteAction:(void(^)(id entity, void(^successBlock)(void)))deleteBlock
+didRemoveRowCompletion:(void(^)(void))completionBlock {
     
     NSIndexPath *indexPath = nil;
     NSInteger index = [entityDataSource indexOfObject:entity] + dataSourceOffset;
@@ -698,7 +700,7 @@ static NSInteger const kPBListDefaultTag = 105;
         indexPath =
         [NSIndexPath
          indexPathForRow:index
-         inSection:0];
+         inSection:section];
     }
     
     __weak typeof(self) this = self;
@@ -717,6 +719,10 @@ static NSInteger const kPBListDefaultTag = 105;
                  withRowAnimation:UITableViewRowAnimationFade];
                 
                 [this.tableView endUpdates];
+                
+                if (completionBlock != nil) {
+                    completionBlock();
+                }
                 
             } else {
                 
@@ -754,7 +760,7 @@ static NSInteger const kPBListDefaultTag = 105;
     [self cleanUp];
 }
 
-#pragma mark -
+#pragma mark - Private
 
 - (void)selectItems:(NSArray *)items inSection:(NSInteger)section {
 
