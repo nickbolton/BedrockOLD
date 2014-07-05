@@ -77,6 +77,16 @@
     self.items = items;
 }
 
+- (void)replaceWithItem:(id)item atIndex:(NSInteger)index {
+    
+    if (self.items.count > index) {
+        
+        NSMutableArray *items = [self.items mutableCopy];
+        [items replaceObjectAtIndex:index withObject:item];
+        self.items = items;
+    }
+}
+
 - (void)replaceItem:(id)oldItem withItem:(id)item {
 
     NSInteger pos = [self.items indexOfObject:oldItem];
