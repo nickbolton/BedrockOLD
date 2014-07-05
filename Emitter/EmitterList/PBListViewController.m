@@ -1185,6 +1185,9 @@ didRemoveRowCompletion:(void(^)(void))completionBlock {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+
     PBListItem *item = [self itemAtIndexPath:indexPath];
     
     UITableViewCell *cell;
