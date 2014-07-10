@@ -11,7 +11,6 @@
 @interface PBGrowingViewController ()
 
 @property (nonatomic) NSInteger itemCount;
-@property (nonatomic) CGFloat listViewItemHeight;
 
 @end
 
@@ -86,7 +85,7 @@
         [PBListItem
          selectionItemWithTitle:title
          value:nil
-         itemType:PBItemTypeChecked
+         itemType:PBItemTypeDefault
          hasDisclosure:NO
          selectAction:^(id cell) {
 
@@ -94,6 +93,7 @@
 
          } deleteAction:nil];
 
+        item.checkedType = PBItemCheckedTypeSingle;
         item.titleColor = [UIColor blackColor];
         item.backgroundColor = [UIColor greenColor];
 

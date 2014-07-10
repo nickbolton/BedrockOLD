@@ -1096,12 +1096,20 @@ didRemoveRowCompletion:(void(^)(void))completionBlock {
         
         cell.titleLabel.textAlignment = item.titleAlignment;
         
-        if (item.hasDisclosure == NO && cell.valueMarginAdjusted == NO) {
-            
-            CGRect frame = cell.valueLabel.frame;
-            frame.origin.x -= item.valueMargin;
-            cell.valueLabel.frame = frame;
-            
+        if (cell.valueMarginAdjusted == NO) {
+            if (item.hasDisclosure) {
+                
+                CGRect frame = cell.valueLabel.frame;
+                frame.origin.x -= 2.0f * item.valueMargin;
+                cell.valueLabel.frame = frame;
+
+            } else {
+                
+                CGRect frame = cell.valueLabel.frame;
+                frame.origin.x -= item.valueMargin;
+                cell.valueLabel.frame = frame;
+            }
+
             cell.valueMarginAdjusted = YES;
         }
     }

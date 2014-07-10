@@ -7,6 +7,64 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FCB4C6AD196F21640068A83B /* NSLayoutConstraint+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C62B196F21640068A83B /* NSLayoutConstraint+Bedrock.m */; };
+		FCB4C6AE196F21640068A83B /* PBCalendarDayCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C62E196F21640068A83B /* PBCalendarDayCell.m */; };
+		FCB4C6AF196F21640068A83B /* PBCalendarEndPointView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C630196F21640068A83B /* PBCalendarEndPointView.m */; };
+		FCB4C6B0196F21640068A83B /* PBCalendarSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C632196F21640068A83B /* PBCalendarSelectionViewController.m */; };
+		FCB4C6B1196F21640068A83B /* PBCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C634196F21640068A83B /* PBCalendarView.m */; };
+		FCB4C6B2196F21640068A83B /* PBMonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C636196F21640068A83B /* PBMonthView.m */; };
+		FCB4C6B3196F21640068A83B /* PBCollectionDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C63B196F21640068A83B /* PBCollectionDefaultCell.m */; };
+		FCB4C6B4196F21640068A83B /* PBCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C63D196F21640068A83B /* PBCollectionItem.m */; };
+		FCB4C6B5196F21640068A83B /* PBCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C63F196F21640068A83B /* PBCollectionLayout.m */; };
+		FCB4C6B6196F21640068A83B /* PBCollectionSupplimentaryImageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C641196F21640068A83B /* PBCollectionSupplimentaryImageItem.m */; };
+		FCB4C6B7196F21640068A83B /* PBCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C643196F21640068A83B /* PBCollectionViewController.m */; };
+		FCB4C6B8196F21640068A83B /* PBListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C648196F21640068A83B /* PBListCell.m */; };
+		FCB4C6B9196F21640068A83B /* PBListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCB4C649196F21640068A83B /* PBListCell.xib */; };
+		FCB4C6BA196F21640068A83B /* PBListControlItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C64B196F21640068A83B /* PBListControlItem.m */; };
+		FCB4C6BB196F21640068A83B /* PBListDatePickerExpandedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C64D196F21640068A83B /* PBListDatePickerExpandedItem.m */; };
+		FCB4C6BC196F21640068A83B /* PBListDatePickerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C64F196F21640068A83B /* PBListDatePickerItem.m */; };
+		FCB4C6BD196F21640068A83B /* PBListExpandableItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C651196F21640068A83B /* PBListExpandableItem.m */; };
+		FCB4C6BE196F21640068A83B /* PBListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C653196F21640068A83B /* PBListItem.m */; };
+		FCB4C6BF196F21640068A83B /* PBListTextItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C655196F21640068A83B /* PBListTextItem.m */; };
+		FCB4C6C0196F21640068A83B /* PBListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C657196F21640068A83B /* PBListViewController.m */; };
+		FCB4C6C1196F21640068A83B /* PBListViewControllerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C65A196F21640068A83B /* PBListViewControllerCell.m */; };
+		FCB4C6C2196F21650068A83B /* PBListViewControllerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C65C196F21640068A83B /* PBListViewControllerItem.m */; };
+		FCB4C6C3196F21650068A83B /* PBListViewDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C65E196F21640068A83B /* PBListViewDefaultCell.m */; };
+		FCB4C6C4196F21650068A83B /* PBListViewExpandableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C660196F21640068A83B /* PBListViewExpandableCell.m */; };
+		FCB4C6C5196F21650068A83B /* PBListViewExpandableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCB4C661196F21640068A83B /* PBListViewExpandableCell.xib */; };
+		FCB4C6C6196F21650068A83B /* PBSectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C663196F21640068A83B /* PBSectionItem.m */; };
+		FCB4C6C7196F21650068A83B /* PBTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C665196F21640068A83B /* PBTitleCell.m */; };
+		FCB4C6C8196F21650068A83B /* PBTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FCB4C666196F21640068A83B /* PBTitleCell.xib */; };
+		FCB4C6C9196F21650068A83B /* PBGroupedTableRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C669196F21640068A83B /* PBGroupedTableRenderer.m */; };
+		FCB4C6CA196F21650068A83B /* PBListControlRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C66B196F21640068A83B /* PBListControlRenderer.m */; };
+		FCB4C6CB196F21650068A83B /* PBListDatePickerRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C66D196F21640068A83B /* PBListDatePickerRenderer.m */; };
+		FCB4C6CC196F21650068A83B /* PBListTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C670196F21640068A83B /* PBListTextRenderer.m */; };
+		FCB4C6CD196F21650068A83B /* PBPaginationRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C672196F21640068A83B /* PBPaginationRenderer.m */; };
+		FCB4C6CE196F21650068A83B /* UIAlertView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C676196F21640068A83B /* UIAlertView+Bedrock.m */; };
+		FCB4C6CF196F21650068A83B /* UIButton+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C678196F21640068A83B /* UIButton+Bedrock.m */; };
+		FCB4C6D0196F21650068A83B /* UIColor+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C67A196F21640068A83B /* UIColor+Bedrock.m */; };
+		FCB4C6D1196F21650068A83B /* UIImage+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C67C196F21640068A83B /* UIImage+Bedrock.m */; };
+		FCB4C6D2196F21650068A83B /* UINavigationController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C67E196F21640068A83B /* UINavigationController+Bedrock.m */; };
+		FCB4C6D3196F21650068A83B /* UIView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C680196F21640068A83B /* UIView+Bedrock.m */; };
+		FCB4C6D4196F21650068A83B /* UIViewController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C682196F21640068A83B /* UIViewController+Bedrock.m */; };
+		FCB4C6D5196F21650068A83B /* PBActionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C685196F21640068A83B /* PBActionDelegate.m */; };
+		FCB4C6D6196F21650068A83B /* PBIAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C687196F21640068A83B /* PBIAPHelper.m */; };
+		FCB4C6D7196F21650068A83B /* PBGradientView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C68A196F21640068A83B /* PBGradientView.m */; };
+		FCB4C6D8196F21650068A83B /* PBIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C68C196F21640068A83B /* PBIndicatorView.m */; };
+		FCB4C6D9196F21650068A83B /* UIBezierButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C68E196F21640068A83B /* UIBezierButton.m */; };
+		FCB4C6DA196F21650068A83B /* UIBezierView.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C690196F21640068A83B /* UIBezierView.m */; };
+		FCB4C6DB196F21650068A83B /* NSArray+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C695196F21640068A83B /* NSArray+Bedrock.m */; };
+		FCB4C6DC196F21650068A83B /* NSCalendar+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C697196F21640068A83B /* NSCalendar+Bedrock.m */; };
+		FCB4C6DD196F21650068A83B /* NSDate+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C699196F21640068A83B /* NSDate+Bedrock.m */; };
+		FCB4C6DE196F21650068A83B /* NSDateComponents+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C69B196F21640068A83B /* NSDateComponents+Bedrock.m */; };
+		FCB4C6DF196F21650068A83B /* NSNotification+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C69D196F21640068A83B /* NSNotification+Bedrock.m */; };
+		FCB4C6E0196F21650068A83B /* NSObject+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C69F196F21640068A83B /* NSObject+Bedrock.m */; };
+		FCB4C6E1196F21650068A83B /* NSString+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6A1196F21640068A83B /* NSString+Bedrock.m */; };
+		FCB4C6E2196F21650068A83B /* PBDateRange.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6A4196F21640068A83B /* PBDateRange.m */; };
+		FCB4C6E3196F21650068A83B /* PBDummyClass.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6A6196F21640068A83B /* PBDummyClass.m */; };
+		FCB4C6E4196F21650068A83B /* PBManagedObjectContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6A8196F21640068A83B /* PBManagedObjectContextManager.m */; };
+		FCB4C6E5196F21650068A83B /* PBRunningAverageValue.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6AA196F21640068A83B /* PBRunningAverageValue.m */; };
+		FCB4C6E6196F21650068A83B /* PBSwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C6AC196F21640068A83B /* PBSwizzler.m */; };
 		FE2A4787187B6F0B007A4178 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A4786187B6F0B007A4178 /* Foundation.framework */; };
 		FE2A4789187B6F0B007A4178 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A4788187B6F0B007A4178 /* CoreGraphics.framework */; };
 		FE2A478B187B6F0B007A4178 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE2A478A187B6F0B007A4178 /* UIKit.framework */; };
@@ -23,42 +81,7 @@
 		FE2A47E6187B7215007A4178 /* PBSelectionListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47E5187B7215007A4178 /* PBSelectionListViewController.m */; };
 		FE2A47EF187B874B007A4178 /* PBDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47EE187B874B007A4178 /* PBDetailViewController.m */; };
 		FE2A47F2187B8D35007A4178 /* PBGrowingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2A47F1187B8D35007A4178 /* PBGrowingViewController.m */; };
-		FE40426D187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */; };
-		FE40426E187CA0B70028C249 /* PBCollectionDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */; };
-		FE40426F187CA0B70028C249 /* PBCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BC187CA0B70028C249 /* PBCollectionItem.m */; };
-		FE404270187CA0B70028C249 /* PBCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */; };
-		FE404271187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */; };
-		FE404272187CA0B70028C249 /* PBCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */; };
-		FE404273187CA0B70028C249 /* PBListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C5187CA0B70028C249 /* PBListCell.m */; };
-		FE404274187CA0B70028C249 /* PBListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4041C6187CA0B70028C249 /* PBListCell.xib */; };
-		FE404275187CA0B70028C249 /* PBListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041C8187CA0B70028C249 /* PBListItem.m */; };
-		FE404276187CA0B70028C249 /* PBListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CA187CA0B70028C249 /* PBListViewController.m */; };
-		FE404277187CA0B70028C249 /* PBListViewControllerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */; };
-		FE404278187CA0B70028C249 /* PBListViewDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */; };
-		FE404279187CA0B70028C249 /* PBTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4041D0187CA0B70028C249 /* PBTitleCell.m */; };
-		FE40427A187CA0B70028C249 /* PBTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE4041D1187CA0B70028C249 /* PBTitleCell.xib */; };
-		FE4042C4187CA0B70028C249 /* UIAlertView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */; };
-		FE4042C5187CA0B70028C249 /* UIButton+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404244187CA0B70028C249 /* UIButton+Bedrock.m */; };
-		FE4042C6187CA0B70028C249 /* UIColor+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404246187CA0B70028C249 /* UIColor+Bedrock.m */; };
-		FE4042C7187CA0B70028C249 /* UIImage+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404248187CA0B70028C249 /* UIImage+Bedrock.m */; };
-		FE4042C8187CA0B70028C249 /* UINavigationController+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */; };
-		FE4042C9187CA0B70028C249 /* UIView+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424C187CA0B70028C249 /* UIView+Bedrock.m */; };
-		FE4042CA187CA0B70028C249 /* PBActionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40424F187CA0B70028C249 /* PBActionDelegate.m */; };
-		FE4042CB187CA0B70028C249 /* UIBezierButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404252187CA0B70028C249 /* UIBezierButton.m */; };
-		FE4042CC187CA0B70028C249 /* UIBezierView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404254187CA0B70028C249 /* UIBezierView.m */; };
-		FE4042CD187CA0B70028C249 /* NSArray+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404259187CA0B70028C249 /* NSArray+Bedrock.m */; };
-		FE4042CE187CA0B70028C249 /* NSDate+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */; };
-		FE4042CF187CA0B70028C249 /* NSNotification+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */; };
-		FE4042D0187CA0B70028C249 /* NSObject+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */; };
-		FE4042D1187CA0B70028C249 /* NSString+Bedrock.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404261187CA0B70028C249 /* NSString+Bedrock.m */; };
-		FE4042D2187CA0B70028C249 /* PBCalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404264187CA0B70028C249 /* PBCalendarManager.m */; };
-		FE4042D3187CA0B70028C249 /* PBDateRange.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404266187CA0B70028C249 /* PBDateRange.m */; };
-		FE4042D4187CA0B70028C249 /* PBDummyClass.m in Sources */ = {isa = PBXBuildFile; fileRef = FE404268187CA0B70028C249 /* PBDummyClass.m */; };
-		FE4042D5187CA0B70028C249 /* PBManagedObjectContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */; };
-		FE4042D6187CA0B70028C249 /* PBRunningAverageValue.m in Sources */ = {isa = PBXBuildFile; fileRef = FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */; };
-		FE4042D9187CA54A0028C249 /* PBListViewControllerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */; };
 		FE4042DC187CE0C50028C249 /* PBGroupedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042DB187CE0C50028C249 /* PBGroupedViewController.m */; };
-		FE4042DF187CE0F30028C249 /* PBSectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FE4042DE187CE0F30028C249 /* PBSectionItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +95,124 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FCB4C62A196F21640068A83B /* NSLayoutConstraint+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C62B196F21640068A83B /* NSLayoutConstraint+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C62D196F21640068A83B /* PBCalendarDayCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarDayCell.h; sourceTree = "<group>"; };
+		FCB4C62E196F21640068A83B /* PBCalendarDayCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarDayCell.m; sourceTree = "<group>"; };
+		FCB4C62F196F21640068A83B /* PBCalendarEndPointView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarEndPointView.h; sourceTree = "<group>"; };
+		FCB4C630196F21640068A83B /* PBCalendarEndPointView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarEndPointView.m; sourceTree = "<group>"; };
+		FCB4C631196F21640068A83B /* PBCalendarSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarSelectionViewController.h; sourceTree = "<group>"; };
+		FCB4C632196F21640068A83B /* PBCalendarSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarSelectionViewController.m; sourceTree = "<group>"; };
+		FCB4C633196F21640068A83B /* PBCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarView.h; sourceTree = "<group>"; };
+		FCB4C634196F21640068A83B /* PBCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarView.m; sourceTree = "<group>"; };
+		FCB4C635196F21640068A83B /* PBMonthView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBMonthView.h; sourceTree = "<group>"; };
+		FCB4C636196F21640068A83B /* PBMonthView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBMonthView.m; sourceTree = "<group>"; };
+		FCB4C638196F21640068A83B /* Emitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Emitter.h; sourceTree = "<group>"; };
+		FCB4C63A196F21640068A83B /* PBCollectionDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionDefaultCell.h; sourceTree = "<group>"; };
+		FCB4C63B196F21640068A83B /* PBCollectionDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionDefaultCell.m; sourceTree = "<group>"; };
+		FCB4C63C196F21640068A83B /* PBCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItem.h; sourceTree = "<group>"; };
+		FCB4C63D196F21640068A83B /* PBCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionItem.m; sourceTree = "<group>"; };
+		FCB4C63E196F21640068A83B /* PBCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionLayout.h; sourceTree = "<group>"; };
+		FCB4C63F196F21640068A83B /* PBCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionLayout.m; sourceTree = "<group>"; };
+		FCB4C640196F21640068A83B /* PBCollectionSupplimentaryImageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionSupplimentaryImageItem.h; sourceTree = "<group>"; };
+		FCB4C641196F21640068A83B /* PBCollectionSupplimentaryImageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionSupplimentaryImageItem.m; sourceTree = "<group>"; };
+		FCB4C642196F21640068A83B /* PBCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionViewController.h; sourceTree = "<group>"; };
+		FCB4C643196F21640068A83B /* PBCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionViewController.m; sourceTree = "<group>"; };
+		FCB4C645196F21640068A83B /* PBCollectionItemRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItemRenderer.h; sourceTree = "<group>"; };
+		FCB4C647196F21640068A83B /* PBListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListCell.h; sourceTree = "<group>"; };
+		FCB4C648196F21640068A83B /* PBListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListCell.m; sourceTree = "<group>"; };
+		FCB4C649196F21640068A83B /* PBListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBListCell.xib; sourceTree = "<group>"; };
+		FCB4C64A196F21640068A83B /* PBListControlItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListControlItem.h; sourceTree = "<group>"; };
+		FCB4C64B196F21640068A83B /* PBListControlItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListControlItem.m; sourceTree = "<group>"; };
+		FCB4C64C196F21640068A83B /* PBListDatePickerExpandedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListDatePickerExpandedItem.h; sourceTree = "<group>"; };
+		FCB4C64D196F21640068A83B /* PBListDatePickerExpandedItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListDatePickerExpandedItem.m; sourceTree = "<group>"; };
+		FCB4C64E196F21640068A83B /* PBListDatePickerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListDatePickerItem.h; sourceTree = "<group>"; };
+		FCB4C64F196F21640068A83B /* PBListDatePickerItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListDatePickerItem.m; sourceTree = "<group>"; };
+		FCB4C650196F21640068A83B /* PBListExpandableItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListExpandableItem.h; sourceTree = "<group>"; };
+		FCB4C651196F21640068A83B /* PBListExpandableItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListExpandableItem.m; sourceTree = "<group>"; };
+		FCB4C652196F21640068A83B /* PBListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListItem.h; sourceTree = "<group>"; };
+		FCB4C653196F21640068A83B /* PBListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListItem.m; sourceTree = "<group>"; };
+		FCB4C654196F21640068A83B /* PBListTextItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListTextItem.h; sourceTree = "<group>"; };
+		FCB4C655196F21640068A83B /* PBListTextItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListTextItem.m; sourceTree = "<group>"; };
+		FCB4C656196F21640068A83B /* PBListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewController.h; sourceTree = "<group>"; };
+		FCB4C657196F21640068A83B /* PBListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewController.m; sourceTree = "<group>"; };
+		FCB4C658196F21640068A83B /* PBListViewController_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewController_Private.h; sourceTree = "<group>"; };
+		FCB4C659196F21640068A83B /* PBListViewControllerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerCell.h; sourceTree = "<group>"; };
+		FCB4C65A196F21640068A83B /* PBListViewControllerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerCell.m; sourceTree = "<group>"; };
+		FCB4C65B196F21640068A83B /* PBListViewControllerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerItem.h; sourceTree = "<group>"; };
+		FCB4C65C196F21640068A83B /* PBListViewControllerItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerItem.m; sourceTree = "<group>"; };
+		FCB4C65D196F21640068A83B /* PBListViewDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewDefaultCell.h; sourceTree = "<group>"; };
+		FCB4C65E196F21640068A83B /* PBListViewDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewDefaultCell.m; sourceTree = "<group>"; };
+		FCB4C65F196F21640068A83B /* PBListViewExpandableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewExpandableCell.h; sourceTree = "<group>"; };
+		FCB4C660196F21640068A83B /* PBListViewExpandableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewExpandableCell.m; sourceTree = "<group>"; };
+		FCB4C661196F21640068A83B /* PBListViewExpandableCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBListViewExpandableCell.xib; sourceTree = "<group>"; };
+		FCB4C662196F21640068A83B /* PBSectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBSectionItem.h; sourceTree = "<group>"; };
+		FCB4C663196F21640068A83B /* PBSectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBSectionItem.m; sourceTree = "<group>"; };
+		FCB4C664196F21640068A83B /* PBTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBTitleCell.h; sourceTree = "<group>"; };
+		FCB4C665196F21640068A83B /* PBTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBTitleCell.m; sourceTree = "<group>"; };
+		FCB4C666196F21640068A83B /* PBTitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBTitleCell.xib; sourceTree = "<group>"; };
+		FCB4C668196F21640068A83B /* PBGroupedTableRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGroupedTableRenderer.h; sourceTree = "<group>"; };
+		FCB4C669196F21640068A83B /* PBGroupedTableRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGroupedTableRenderer.m; sourceTree = "<group>"; };
+		FCB4C66A196F21640068A83B /* PBListControlRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListControlRenderer.h; sourceTree = "<group>"; };
+		FCB4C66B196F21640068A83B /* PBListControlRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListControlRenderer.m; sourceTree = "<group>"; };
+		FCB4C66C196F21640068A83B /* PBListDatePickerRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListDatePickerRenderer.h; sourceTree = "<group>"; };
+		FCB4C66D196F21640068A83B /* PBListDatePickerRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListDatePickerRenderer.m; sourceTree = "<group>"; };
+		FCB4C66E196F21640068A83B /* PBListItemRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListItemRenderer.h; sourceTree = "<group>"; };
+		FCB4C66F196F21640068A83B /* PBListTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListTextRenderer.h; sourceTree = "<group>"; };
+		FCB4C670196F21640068A83B /* PBListTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListTextRenderer.m; sourceTree = "<group>"; };
+		FCB4C671196F21640068A83B /* PBPaginationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBPaginationRenderer.h; sourceTree = "<group>"; };
+		FCB4C672196F21640068A83B /* PBPaginationRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBPaginationRenderer.m; sourceTree = "<group>"; };
+		FCB4C675196F21640068A83B /* UIAlertView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C676196F21640068A83B /* UIAlertView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C677196F21640068A83B /* UIButton+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C678196F21640068A83B /* UIButton+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C679196F21640068A83B /* UIColor+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C67A196F21640068A83B /* UIColor+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C67B196F21640068A83B /* UIImage+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C67C196F21640068A83B /* UIImage+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C67D196F21640068A83B /* UINavigationController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C67E196F21640068A83B /* UINavigationController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C67F196F21640068A83B /* UIView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C680196F21640068A83B /* UIView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C681196F21640068A83B /* UIViewController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C682196F21640068A83B /* UIViewController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C684196F21640068A83B /* PBActionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBActionDelegate.h; sourceTree = "<group>"; };
+		FCB4C685196F21640068A83B /* PBActionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBActionDelegate.m; sourceTree = "<group>"; };
+		FCB4C686196F21640068A83B /* PBIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBIAPHelper.h; sourceTree = "<group>"; };
+		FCB4C687196F21640068A83B /* PBIAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBIAPHelper.m; sourceTree = "<group>"; };
+		FCB4C689196F21640068A83B /* PBGradientView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGradientView.h; sourceTree = "<group>"; };
+		FCB4C68A196F21640068A83B /* PBGradientView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGradientView.m; sourceTree = "<group>"; };
+		FCB4C68B196F21640068A83B /* PBIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBIndicatorView.h; sourceTree = "<group>"; };
+		FCB4C68C196F21640068A83B /* PBIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBIndicatorView.m; sourceTree = "<group>"; };
+		FCB4C68D196F21640068A83B /* UIBezierButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierButton.h; sourceTree = "<group>"; };
+		FCB4C68E196F21640068A83B /* UIBezierButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierButton.m; sourceTree = "<group>"; };
+		FCB4C68F196F21640068A83B /* UIBezierView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierView.h; sourceTree = "<group>"; };
+		FCB4C690196F21640068A83B /* UIBezierView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierView.m; sourceTree = "<group>"; };
+		FCB4C692196F21640068A83B /* Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bedrock.h; sourceTree = "<group>"; };
+		FCB4C694196F21640068A83B /* NSArray+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C695196F21640068A83B /* NSArray+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C696196F21640068A83B /* NSCalendar+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C697196F21640068A83B /* NSCalendar+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C698196F21640068A83B /* NSDate+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C699196F21640068A83B /* NSDate+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C69A196F21640068A83B /* NSDateComponents+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDateComponents+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C69B196F21640068A83B /* NSDateComponents+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDateComponents+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C69C196F21640068A83B /* NSNotification+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotification+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C69D196F21640068A83B /* NSNotification+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C69E196F21640068A83B /* NSObject+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C69F196F21640068A83B /* NSObject+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C6A0196F21640068A83B /* NSString+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Bedrock.h"; sourceTree = "<group>"; };
+		FCB4C6A1196F21640068A83B /* NSString+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Bedrock.m"; sourceTree = "<group>"; };
+		FCB4C6A3196F21640068A83B /* PBDateRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDateRange.h; sourceTree = "<group>"; };
+		FCB4C6A4196F21640068A83B /* PBDateRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDateRange.m; sourceTree = "<group>"; };
+		FCB4C6A5196F21640068A83B /* PBDummyClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDummyClass.h; sourceTree = "<group>"; };
+		FCB4C6A6196F21640068A83B /* PBDummyClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDummyClass.m; sourceTree = "<group>"; };
+		FCB4C6A7196F21640068A83B /* PBManagedObjectContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBManagedObjectContextManager.h; sourceTree = "<group>"; };
+		FCB4C6A8196F21640068A83B /* PBManagedObjectContextManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBManagedObjectContextManager.m; sourceTree = "<group>"; };
+		FCB4C6A9196F21640068A83B /* PBRunningAverageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBRunningAverageValue.h; sourceTree = "<group>"; };
+		FCB4C6AA196F21640068A83B /* PBRunningAverageValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBRunningAverageValue.m; sourceTree = "<group>"; };
+		FCB4C6AB196F21640068A83B /* PBSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBSwizzler.h; sourceTree = "<group>"; };
+		FCB4C6AC196F21640068A83B /* PBSwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBSwizzler.m; sourceTree = "<group>"; };
 		FE2A4783187B6F0B007A4178 /* PBEmitterViewControllerListExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PBEmitterViewControllerListExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE2A4786187B6F0B007A4178 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FE2A4788187B6F0B007A4178 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -96,78 +237,8 @@
 		FE2A47EE187B874B007A4178 /* PBDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDetailViewController.m; sourceTree = "<group>"; };
 		FE2A47F0187B8D35007A4178 /* PBGrowingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGrowingViewController.h; sourceTree = "<group>"; };
 		FE2A47F1187B8D35007A4178 /* PBGrowingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGrowingViewController.m; sourceTree = "<group>"; };
-		FE4041B4187CA0B70028C249 /* NSLayoutConstraint+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+Bedrock.h"; sourceTree = "<group>"; };
-		FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+Bedrock.m"; sourceTree = "<group>"; };
-		FE4041B7187CA0B70028C249 /* Emitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Emitter.h; sourceTree = "<group>"; };
-		FE4041B9187CA0B70028C249 /* PBCollectionDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionDefaultCell.h; sourceTree = "<group>"; };
-		FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionDefaultCell.m; sourceTree = "<group>"; };
-		FE4041BB187CA0B70028C249 /* PBCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionItem.h; sourceTree = "<group>"; };
-		FE4041BC187CA0B70028C249 /* PBCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionItem.m; sourceTree = "<group>"; };
-		FE4041BD187CA0B70028C249 /* PBCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionLayout.h; sourceTree = "<group>"; };
-		FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionLayout.m; sourceTree = "<group>"; };
-		FE4041BF187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionSupplimentaryImageItem.h; sourceTree = "<group>"; };
-		FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionSupplimentaryImageItem.m; sourceTree = "<group>"; };
-		FE4041C1187CA0B70028C249 /* PBCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCollectionViewController.h; sourceTree = "<group>"; };
-		FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCollectionViewController.m; sourceTree = "<group>"; };
-		FE4041C4187CA0B70028C249 /* PBListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListCell.h; sourceTree = "<group>"; };
-		FE4041C5187CA0B70028C249 /* PBListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListCell.m; sourceTree = "<group>"; };
-		FE4041C6187CA0B70028C249 /* PBListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBListCell.xib; sourceTree = "<group>"; };
-		FE4041C7187CA0B70028C249 /* PBListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListItem.h; sourceTree = "<group>"; };
-		FE4041C8187CA0B70028C249 /* PBListItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListItem.m; sourceTree = "<group>"; };
-		FE4041C9187CA0B70028C249 /* PBListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewController.h; sourceTree = "<group>"; };
-		FE4041CA187CA0B70028C249 /* PBListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewController.m; sourceTree = "<group>"; };
-		FE4041CB187CA0B70028C249 /* PBListViewControllerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerItem.h; sourceTree = "<group>"; };
-		FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerItem.m; sourceTree = "<group>"; };
-		FE4041CD187CA0B70028C249 /* PBListViewDefaultCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewDefaultCell.h; sourceTree = "<group>"; };
-		FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewDefaultCell.m; sourceTree = "<group>"; };
-		FE4041CF187CA0B70028C249 /* PBTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBTitleCell.h; sourceTree = "<group>"; };
-		FE4041D0187CA0B70028C249 /* PBTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBTitleCell.m; sourceTree = "<group>"; };
-		FE4041D1187CA0B70028C249 /* PBTitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PBTitleCell.xib; sourceTree = "<group>"; };
-		FE404241187CA0B70028C249 /* UIAlertView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Bedrock.h"; sourceTree = "<group>"; };
-		FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Bedrock.m"; sourceTree = "<group>"; };
-		FE404243187CA0B70028C249 /* UIButton+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Bedrock.h"; sourceTree = "<group>"; };
-		FE404244187CA0B70028C249 /* UIButton+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bedrock.m"; sourceTree = "<group>"; };
-		FE404245187CA0B70028C249 /* UIColor+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Bedrock.h"; sourceTree = "<group>"; };
-		FE404246187CA0B70028C249 /* UIColor+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Bedrock.m"; sourceTree = "<group>"; };
-		FE404247187CA0B70028C249 /* UIImage+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Bedrock.h"; sourceTree = "<group>"; };
-		FE404248187CA0B70028C249 /* UIImage+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Bedrock.m"; sourceTree = "<group>"; };
-		FE404249187CA0B70028C249 /* UINavigationController+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+Bedrock.h"; sourceTree = "<group>"; };
-		FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+Bedrock.m"; sourceTree = "<group>"; };
-		FE40424B187CA0B70028C249 /* UIView+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Bedrock.h"; sourceTree = "<group>"; };
-		FE40424C187CA0B70028C249 /* UIView+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Bedrock.m"; sourceTree = "<group>"; };
-		FE40424E187CA0B70028C249 /* PBActionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBActionDelegate.h; sourceTree = "<group>"; };
-		FE40424F187CA0B70028C249 /* PBActionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBActionDelegate.m; sourceTree = "<group>"; };
-		FE404251187CA0B70028C249 /* UIBezierButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierButton.h; sourceTree = "<group>"; };
-		FE404252187CA0B70028C249 /* UIBezierButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierButton.m; sourceTree = "<group>"; };
-		FE404253187CA0B70028C249 /* UIBezierView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierView.h; sourceTree = "<group>"; };
-		FE404254187CA0B70028C249 /* UIBezierView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierView.m; sourceTree = "<group>"; };
-		FE404256187CA0B70028C249 /* Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bedrock.h; sourceTree = "<group>"; };
-		FE404258187CA0B70028C249 /* NSArray+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Bedrock.h"; sourceTree = "<group>"; };
-		FE404259187CA0B70028C249 /* NSArray+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Bedrock.m"; sourceTree = "<group>"; };
-		FE40425A187CA0B70028C249 /* NSDate+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Bedrock.h"; sourceTree = "<group>"; };
-		FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Bedrock.m"; sourceTree = "<group>"; };
-		FE40425C187CA0B70028C249 /* NSNotification+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotification+Bedrock.h"; sourceTree = "<group>"; };
-		FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+Bedrock.m"; sourceTree = "<group>"; };
-		FE40425E187CA0B70028C249 /* NSObject+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Bedrock.h"; sourceTree = "<group>"; };
-		FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Bedrock.m"; sourceTree = "<group>"; };
-		FE404260187CA0B70028C249 /* NSString+Bedrock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Bedrock.h"; sourceTree = "<group>"; };
-		FE404261187CA0B70028C249 /* NSString+Bedrock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Bedrock.m"; sourceTree = "<group>"; };
-		FE404263187CA0B70028C249 /* PBCalendarManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBCalendarManager.h; sourceTree = "<group>"; };
-		FE404264187CA0B70028C249 /* PBCalendarManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBCalendarManager.m; sourceTree = "<group>"; };
-		FE404265187CA0B70028C249 /* PBDateRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDateRange.h; sourceTree = "<group>"; };
-		FE404266187CA0B70028C249 /* PBDateRange.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDateRange.m; sourceTree = "<group>"; };
-		FE404267187CA0B70028C249 /* PBDummyClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBDummyClass.h; sourceTree = "<group>"; };
-		FE404268187CA0B70028C249 /* PBDummyClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBDummyClass.m; sourceTree = "<group>"; };
-		FE404269187CA0B70028C249 /* PBManagedObjectContextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBManagedObjectContextManager.h; sourceTree = "<group>"; };
-		FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBManagedObjectContextManager.m; sourceTree = "<group>"; };
-		FE40426B187CA0B70028C249 /* PBRunningAverageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBRunningAverageValue.h; sourceTree = "<group>"; };
-		FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBRunningAverageValue.m; sourceTree = "<group>"; };
-		FE4042D7187CA54A0028C249 /* PBListViewControllerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBListViewControllerCell.h; sourceTree = "<group>"; };
-		FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBListViewControllerCell.m; sourceTree = "<group>"; };
 		FE4042DA187CE0C50028C249 /* PBGroupedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBGroupedViewController.h; sourceTree = "<group>"; };
 		FE4042DB187CE0C50028C249 /* PBGroupedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBGroupedViewController.m; sourceTree = "<group>"; };
-		FE4042DD187CE0F30028C249 /* PBSectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBSectionItem.h; sourceTree = "<group>"; };
-		FE4042DE187CE0F30028C249 /* PBSectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBSectionItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +265,236 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FCB4C629196F21640068A83B /* AutoLayout */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C62A196F21640068A83B /* NSLayoutConstraint+Bedrock.h */,
+				FCB4C62B196F21640068A83B /* NSLayoutConstraint+Bedrock.m */,
+			);
+			name = AutoLayout;
+			path = ../../AutoLayout;
+			sourceTree = "<group>";
+		};
+		FCB4C62C196F21640068A83B /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C62D196F21640068A83B /* PBCalendarDayCell.h */,
+				FCB4C62E196F21640068A83B /* PBCalendarDayCell.m */,
+				FCB4C62F196F21640068A83B /* PBCalendarEndPointView.h */,
+				FCB4C630196F21640068A83B /* PBCalendarEndPointView.m */,
+				FCB4C631196F21640068A83B /* PBCalendarSelectionViewController.h */,
+				FCB4C632196F21640068A83B /* PBCalendarSelectionViewController.m */,
+				FCB4C633196F21640068A83B /* PBCalendarView.h */,
+				FCB4C634196F21640068A83B /* PBCalendarView.m */,
+				FCB4C635196F21640068A83B /* PBMonthView.h */,
+				FCB4C636196F21640068A83B /* PBMonthView.m */,
+			);
+			name = Calendar;
+			path = ../../Calendar;
+			sourceTree = "<group>";
+		};
+		FCB4C637196F21640068A83B /* Emitter */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C638196F21640068A83B /* Emitter.h */,
+				FCB4C639196F21640068A83B /* EmitterCollection */,
+				FCB4C646196F21640068A83B /* EmitterList */,
+			);
+			name = Emitter;
+			path = ../../Emitter;
+			sourceTree = "<group>";
+		};
+		FCB4C639196F21640068A83B /* EmitterCollection */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C63A196F21640068A83B /* PBCollectionDefaultCell.h */,
+				FCB4C63B196F21640068A83B /* PBCollectionDefaultCell.m */,
+				FCB4C63C196F21640068A83B /* PBCollectionItem.h */,
+				FCB4C63D196F21640068A83B /* PBCollectionItem.m */,
+				FCB4C63E196F21640068A83B /* PBCollectionLayout.h */,
+				FCB4C63F196F21640068A83B /* PBCollectionLayout.m */,
+				FCB4C640196F21640068A83B /* PBCollectionSupplimentaryImageItem.h */,
+				FCB4C641196F21640068A83B /* PBCollectionSupplimentaryImageItem.m */,
+				FCB4C642196F21640068A83B /* PBCollectionViewController.h */,
+				FCB4C643196F21640068A83B /* PBCollectionViewController.m */,
+				FCB4C644196F21640068A83B /* Renderers */,
+			);
+			path = EmitterCollection;
+			sourceTree = "<group>";
+		};
+		FCB4C644196F21640068A83B /* Renderers */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C645196F21640068A83B /* PBCollectionItemRenderer.h */,
+			);
+			path = Renderers;
+			sourceTree = "<group>";
+		};
+		FCB4C646196F21640068A83B /* EmitterList */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C647196F21640068A83B /* PBListCell.h */,
+				FCB4C648196F21640068A83B /* PBListCell.m */,
+				FCB4C649196F21640068A83B /* PBListCell.xib */,
+				FCB4C64A196F21640068A83B /* PBListControlItem.h */,
+				FCB4C64B196F21640068A83B /* PBListControlItem.m */,
+				FCB4C64C196F21640068A83B /* PBListDatePickerExpandedItem.h */,
+				FCB4C64D196F21640068A83B /* PBListDatePickerExpandedItem.m */,
+				FCB4C64E196F21640068A83B /* PBListDatePickerItem.h */,
+				FCB4C64F196F21640068A83B /* PBListDatePickerItem.m */,
+				FCB4C650196F21640068A83B /* PBListExpandableItem.h */,
+				FCB4C651196F21640068A83B /* PBListExpandableItem.m */,
+				FCB4C652196F21640068A83B /* PBListItem.h */,
+				FCB4C653196F21640068A83B /* PBListItem.m */,
+				FCB4C654196F21640068A83B /* PBListTextItem.h */,
+				FCB4C655196F21640068A83B /* PBListTextItem.m */,
+				FCB4C656196F21640068A83B /* PBListViewController.h */,
+				FCB4C657196F21640068A83B /* PBListViewController.m */,
+				FCB4C658196F21640068A83B /* PBListViewController_Private.h */,
+				FCB4C659196F21640068A83B /* PBListViewControllerCell.h */,
+				FCB4C65A196F21640068A83B /* PBListViewControllerCell.m */,
+				FCB4C65B196F21640068A83B /* PBListViewControllerItem.h */,
+				FCB4C65C196F21640068A83B /* PBListViewControllerItem.m */,
+				FCB4C65D196F21640068A83B /* PBListViewDefaultCell.h */,
+				FCB4C65E196F21640068A83B /* PBListViewDefaultCell.m */,
+				FCB4C65F196F21640068A83B /* PBListViewExpandableCell.h */,
+				FCB4C660196F21640068A83B /* PBListViewExpandableCell.m */,
+				FCB4C661196F21640068A83B /* PBListViewExpandableCell.xib */,
+				FCB4C662196F21640068A83B /* PBSectionItem.h */,
+				FCB4C663196F21640068A83B /* PBSectionItem.m */,
+				FCB4C664196F21640068A83B /* PBTitleCell.h */,
+				FCB4C665196F21640068A83B /* PBTitleCell.m */,
+				FCB4C666196F21640068A83B /* PBTitleCell.xib */,
+				FCB4C667196F21640068A83B /* Renderers */,
+			);
+			path = EmitterList;
+			sourceTree = "<group>";
+		};
+		FCB4C667196F21640068A83B /* Renderers */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C668196F21640068A83B /* PBGroupedTableRenderer.h */,
+				FCB4C669196F21640068A83B /* PBGroupedTableRenderer.m */,
+				FCB4C66A196F21640068A83B /* PBListControlRenderer.h */,
+				FCB4C66B196F21640068A83B /* PBListControlRenderer.m */,
+				FCB4C66C196F21640068A83B /* PBListDatePickerRenderer.h */,
+				FCB4C66D196F21640068A83B /* PBListDatePickerRenderer.m */,
+				FCB4C66E196F21640068A83B /* PBListItemRenderer.h */,
+				FCB4C66F196F21640068A83B /* PBListTextRenderer.h */,
+				FCB4C670196F21640068A83B /* PBListTextRenderer.m */,
+				FCB4C671196F21640068A83B /* PBPaginationRenderer.h */,
+				FCB4C672196F21640068A83B /* PBPaginationRenderer.m */,
+			);
+			path = Renderers;
+			sourceTree = "<group>";
+		};
+		FCB4C673196F21640068A83B /* iOS-Core */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C674196F21640068A83B /* Categories */,
+				FCB4C683196F21640068A83B /* Utilities */,
+				FCB4C688196F21640068A83B /* Views */,
+			);
+			name = "iOS-Core";
+			path = "../../iOS-Core";
+			sourceTree = "<group>";
+		};
+		FCB4C674196F21640068A83B /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C675196F21640068A83B /* UIAlertView+Bedrock.h */,
+				FCB4C676196F21640068A83B /* UIAlertView+Bedrock.m */,
+				FCB4C677196F21640068A83B /* UIButton+Bedrock.h */,
+				FCB4C678196F21640068A83B /* UIButton+Bedrock.m */,
+				FCB4C679196F21640068A83B /* UIColor+Bedrock.h */,
+				FCB4C67A196F21640068A83B /* UIColor+Bedrock.m */,
+				FCB4C67B196F21640068A83B /* UIImage+Bedrock.h */,
+				FCB4C67C196F21640068A83B /* UIImage+Bedrock.m */,
+				FCB4C67D196F21640068A83B /* UINavigationController+Bedrock.h */,
+				FCB4C67E196F21640068A83B /* UINavigationController+Bedrock.m */,
+				FCB4C67F196F21640068A83B /* UIView+Bedrock.h */,
+				FCB4C680196F21640068A83B /* UIView+Bedrock.m */,
+				FCB4C681196F21640068A83B /* UIViewController+Bedrock.h */,
+				FCB4C682196F21640068A83B /* UIViewController+Bedrock.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		FCB4C683196F21640068A83B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C684196F21640068A83B /* PBActionDelegate.h */,
+				FCB4C685196F21640068A83B /* PBActionDelegate.m */,
+				FCB4C686196F21640068A83B /* PBIAPHelper.h */,
+				FCB4C687196F21640068A83B /* PBIAPHelper.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		FCB4C688196F21640068A83B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C689196F21640068A83B /* PBGradientView.h */,
+				FCB4C68A196F21640068A83B /* PBGradientView.m */,
+				FCB4C68B196F21640068A83B /* PBIndicatorView.h */,
+				FCB4C68C196F21640068A83B /* PBIndicatorView.m */,
+				FCB4C68D196F21640068A83B /* UIBezierButton.h */,
+				FCB4C68E196F21640068A83B /* UIBezierButton.m */,
+				FCB4C68F196F21640068A83B /* UIBezierView.h */,
+				FCB4C690196F21640068A83B /* UIBezierView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FCB4C691196F21640068A83B /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C692196F21640068A83B /* Bedrock.h */,
+				FCB4C693196F21640068A83B /* Categories */,
+				FCB4C6A2196F21640068A83B /* Utilities */,
+			);
+			name = Shared;
+			path = ../../Shared;
+			sourceTree = "<group>";
+		};
+		FCB4C693196F21640068A83B /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C694196F21640068A83B /* NSArray+Bedrock.h */,
+				FCB4C695196F21640068A83B /* NSArray+Bedrock.m */,
+				FCB4C696196F21640068A83B /* NSCalendar+Bedrock.h */,
+				FCB4C697196F21640068A83B /* NSCalendar+Bedrock.m */,
+				FCB4C698196F21640068A83B /* NSDate+Bedrock.h */,
+				FCB4C699196F21640068A83B /* NSDate+Bedrock.m */,
+				FCB4C69A196F21640068A83B /* NSDateComponents+Bedrock.h */,
+				FCB4C69B196F21640068A83B /* NSDateComponents+Bedrock.m */,
+				FCB4C69C196F21640068A83B /* NSNotification+Bedrock.h */,
+				FCB4C69D196F21640068A83B /* NSNotification+Bedrock.m */,
+				FCB4C69E196F21640068A83B /* NSObject+Bedrock.h */,
+				FCB4C69F196F21640068A83B /* NSObject+Bedrock.m */,
+				FCB4C6A0196F21640068A83B /* NSString+Bedrock.h */,
+				FCB4C6A1196F21640068A83B /* NSString+Bedrock.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		FCB4C6A2196F21640068A83B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FCB4C6A3196F21640068A83B /* PBDateRange.h */,
+				FCB4C6A4196F21640068A83B /* PBDateRange.m */,
+				FCB4C6A5196F21640068A83B /* PBDummyClass.h */,
+				FCB4C6A6196F21640068A83B /* PBDummyClass.m */,
+				FCB4C6A7196F21640068A83B /* PBManagedObjectContextManager.h */,
+				FCB4C6A8196F21640068A83B /* PBManagedObjectContextManager.m */,
+				FCB4C6A9196F21640068A83B /* PBRunningAverageValue.h */,
+				FCB4C6AA196F21640068A83B /* PBRunningAverageValue.m */,
+				FCB4C6AB196F21640068A83B /* PBSwizzler.h */,
+				FCB4C6AC196F21640068A83B /* PBSwizzler.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		FE2A477A187B6F0B007A4178 = {
 			isa = PBXGroup;
 			children = (
@@ -278,170 +579,13 @@
 		FE4041B2187CA09E0028C249 /* Bedrock */ = {
 			isa = PBXGroup;
 			children = (
-				FE4041B3187CA0B70028C249 /* AutoLayout */,
-				FE4041B6187CA0B70028C249 /* Emitter */,
-				FE40423F187CA0B70028C249 /* iOS-Core */,
-				FE404255187CA0B70028C249 /* Shared */,
+				FCB4C629196F21640068A83B /* AutoLayout */,
+				FCB4C62C196F21640068A83B /* Calendar */,
+				FCB4C637196F21640068A83B /* Emitter */,
+				FCB4C673196F21640068A83B /* iOS-Core */,
+				FCB4C691196F21640068A83B /* Shared */,
 			);
 			name = Bedrock;
-			sourceTree = "<group>";
-		};
-		FE4041B3187CA0B70028C249 /* AutoLayout */ = {
-			isa = PBXGroup;
-			children = (
-				FE4041B4187CA0B70028C249 /* NSLayoutConstraint+Bedrock.h */,
-				FE4041B5187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m */,
-			);
-			name = AutoLayout;
-			path = ../../../AutoLayout;
-			sourceTree = "<group>";
-		};
-		FE4041B6187CA0B70028C249 /* Emitter */ = {
-			isa = PBXGroup;
-			children = (
-				FE4041B7187CA0B70028C249 /* Emitter.h */,
-				FE4041B8187CA0B70028C249 /* EmitterCollection */,
-				FE4041C3187CA0B70028C249 /* EmitterList */,
-			);
-			name = Emitter;
-			path = ../..;
-			sourceTree = "<group>";
-		};
-		FE4041B8187CA0B70028C249 /* EmitterCollection */ = {
-			isa = PBXGroup;
-			children = (
-				FE4041B9187CA0B70028C249 /* PBCollectionDefaultCell.h */,
-				FE4041BA187CA0B70028C249 /* PBCollectionDefaultCell.m */,
-				FE4041BB187CA0B70028C249 /* PBCollectionItem.h */,
-				FE4041BC187CA0B70028C249 /* PBCollectionItem.m */,
-				FE4041BD187CA0B70028C249 /* PBCollectionLayout.h */,
-				FE4041BE187CA0B70028C249 /* PBCollectionLayout.m */,
-				FE4041BF187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.h */,
-				FE4041C0187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m */,
-				FE4041C1187CA0B70028C249 /* PBCollectionViewController.h */,
-				FE4041C2187CA0B70028C249 /* PBCollectionViewController.m */,
-			);
-			path = EmitterCollection;
-			sourceTree = "<group>";
-		};
-		FE4041C3187CA0B70028C249 /* EmitterList */ = {
-			isa = PBXGroup;
-			children = (
-				FE4041C4187CA0B70028C249 /* PBListCell.h */,
-				FE4041C5187CA0B70028C249 /* PBListCell.m */,
-				FE4041C6187CA0B70028C249 /* PBListCell.xib */,
-				FE4041C7187CA0B70028C249 /* PBListItem.h */,
-				FE4041C8187CA0B70028C249 /* PBListItem.m */,
-				FE4042DD187CE0F30028C249 /* PBSectionItem.h */,
-				FE4042DE187CE0F30028C249 /* PBSectionItem.m */,
-				FE4041C9187CA0B70028C249 /* PBListViewController.h */,
-				FE4041CA187CA0B70028C249 /* PBListViewController.m */,
-				FE4041CB187CA0B70028C249 /* PBListViewControllerItem.h */,
-				FE4041CC187CA0B70028C249 /* PBListViewControllerItem.m */,
-				FE4041CD187CA0B70028C249 /* PBListViewDefaultCell.h */,
-				FE4041CE187CA0B70028C249 /* PBListViewDefaultCell.m */,
-				FE4042D7187CA54A0028C249 /* PBListViewControllerCell.h */,
-				FE4042D8187CA54A0028C249 /* PBListViewControllerCell.m */,
-				FE4041CF187CA0B70028C249 /* PBTitleCell.h */,
-				FE4041D0187CA0B70028C249 /* PBTitleCell.m */,
-				FE4041D1187CA0B70028C249 /* PBTitleCell.xib */,
-			);
-			path = EmitterList;
-			sourceTree = "<group>";
-		};
-		FE40423F187CA0B70028C249 /* iOS-Core */ = {
-			isa = PBXGroup;
-			children = (
-				FE404240187CA0B70028C249 /* Categories */,
-				FE40424D187CA0B70028C249 /* Utilities */,
-				FE404250187CA0B70028C249 /* Views */,
-			);
-			name = "iOS-Core";
-			path = "../../../iOS-Core";
-			sourceTree = "<group>";
-		};
-		FE404240187CA0B70028C249 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				FE404241187CA0B70028C249 /* UIAlertView+Bedrock.h */,
-				FE404242187CA0B70028C249 /* UIAlertView+Bedrock.m */,
-				FE404243187CA0B70028C249 /* UIButton+Bedrock.h */,
-				FE404244187CA0B70028C249 /* UIButton+Bedrock.m */,
-				FE404245187CA0B70028C249 /* UIColor+Bedrock.h */,
-				FE404246187CA0B70028C249 /* UIColor+Bedrock.m */,
-				FE404247187CA0B70028C249 /* UIImage+Bedrock.h */,
-				FE404248187CA0B70028C249 /* UIImage+Bedrock.m */,
-				FE404249187CA0B70028C249 /* UINavigationController+Bedrock.h */,
-				FE40424A187CA0B70028C249 /* UINavigationController+Bedrock.m */,
-				FE40424B187CA0B70028C249 /* UIView+Bedrock.h */,
-				FE40424C187CA0B70028C249 /* UIView+Bedrock.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
-		FE40424D187CA0B70028C249 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				FE40424E187CA0B70028C249 /* PBActionDelegate.h */,
-				FE40424F187CA0B70028C249 /* PBActionDelegate.m */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		FE404250187CA0B70028C249 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				FE404251187CA0B70028C249 /* UIBezierButton.h */,
-				FE404252187CA0B70028C249 /* UIBezierButton.m */,
-				FE404253187CA0B70028C249 /* UIBezierView.h */,
-				FE404254187CA0B70028C249 /* UIBezierView.m */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		FE404255187CA0B70028C249 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				FE404256187CA0B70028C249 /* Bedrock.h */,
-				FE404257187CA0B70028C249 /* Categories */,
-				FE404262187CA0B70028C249 /* Utilities */,
-			);
-			name = Shared;
-			path = ../../../Shared;
-			sourceTree = "<group>";
-		};
-		FE404257187CA0B70028C249 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				FE404258187CA0B70028C249 /* NSArray+Bedrock.h */,
-				FE404259187CA0B70028C249 /* NSArray+Bedrock.m */,
-				FE40425A187CA0B70028C249 /* NSDate+Bedrock.h */,
-				FE40425B187CA0B70028C249 /* NSDate+Bedrock.m */,
-				FE40425C187CA0B70028C249 /* NSNotification+Bedrock.h */,
-				FE40425D187CA0B70028C249 /* NSNotification+Bedrock.m */,
-				FE40425E187CA0B70028C249 /* NSObject+Bedrock.h */,
-				FE40425F187CA0B70028C249 /* NSObject+Bedrock.m */,
-				FE404260187CA0B70028C249 /* NSString+Bedrock.h */,
-				FE404261187CA0B70028C249 /* NSString+Bedrock.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
-		FE404262187CA0B70028C249 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				FE404263187CA0B70028C249 /* PBCalendarManager.h */,
-				FE404264187CA0B70028C249 /* PBCalendarManager.m */,
-				FE404265187CA0B70028C249 /* PBDateRange.h */,
-				FE404266187CA0B70028C249 /* PBDateRange.m */,
-				FE404267187CA0B70028C249 /* PBDummyClass.h */,
-				FE404268187CA0B70028C249 /* PBDummyClass.m */,
-				FE404269187CA0B70028C249 /* PBManagedObjectContextManager.h */,
-				FE40426A187CA0B70028C249 /* PBManagedObjectContextManager.m */,
-				FE40426B187CA0B70028C249 /* PBRunningAverageValue.h */,
-				FE40426C187CA0B70028C249 /* PBRunningAverageValue.m */,
-			);
-			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -521,10 +665,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE40427A187CA0B70028C249 /* PBTitleCell.xib in Resources */,
-				FE404274187CA0B70028C249 /* PBListCell.xib in Resources */,
+				FCB4C6B9196F21640068A83B /* PBListCell.xib in Resources */,
 				FE2A47A2187B6F0B007A4178 /* Images.xcassets in Resources */,
+				FCB4C6C5196F21650068A83B /* PBListViewExpandableCell.xib in Resources */,
 				FE2A4791187B6F0B007A4178 /* InfoPlist.strings in Resources */,
+				FCB4C6C8196F21650068A83B /* PBTitleCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,46 +688,68 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE4042C7187CA0B70028C249 /* UIImage+Bedrock.m in Sources */,
-				FE4042C5187CA0B70028C249 /* UIButton+Bedrock.m in Sources */,
-				FE404279187CA0B70028C249 /* PBTitleCell.m in Sources */,
+				FCB4C6BB196F21640068A83B /* PBListDatePickerExpandedItem.m in Sources */,
+				FCB4C6D1196F21650068A83B /* UIImage+Bedrock.m in Sources */,
+				FCB4C6AD196F21640068A83B /* NSLayoutConstraint+Bedrock.m in Sources */,
 				FE2A4797187B6F0B007A4178 /* PBAppDelegate.m in Sources */,
-				FE4042C4187CA0B70028C249 /* UIAlertView+Bedrock.m in Sources */,
-				FE4042D2187CA0B70028C249 /* PBCalendarManager.m in Sources */,
-				FE404277187CA0B70028C249 /* PBListViewControllerItem.m in Sources */,
-				FE4042CD187CA0B70028C249 /* NSArray+Bedrock.m in Sources */,
-				FE4042CE187CA0B70028C249 /* NSDate+Bedrock.m in Sources */,
+				FCB4C6D3196F21650068A83B /* UIView+Bedrock.m in Sources */,
+				FCB4C6E5196F21650068A83B /* PBRunningAverageValue.m in Sources */,
+				FCB4C6E1196F21650068A83B /* NSString+Bedrock.m in Sources */,
+				FCB4C6CD196F21650068A83B /* PBPaginationRenderer.m in Sources */,
+				FCB4C6D8196F21650068A83B /* PBIndicatorView.m in Sources */,
+				FCB4C6E3196F21650068A83B /* PBDummyClass.m in Sources */,
+				FCB4C6AE196F21640068A83B /* PBCalendarDayCell.m in Sources */,
+				FCB4C6C4196F21650068A83B /* PBListViewExpandableCell.m in Sources */,
+				FCB4C6D5196F21650068A83B /* PBActionDelegate.m in Sources */,
 				FE2A47A0187B6F0B007A4178 /* PBViewController.m in Sources */,
-				FE40426F187CA0B70028C249 /* PBCollectionItem.m in Sources */,
-				FE4042CB187CA0B70028C249 /* UIBezierButton.m in Sources */,
-				FE404271187CA0B70028C249 /* PBCollectionSupplimentaryImageItem.m in Sources */,
-				FE404273187CA0B70028C249 /* PBListCell.m in Sources */,
-				FE4042D3187CA0B70028C249 /* PBDateRange.m in Sources */,
-				FE40426D187CA0B70028C249 /* NSLayoutConstraint+Bedrock.m in Sources */,
-				FE4042C9187CA0B70028C249 /* UIView+Bedrock.m in Sources */,
+				FCB4C6DD196F21650068A83B /* NSDate+Bedrock.m in Sources */,
+				FCB4C6B2196F21640068A83B /* PBMonthView.m in Sources */,
+				FCB4C6B3196F21640068A83B /* PBCollectionDefaultCell.m in Sources */,
 				FE2A4793187B6F0B007A4178 /* main.m in Sources */,
-				FE4042D4187CA0B70028C249 /* PBDummyClass.m in Sources */,
+				FCB4C6C6196F21650068A83B /* PBSectionItem.m in Sources */,
+				FCB4C6C9196F21650068A83B /* PBGroupedTableRenderer.m in Sources */,
 				FE2A47EF187B874B007A4178 /* PBDetailViewController.m in Sources */,
-				FE404275187CA0B70028C249 /* PBListItem.m in Sources */,
-				FE4042D6187CA0B70028C249 /* PBRunningAverageValue.m in Sources */,
-				FE4042DF187CE0F30028C249 /* PBSectionItem.m in Sources */,
-				FE404278187CA0B70028C249 /* PBListViewDefaultCell.m in Sources */,
-				FE4042CF187CA0B70028C249 /* NSNotification+Bedrock.m in Sources */,
+				FCB4C6C2196F21650068A83B /* PBListViewControllerItem.m in Sources */,
+				FCB4C6D0196F21650068A83B /* UIColor+Bedrock.m in Sources */,
 				FE2A47F2187B8D35007A4178 /* PBGrowingViewController.m in Sources */,
-				FE4042D1187CA0B70028C249 /* NSString+Bedrock.m in Sources */,
-				FE404272187CA0B70028C249 /* PBCollectionViewController.m in Sources */,
-				FE4042D5187CA0B70028C249 /* PBManagedObjectContextManager.m in Sources */,
-				FE404270187CA0B70028C249 /* PBCollectionLayout.m in Sources */,
-				FE4042CA187CA0B70028C249 /* PBActionDelegate.m in Sources */,
-				FE4042C6187CA0B70028C249 /* UIColor+Bedrock.m in Sources */,
-				FE4042C8187CA0B70028C249 /* UINavigationController+Bedrock.m in Sources */,
+				FCB4C6CA196F21650068A83B /* PBListControlRenderer.m in Sources */,
+				FCB4C6DB196F21650068A83B /* NSArray+Bedrock.m in Sources */,
+				FCB4C6B8196F21640068A83B /* PBListCell.m in Sources */,
+				FCB4C6B0196F21640068A83B /* PBCalendarSelectionViewController.m in Sources */,
+				FCB4C6BE196F21640068A83B /* PBListItem.m in Sources */,
+				FCB4C6E2196F21650068A83B /* PBDateRange.m in Sources */,
+				FCB4C6C3196F21650068A83B /* PBListViewDefaultCell.m in Sources */,
+				FCB4C6CB196F21650068A83B /* PBListDatePickerRenderer.m in Sources */,
+				FCB4C6B6196F21640068A83B /* PBCollectionSupplimentaryImageItem.m in Sources */,
+				FCB4C6E4196F21650068A83B /* PBManagedObjectContextManager.m in Sources */,
+				FCB4C6D2196F21650068A83B /* UINavigationController+Bedrock.m in Sources */,
 				FE2A47E6187B7215007A4178 /* PBSelectionListViewController.m in Sources */,
+				FCB4C6C1196F21640068A83B /* PBListViewControllerCell.m in Sources */,
+				FCB4C6DF196F21650068A83B /* NSNotification+Bedrock.m in Sources */,
+				FCB4C6CE196F21650068A83B /* UIAlertView+Bedrock.m in Sources */,
+				FCB4C6BD196F21640068A83B /* PBListExpandableItem.m in Sources */,
+				FCB4C6BC196F21640068A83B /* PBListDatePickerItem.m in Sources */,
+				FCB4C6B5196F21640068A83B /* PBCollectionLayout.m in Sources */,
+				FCB4C6C0196F21640068A83B /* PBListViewController.m in Sources */,
+				FCB4C6D6196F21650068A83B /* PBIAPHelper.m in Sources */,
+				FCB4C6BF196F21640068A83B /* PBListTextItem.m in Sources */,
+				FCB4C6D9196F21650068A83B /* UIBezierButton.m in Sources */,
+				FCB4C6CF196F21650068A83B /* UIButton+Bedrock.m in Sources */,
+				FCB4C6B4196F21640068A83B /* PBCollectionItem.m in Sources */,
+				FCB4C6B7196F21640068A83B /* PBCollectionViewController.m in Sources */,
+				FCB4C6BA196F21640068A83B /* PBListControlItem.m in Sources */,
+				FCB4C6C7196F21650068A83B /* PBTitleCell.m in Sources */,
+				FCB4C6DE196F21650068A83B /* NSDateComponents+Bedrock.m in Sources */,
+				FCB4C6D4196F21650068A83B /* UIViewController+Bedrock.m in Sources */,
+				FCB4C6E6196F21650068A83B /* PBSwizzler.m in Sources */,
 				FE4042DC187CE0C50028C249 /* PBGroupedViewController.m in Sources */,
-				FE404276187CA0B70028C249 /* PBListViewController.m in Sources */,
-				FE4042D9187CA54A0028C249 /* PBListViewControllerCell.m in Sources */,
-				FE4042CC187CA0B70028C249 /* UIBezierView.m in Sources */,
-				FE4042D0187CA0B70028C249 /* NSObject+Bedrock.m in Sources */,
-				FE40426E187CA0B70028C249 /* PBCollectionDefaultCell.m in Sources */,
+				FCB4C6DA196F21650068A83B /* UIBezierView.m in Sources */,
+				FCB4C6E0196F21650068A83B /* NSObject+Bedrock.m in Sources */,
+				FCB4C6DC196F21650068A83B /* NSCalendar+Bedrock.m in Sources */,
+				FCB4C6CC196F21650068A83B /* PBListTextRenderer.m in Sources */,
+				FCB4C6B1196F21640068A83B /* PBCalendarView.m in Sources */,
+				FCB4C6AF196F21640068A83B /* PBCalendarEndPointView.m in Sources */,
+				FCB4C6D7196F21650068A83B /* PBGradientView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

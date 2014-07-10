@@ -135,11 +135,7 @@
     [items addObject:[self buildModalViewControllerItem]];
     [items addObject:[self buildPushingViewControllerItem]];
     [items addObject:[self spacerItem]];
-    [items addObject:[self buildGrowingViewControllerItem]];
-    [items addObject:[self spacerItem]];
     [items addObject:[self buildSectionViewControllerItem]];
-    [items addObject:[self spacerItem]];
-    [items addObject:[self buildSimpleSelectionViewControllerItem]];
 
     return items;
 }

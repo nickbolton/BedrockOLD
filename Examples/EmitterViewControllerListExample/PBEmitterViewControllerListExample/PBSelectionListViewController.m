@@ -41,7 +41,7 @@
         [PBListItem
          selectionItemWithTitle:title
          value:nil
-         itemType:PBItemTypeChecked
+         itemType:PBItemTypeDefault
          hasDisclosure:NO
          selectAction:^(id cell) {
 
@@ -50,6 +50,7 @@
          } deleteAction:nil];
 
         item.titleColor = [UIColor blackColor];
+        item.checkedType = PBItemCheckedTypeSingle;
 
         [items addObject:item];
     }

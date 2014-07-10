@@ -60,6 +60,7 @@
          } deleteAction:nil];
 
         item.titleColor = [UIColor blackColor];
+        item.valueMargin = 15.0f;
 
         [items addObject:item];
     }
