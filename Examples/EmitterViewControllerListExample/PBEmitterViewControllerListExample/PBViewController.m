@@ -18,104 +18,6 @@
 
 @implementation PBViewController
 
-#pragma mark - Setup
-
-- (PBListViewControllerItem *)buildSimpleSelectionViewControllerItem {
-
-    PBSelectionListViewController *viewController =
-    [[PBSelectionListViewController alloc] init];
-
-    return
-    [PBListViewControllerItem
-     itemWithViewController:viewController
-     cellID:NSStringFromClass([viewController class])];
-}
-
-- (PBListItem *)buildModalViewControllerItem {
-
-    __weak typeof(self) this = self;
-
-    PBListItem *item =
-    [PBListItem
-     selectionItemWithTitle:@"Launch Modal"
-     value:nil
-     itemType:PBItemTypeDefault
-     hasDisclosure:YES
-     selectAction:^(id cell) {
-
-         PBDetailViewController *viewController =
-         [[PBDetailViewController alloc] init];
-
-         viewController.hasCancelNavigationBarItem = YES;
-
-         [UINavigationController
-          presentViewController:viewController
-          fromViewController:this
-          completion:nil];
-
-     } deleteAction:nil];
-    item.backgroundColor = [UIColor whiteColor];
-    item.titleColor = [UIColor blackColor];
-
-    return item;
-}
-
-- (PBListItem *)buildPushingViewControllerItem {
-
-    __weak typeof(self) this = self;
-
-    PBListItem *item =
-    [PBListItem
-     selectionItemWithTitle:@"Push Detail"
-     value:nil
-     itemType:PBItemTypeDefault
-     hasDisclosure:YES
-     selectAction:^(id cell) {
-
-         PBDetailViewController *viewController =
-         [[PBDetailViewController alloc] init];
-
-         [this.navigationController
-          pushViewController:viewController
-          animated:YES];
-
-     } deleteAction:nil];
-    item.backgroundColor = [UIColor whiteColor];
-    item.titleColor = [UIColor blackColor];
-    
-    return item;
-}
-
-- (PBListItem *)buildGrowingViewControllerItem {
-
-    PBGrowingViewController *viewController =
-    [[PBGrowingViewController alloc] init];
-
-    return
-    [PBListViewControllerItem
-     itemWithViewController:viewController
-     cellID:NSStringFromClass([viewController class])];
-}
-
-- (PBListItem *)buildSectionViewControllerItem {
-
-    PBGroupedViewController *viewController =
-    [[PBGroupedViewController alloc] init];
-
-    return
-    [PBListViewControllerItem
-     itemWithViewController:viewController
-     cellID:NSStringFromClass([viewController class])];
-}
-
-- (PBListItem *)spacerItem {
-
-    PBListItem *item =
-    [PBListItem spacerItemWithHeight:20.0f];
-    item.backgroundColor = [UIColor lightGrayColor];
-    return item;
-}
-
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
@@ -129,15 +31,80 @@
 }
 
 - (NSArray *)buildDataSource {
+    
+    // subclasses of PBListViewController need only supply PBListItem objects
 
     NSMutableArray *items = [NSMutableArray array];
 
-    [items addObject:[self buildModalViewControllerItem]];
-    [items addObject:[self buildPushingViewControllerItem]];
     [items addObject:[self spacerItem]];
-    [items addObject:[self buildSectionViewControllerItem]];
+    [items addObject:[self buildModalViewControllerItem]];
+    [items addObject:[self spacerItem]];
+    [items addObject:[self buildPushingViewControllerItem]];
 
     return items;
+}
+
+- (PBListItem *)buildModalViewControllerItem {
+    
+    __weak typeof(self) this = self;
+    
+    PBListItem *item =
+    [PBListItem
+     selectionItemWithTitle:@"Launch Modal"
+     value:nil
+     itemType:PBItemTypeDefault
+     hasDisclosure:YES
+     selectAction:^(id cell) {
+         
+         PBDetailViewController *viewController =
+         [[PBDetailViewController alloc] init];
+         
+         viewController.hasCancelNavigationBarItem = YES;
+         
+         [UINavigationController
+          presentViewController:viewController
+          fromViewController:this
+          completion:nil];
+         
+     } deleteAction:nil];
+    item.backgroundColor = [UIColor whiteColor];
+    item.titleColor = [UIColor blackColor];
+    
+    return item;
+}
+
+- (PBListItem *)buildPushingViewControllerItem {
+    
+    __weak typeof(self) this = self;
+    
+    PBListItem *item =
+    [PBListItem
+     selectionItemWithTitle:@"Push Detail"
+     value:nil
+     itemType:PBItemTypeDefault
+     hasDisclosure:YES
+     selectAction:^(id cell) {
+         
+         PBDetailViewController *viewController =
+         [[PBDetailViewController alloc] init];
+         
+         [this.navigationController
+          pushViewController:viewController
+          animated:YES];
+         
+     } deleteAction:nil];
+    item.backgroundColor = [UIColor whiteColor];
+    item.titleColor = [UIColor blackColor];
+    
+    return item;
+}
+
+- (PBListItem *)spacerItem {
+    
+    PBListItem *item =
+    [PBListItem spacerItemWithHeight:20.0f];
+    item.backgroundColor = [UIColor lightGrayColor];
+    return item;
 }
 
 @end
