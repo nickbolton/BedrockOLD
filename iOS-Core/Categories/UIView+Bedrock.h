@@ -26,8 +26,13 @@
                              translation:(CGPoint)translation;
 - (void)stopWiggleAnimation;
 
-- (void)startPulsingAnimation:(CGFloat)periodicty;
+- (void)startPulsingAnimation:(CGFloat)periodcity;
 - (void)stopPulsingAnimation;
+
+- (void)startBlinkingAnimation:(CGFloat)periodcity;
+- (void)startBlinkingAnimation:(CGFloat)periodcity
+               minimumDuration:(NSTimeInterval)minimumDuration;
+- (void)stopBlinkingAnimation;
 
 // motion
 - (void)addHorizontalMotion:(CGFloat)weight;

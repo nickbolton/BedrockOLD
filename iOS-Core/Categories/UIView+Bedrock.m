@@ -17,6 +17,7 @@ static char kPBMotionDictionaryObjectKey;
 
 static NSString *kPBHorizontalMotionKey = @"horizontal-motion";
 static NSString *kPBVerticalMotionKey = @"vertical-motion";
+static NSString *kPBMinimumBlinkingDurationKey = @"minimum-blinking-duration";
 
 @implementation UIView (Bedrock)
 
@@ -26,6 +27,14 @@ static NSString *kPBVerticalMotionKey = @"vertical-motion";
 
 - (void)pb_setMotionDictionaryObject:(NSMutableDictionary *)motionDictionary {
     objc_setAssociatedObject(self, &kPBMotionDictionaryObjectKey, motionDictionary, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSNumber *)pb_minimumBlinkingDurationObject {
+    return (NSMutableDictionary *)objc_getAssociatedObject(self, &kPBMinimumBlinkingDurationKey);
+}
+
+- (void)pb_setMinimumBlinkingDurationObject:(NSNumber *)duration {
+    objc_setAssociatedObject(self, &kPBMinimumBlinkingDurationKey, duration, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)removeAllSubviews {
@@ -213,12 +222,12 @@ static NSString *kPBVerticalMotionKey = @"vertical-motion";
     return anim;
 }
 
-- (void)startPulsingAnimation:(CGFloat)periodicty {
+- (void)startPulsingAnimation:(CGFloat)periodcity {
 
     if ([self.layer.animationKeys containsObject:@"animateOpacity"] == NO) {
 
         CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-        animation.duration=periodicty;
+        animation.duration=periodcity;
         animation.repeatCount=HUGE_VALF;
         animation.autoreverses=YES;
         animation.fromValue=[NSNumber numberWithFloat:1.0f];
@@ -232,6 +241,78 @@ static NSString *kPBVerticalMotionKey = @"vertical-motion";
 
 - (void)stopPulsingAnimation {
     [self.layer removeAnimationForKey:@"animateOpacity"];
+}
+
+- (void)startBlinkingAnimation:(CGFloat)periodcity {
+
+    [self startBlinkingAnimation:periodcity minimumDuration:0.0f];
+}
+
+- (void)startBlinkingAnimation:(CGFloat)periodcity
+               minimumDuration:(NSTimeInterval)minimumDuration {
+    
+    if ([self.layer.animationKeys containsObject:@"animateOpacity"] == NO) {
+
+        if (minimumDuration > 0.0f) {
+            
+            CFTimeInterval now = CACurrentMediaTime();
+            
+            [self pb_setMinimumBlinkingDurationObject:@(minimumDuration)];
+        }
+    
+        CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        animation.duration=periodcity;
+        animation.repeatCount=HUGE_VALF;
+        animation.autoreverses=YES;
+        animation.fromValue=[NSNumber numberWithFloat:1.0f];
+        animation.toValue=[NSNumber numberWithFloat:0.0f];
+        animation.timingFunction =
+        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        
+        [self.layer addAnimation:animation forKey:@"animateOpacity"];
+    }
+}
+
+- (void)stopBlinkingAnimation {
+    
+    NSNumber *minimumDuration = [self pb_minimumBlinkingDurationObject];
+    
+    if (minimumDuration != nil) {
+        
+        CABasicAnimation *animation = [self.layer animationForKey:@"animateOpacity"];
+     
+        CFTimeInterval now = CACurrentMediaTime();
+        CFTimeInterval startTime = animation.beginTime;
+        CFTimeInterval delta = now - startTime;
+        
+        if (delta < 0.0f) {
+
+            [self doStopBlinkingAnimation];
+
+        } else if (delta >= minimumDuration.floatValue) {
+            
+            [self doStopBlinkingAnimation];
+            
+        } else {
+            
+            __weak typeof(self) this = self;
+            
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delta * NSEC_PER_SEC);
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                
+                [this stopBlinkingAnimation];
+            });
+        }
+
+    } else {
+        
+        [self doStopBlinkingAnimation];
+    }
+}
+
+- (void)doStopBlinkingAnimation {
+    [self.layer removeAnimationForKey:@"animateOpacity"];
+    [self pb_setMinimumBlinkingDurationObject:nil];
 }
 
 - (UIImage *)pb_screenshot {
