@@ -62,7 +62,7 @@
 
 - (void)setSelected:(BOOL)selected {
     
-    static NSTimeInterval const doubleTapThreshold = .01f;
+    static NSTimeInterval const doubleTapThreshold = .05f;
     
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval diff = now - _lastSelectedTime;
