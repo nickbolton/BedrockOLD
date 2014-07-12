@@ -40,4 +40,25 @@
     return navigationController;
 }
 
+- (void)popToViewControllerOfType:(Class)type animated:(BOOL)animated {
+    
+    __block UIViewController *viewController = nil;
+    
+    [self.viewControllers
+     enumerateObjectsWithOptions:NSEnumerationReverse
+     usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+         
+         if ([obj isKindOfClass:type]) {
+             viewController = obj;
+             *stop = YES;
+         }
+     }];
+    
+    NSAssert(viewController != nil,
+             @"No view controller exists of type %@",
+             NSStringFromClass(type));
+    
+    [self popToViewController:viewController animated:animated];
+}
+
 @end

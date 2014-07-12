@@ -19,4 +19,7 @@
                             transitioningDelegate:(id <UIViewControllerTransitioningDelegate>)transitioningDelegate
                                        completion:(void(^)(void))completionBlock;
 
+
+- (void)popToViewControllerOfType:(Class)type animated:(BOOL)animated;
+
 @end
