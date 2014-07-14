@@ -73,8 +73,22 @@
     textField.text = item.text;
     textField.textColor = item.textColor;
     textField.font = item.font;
-    textField.placeholder = item.placeholder;
     cell.backgroundColor = item.backgroundColor;
+    
+    if (item.placeholder.length > 0 && item.placeholderColor != nil && item.placeholderFont != nil) {
+        
+        NSAttributedString *placeholderAttributedString =
+        [[NSAttributedString alloc]
+         initWithString:item.placeholder
+         attributes:@{NSForegroundColorAttributeName : item.placeholderColor,
+                      NSFontAttributeName : item.placeholderFont}];
+        
+        textField.attributedPlaceholder = placeholderAttributedString;
+
+    } else {
+        
+        textField.placeholder = item.placeholder;
+    }
 
     [self renderControl:textField withItem:item];
 }

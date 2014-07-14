@@ -14,6 +14,8 @@
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) NSString *placeholder;
+@property (nonatomic, strong) UIColor *placeholderColor;
+@property (nonatomic, strong) UIFont *placeholderFont;
 @property (nonatomic) UITextField *textField;
 @property (nonatomic) UIEdgeInsets textInsets;
 @property (nonatomic) UIKeyboardType keyboardType;
