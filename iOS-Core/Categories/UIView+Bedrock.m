@@ -273,6 +273,14 @@ static NSString *kPBMinimumBlinkingDurationKey = @"minimum-blinking-duration";
     }
 }
 
+- (void)stopBlinkingAnimation:(BOOL)force {
+    if (force) {
+        [self doStopBlinkingAnimation];
+    } else {
+        [self stopBlinkingAnimation];
+    }
+}
+
 - (void)stopBlinkingAnimation {
     
     NSNumber *minimumDuration = [self pb_minimumBlinkingDurationObject];

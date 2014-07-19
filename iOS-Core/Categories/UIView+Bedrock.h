@@ -33,6 +33,7 @@
 - (void)startBlinkingAnimation:(CGFloat)periodcity
                minimumDuration:(NSTimeInterval)minimumDuration;
 - (void)stopBlinkingAnimation;
+- (void)stopBlinkingAnimation:(BOOL)force;
 
 // motion
 - (void)addHorizontalMotion:(CGFloat)weight;
