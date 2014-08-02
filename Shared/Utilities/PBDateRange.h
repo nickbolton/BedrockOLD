@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;
+@property (nonatomic, readonly) NSArray *dateArray;
 
 + (instancetype)dateRangeWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate;
 

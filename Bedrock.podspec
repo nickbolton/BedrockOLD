@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.license = 'MIT'
 
   s.subspec 'Core' do |c|
-    c.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac/**/*.{h,m}'
+    c.osx.source_files  = 'Shared/**/*.{h,m}', 'Mac-Core/**/*.{h,m}'
     c.ios.source_files  = 'Shared/**/*.{h,m}', 'iOS-Core/**/*.{h,m}'
   end
 
