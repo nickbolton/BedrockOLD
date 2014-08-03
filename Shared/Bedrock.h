@@ -49,6 +49,20 @@
 
 #endif
 
+#import "NSAlert+Bedrock.h"
+#import "NSAppleScript+Bedrock.h"
+#import "NSAttributedString+Bedrock.h"
+#import "NSButton+Bedrock.h"
+#import "NSColor+Bedrock.h"
+#import "NSEvent+Bedrock.h"
+#import "NSFileManager+Bedrock.h"
+#import "NSImage+Bedrock.h"
+#import "NSTask+Bedrock.h"
+#import "NSTextField+Bedrock.h"
+#import "NSUserNotification+Bedrock.h"
+#import "NSView+Bedrock.h"
+#import "NSWindow+Bedrock.h"
+
 #define PBLoc(key) NSLocalizedString(key, nil)
 #define PBLocalizedString(key, comment) NSLocalizedStringFromTableInBundle(key, @"pixelbleed", [NSBundle bundleForClass: [PBDummyClass class]], comment)
 
