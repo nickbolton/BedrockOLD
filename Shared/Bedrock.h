@@ -49,6 +49,11 @@
 
 #endif
 
+#define PB_WINDOW_ANIMATION_DURATION 0.25f
+#define PB_EASE_IN ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn])
+#define PB_EASE_OUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut])
+#define PB_EASE_INOUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut])
+
 #import "NSAlert+Bedrock.h"
 #import "NSAppleScript+Bedrock.h"
 #import "NSAttributedString+Bedrock.h"
