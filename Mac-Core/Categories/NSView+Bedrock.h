@@ -70,4 +70,6 @@ completionBlock:(void (^)(void))completionBlock;
 
 - (NSImage *)pngSnapshot;
 
+- (NSPoint)mouseLocationInLocalCoordinates;
+
 @end

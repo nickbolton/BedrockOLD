@@ -395,4 +395,14 @@ completionBlock:(void (^)(void))completionBlock {
     return [[NSImage alloc] initWithData:imageRep.TIFFRepresentation];
 }
 
+- (NSPoint)mouseLocationInLocalCoordinates {
+ 
+    NSPoint pointInWindow = [self.window mouseLocationOutsideOfEventStream];
+    NSPoint result = [self convertPointFromBase:pointInWindow];
+    result.x *= self.window.backingScaleFactor;
+    result.y *= self.window.backingScaleFactor;
+    
+    return result;
+}
+
 @end
