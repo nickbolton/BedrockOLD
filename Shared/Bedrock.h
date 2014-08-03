@@ -62,6 +62,7 @@
 #import "NSUserNotification+Bedrock.h"
 #import "NSView+Bedrock.h"
 #import "NSWindow+Bedrock.h"
+#import "PBAnimator.h"
 
 #define PBLoc(key) NSLocalizedString(key, nil)
 #define PBLocalizedString(key, comment) NSLocalizedStringFromTableInBundle(key, @"pixelbleed", [NSBundle bundleForClass: [PBDummyClass class]], comment)
