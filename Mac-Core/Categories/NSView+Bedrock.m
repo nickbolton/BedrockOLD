@@ -399,8 +399,6 @@ completionBlock:(void (^)(void))completionBlock {
  
     NSPoint pointInWindow = [self.window mouseLocationOutsideOfEventStream];
     NSPoint result = [self convertPointFromBase:pointInWindow];
-    result.x *= self.window.backingScaleFactor;
-    result.y *= self.window.backingScaleFactor;
     
     return result;
 }
