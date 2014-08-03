@@ -69,6 +69,17 @@
 #import "NSWindow+Bedrock.h"
 #import "PBAnimator.h"
 
+#import "PBClickableLabel.h"
+#import "PBMainWindow.h"
+#import "PBMiddleAlignedTextField.h"
+#import "PBMiddleAlignedTextFieldCell.h"
+#import "PBNotifyingButton.h"
+#import "PBShadowTextFieldCell.h"
+#import "PBStretchableBackgroundView.h"
+#import "PBStretchableImageView.h"
+#import "PBToggleImageView.h"
+#import "PPMainView.h"
+
 #define PBLoc(key) NSLocalizedString(key, nil)
 #define PBLocalizedString(key, comment) NSLocalizedStringFromTableInBundle(key, @"pixelbleed", [NSBundle bundleForClass: [PBDummyClass class]], comment)
 
