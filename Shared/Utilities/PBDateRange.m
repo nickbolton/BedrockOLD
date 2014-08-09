@@ -13,7 +13,6 @@
 
 @property (nonatomic) NSUInteger hashValue;
 @property (nonatomic) BOOL alignToDayBoundaries;
-@property (nonatomic, readwrite) NSArray *dateArray;
 
 @end
 
@@ -92,37 +91,6 @@
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@ - %@", _startDate, _endDate];
-}
-
-- (void)setStartDate:(NSDate *)startDate {
-    _startDate = startDate;
-    _dateArray = nil;
-}
-
-- (void)setEndDate:(NSDate *)endDate {
-    _endDate = endDate;
-    _dateArray = nil;
-}
-
-- (NSArray *)dateArray {
-
-    if (_dateArray == nil) {
-        
-        NSMutableArray *dates = [NSMutableArray array];
-        
-        NSInteger days = [self daysInRange];
-        NSDate *date;
-        
-        for (NSInteger i = 0; i < days; i++) {
-            
-            date = [[self.startDate dateByAddingDays:i] midnight];
-            [dates addObject:date];
-        }
-        
-        _dateArray = dates;
-    }
-    
-    return _dateArray;
 }
 
 - (BOOL)dateWithinRange:(NSDate *)date {
