@@ -29,6 +29,7 @@
 #import "NSNotification+Bedrock.h"
 #import "PBDateRange.h"
 #import "NSDate+Bedrock.h"
+#import "NSData+Bedrock.h"
 #import "NSCalendar+Bedrock.h"
 #import "NSDateComponents+Bedrock.h"
 #import "PBSwizzler.h"
