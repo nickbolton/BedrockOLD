@@ -39,7 +39,7 @@
 }
 
 - (void)commonInit {
-    _enabled = YES;
+    self.enabled = YES;
 
     [[NSNotificationCenter defaultCenter]
      addObserver:self
@@ -89,7 +89,7 @@
     
     _didPan = YES;
 
-    if (_enabled) {
+    if (self.isEnabled) {
 
         if (_dragging == NO) {
             [self mouseDown:nil];

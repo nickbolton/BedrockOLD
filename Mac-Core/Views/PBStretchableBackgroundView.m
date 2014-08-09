@@ -45,7 +45,7 @@
                          _vertical,
                          NSCompositeSourceAtop,
                          1.0f,
-                         _flipped);
+                         self.isFlipped);
 
     [super drawRect:dirtyRect];
 }

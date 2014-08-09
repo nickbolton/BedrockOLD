@@ -102,7 +102,7 @@ static NSTimeInterval const kPBPopoverAnimationDuration = .15f;
                         _bottomRightImage,
                         NSCompositeSourceAtop,
                         1.0f,
-                        _flipped);
+                        self.isFlipped);
 
     self.beakPosition.value = [self calculateBeakPosition];
 
@@ -115,7 +115,7 @@ static NSTimeInterval const kPBPopoverAnimationDuration = .15f;
 
         _beakCurrentPosition = xPos;
 
-        if (_flipped) {
+        if (self.isFlipped) {
 
             beakFrame = NSMakeRect(xPos,
                                    0.0f,

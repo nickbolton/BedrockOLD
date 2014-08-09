@@ -29,7 +29,7 @@
 
 - (void)commonInit {
     _vertical = NO;
-    _flipped = NO;
+    self.flipped = NO;
     _alpha = 1.0f;
 }
 
@@ -45,7 +45,7 @@
                          _vertical,
                          NSCompositeSourceOver,
                          _alpha,
-                         _flipped);
+                         self.isFlipped);
 
     [image unlockFocus];
 
