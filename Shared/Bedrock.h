@@ -52,6 +52,32 @@
 #define PB_EASE_OUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut])
 #define PB_EASE_INOUT ([CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut])
 
+#import "NSAlert+Bedrock.h"
+#import "NSAppleScript+Bedrock.h"
+#import "NSAttributedString+Bedrock.h"
+#import "NSButton+Bedrock.h"
+#import "NSColor+Bedrock.h"
+#import "NSEvent+Bedrock.h"
+#import "NSFileManager+Bedrock.h"
+#import "NSImage+Bedrock.h"
+#import "NSTask+Bedrock.h"
+#import "NSTextField+Bedrock.h"
+#import "NSUserNotification+Bedrock.h"
+#import "NSView+Bedrock.h"
+#import "NSWindow+Bedrock.h"
+#import "PBAnimator.h"
+
+#import "PBClickableLabel.h"
+#import "PBMainWindow.h"
+#import "PBMiddleAlignedTextField.h"
+#import "PBMiddleAlignedTextFieldCell.h"
+#import "PBNotifyingButton.h"
+#import "PBShadowTextFieldCell.h"
+#import "PBStretchableBackgroundView.h"
+#import "PBStretchableImageView.h"
+#import "PBToggleImageView.h"
+#import "PPMainView.h"
+
 #endif
 
 #define PBLoc(key) NSLocalizedString(key, nil)
