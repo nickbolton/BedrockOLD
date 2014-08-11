@@ -165,7 +165,7 @@
 
 - (void)updateHightlightedState:(BOOL)animated {
 
-    if (self.item != nil) {
+    if (self.item != nil && self.item.isStaticItem == NO) {
         
         if (self.item.isEnabled) {
             

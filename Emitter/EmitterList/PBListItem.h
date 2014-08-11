@@ -62,6 +62,7 @@ extern CGFloat const kPBListActionRowHeight;
 @property (nonatomic, getter = isSelected) BOOL selected;
 @property (nonatomic, getter = isDeselectable) BOOL deselectable;
 @property (nonatomic, getter = isDeletable) BOOL deletable;
+@property (nonatomic, getter = isStaticItem) BOOL staticItem;
 @property (nonatomic) CGFloat rowHeight;
 @property (nonatomic, readonly) CGFloat rowHeightSetting;
 @property (nonatomic, strong) NSString *cellID;

@@ -1350,6 +1350,10 @@ didRemoveRowCompletion:(void(^)(void))completionBlock {
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
     if (item != nil) {
+        
+        if (item.isStaticItem) {
+            return nil;
+        }
 
         if (item.isSelected) {
 
