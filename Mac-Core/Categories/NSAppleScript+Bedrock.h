@@ -15,6 +15,9 @@
 + (NSAppleEventDescriptor *)runScriptWithFile:(NSString *)scriptFile;
 + (NSAppleEventDescriptor *)runScriptWithFile:(NSString *)scriptFile
                             tokenReplacements:(NSDictionary *)tokenReplacements;
++ (NSAppleEventDescriptor *)runScriptWithFile:(NSString *)scriptFile
+                            tokenReplacements:(NSDictionary *)tokenReplacements
+                                        error:(NSDictionary **)errorDict;
 + (NSString *)runScriptWithStringResult:(NSString *)scriptFile;
 + (NSNumber *)runScriptWithNumberResult:(NSString *)scriptFile;
 

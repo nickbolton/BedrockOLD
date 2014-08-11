@@ -14,11 +14,12 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
 @implementation NSAppleScript (Bedrock)
 
 + (NSAppleEventDescriptor *)runScript:(NSString*)scriptText {
-    NSDictionary *error = nil;
+
+    NSError *error = nil;
     NSAppleEventDescriptor *appleEventDescriptor =
     [self runScript:scriptText error:&error];
     if (error != nil) {
-        NSLog(@"error: %@", error);
+        PBLog(@"error: %@", error);
     }
     return appleEventDescriptor;
 }
@@ -40,7 +41,7 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
      pathForResource:scriptName ofType:extension];
 
     if (scriptPath == nil) {
-        NSLog(@"No script exists with name: %@", scriptFile);
+        PBLog(@"No script exists with name: %@", scriptFile);
         return nil;
     }
 
@@ -53,7 +54,7 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
      error:&error];
 
     if (error != nil) {
-        NSLog(@"Failed loading script file: %@ - %@", scriptFile, scriptPath);
+        PBLog(@"Failed loading script file: %@ - %@", scriptFile, scriptPath);
         return nil;
     }
 
@@ -62,6 +63,16 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
 
 + (NSAppleEventDescriptor *)runScriptWithFile:(NSString *)scriptFile
                             tokenReplacements:(NSDictionary *)tokenReplacements {
+    return
+    [self
+     runScriptWithFile:scriptFile
+     tokenReplacements:tokenReplacements
+     error:NULL];
+}
+
++ (NSAppleEventDescriptor *)runScriptWithFile:(NSString *)scriptFile
+                            tokenReplacements:(NSDictionary *)tokenReplacements
+                                        error:(NSDictionary **)errorDict {
 
     NSString *extension = [scriptFile pathExtension];
     NSString *scriptName = [scriptFile stringByDeletingPathExtension];
@@ -71,7 +82,7 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
      pathForResource:scriptName ofType:extension];
 
     if (scriptPath == nil) {
-        NSLog(@"No script exists with name: %@", scriptFile);
+        PBLog(@"No script exists with name: %@", scriptFile);
         return nil;
     }
 
@@ -84,7 +95,12 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
      error:&error];
 
     if (error != nil) {
-        NSLog(@"Failed loading script file: %@ - %@", scriptFile, scriptPath);
+        
+        if (errorDict) {
+            *errorDict = @{@"error" : error};
+        }
+        
+        PBLog(@"Failed loading script file: %@ - %@", scriptFile, scriptPath);
         return nil;
     }
 
@@ -94,9 +110,10 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
          stringByReplacingOccurrencesOfString:token
          withString:[tokenReplacements objectForKey:token]];
     }
-
-    return [self runScript:scriptText];
-
+    
+    error = nil;
+    
+    return [self runScript:scriptText error:errorDict];
 }
 
 + (NSString *)runScriptWithStringResult:(NSString *)scriptFile {
@@ -130,3 +147,4 @@ DescType const PBAppleScriptLongDescriptorType = 1819242087;
 }
 
 @end
+
