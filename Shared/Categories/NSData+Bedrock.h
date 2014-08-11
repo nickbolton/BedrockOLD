@@ -1,5 +1,5 @@
 //
-//  NSData+Utilities.h
+//  NSData+Bedrock.h
 //  Bedrock
 //
 //  Created by Nick Bolton on 8/2/14.
