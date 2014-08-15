@@ -398,7 +398,7 @@ completionBlock:(void (^)(void))completionBlock {
 - (NSPoint)mouseLocationInLocalCoordinates {
  
     NSPoint pointInWindow = [self.window mouseLocationOutsideOfEventStream];
-    NSPoint result = [self convertPointFromBase:pointInWindow];
+    NSPoint result = [self convertPoint:pointInWindow fromView:nil];
     
     return result;
 }
