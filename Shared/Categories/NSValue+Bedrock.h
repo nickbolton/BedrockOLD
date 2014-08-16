@@ -10,7 +10,12 @@
 
 @interface NSValue (Bedrock)
 
+#if TARGET_OS_IPHONE
++ (NSValue *)valueWithEdgeInsets:(UIEdgeInsets)insets;
+- (UIEdgeInsets)edgeInsetsValue;
+#else
 + (NSValue *)valueWithEdgeInsets:(NSEdgeInsets)insets;
 - (NSEdgeInsets)edgeInsetsValue;
+#endif
 
 @end

@@ -10,6 +10,17 @@
 
 @implementation NSValue (Bedrock)
 
+#if TARGET_OS_IPHONE
++ (NSValue *)valueWithEdgeInsets:(UIEdgeInsets)insets {
+    return [NSValue valueWithBytes:&insets objCType:@encode(UIEdgeInsets)];
+}
+
+- (UIEdgeInsets)edgeInsetsValue {
+    UIEdgeInsets insets = UIEdgeInsetsZero;
+    [self getValue:&insets];
+    return insets;
+}
+#else
 + (NSValue *)valueWithEdgeInsets:(NSEdgeInsets)insets {
     return [NSValue valueWithBytes:&insets objCType:@encode(NSEdgeInsets)];
 }
@@ -19,5 +30,6 @@
     [self getValue:&insets];
     return insets;
 }
+#endif
 
 @end

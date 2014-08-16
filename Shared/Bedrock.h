@@ -30,6 +30,7 @@
 #import "PBDateRange.h"
 #import "NSDate+Bedrock.h"
 #import "NSCalendar+Bedrock.h"
+#import "NSValue+Bedrock.h"
 #import "NSDateComponents+Bedrock.h"
 #import "PBSwizzler.h"
 
@@ -58,7 +59,6 @@
 #import "NSButton+Bedrock.h"
 #import "NSColor+Bedrock.h"
 #import "NSEvent+Bedrock.h"
-#import "NSValue+Bedrock.h"
 #import "NSFileManager+Bedrock.h"
 #import "NSImage+Bedrock.h"
 #import "NSTask+Bedrock.h"
