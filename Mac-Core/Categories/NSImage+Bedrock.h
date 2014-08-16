@@ -20,4 +20,6 @@
                             vertical:(BOOL)vertical
                                alpha:(CGFloat)alpha;
 
+- (BOOL)isEqualToImage:(NSImage *)image;
+
 @end

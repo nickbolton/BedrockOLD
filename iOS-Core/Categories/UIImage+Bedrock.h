@@ -20,5 +20,6 @@
                        maskImage:(UIImage *)maskImage;
 
 - (UIImage *)scaledToSize:(CGSize)size;
+- (BOOL)isEqualToImage:(UIImage *)image;
 
 @end

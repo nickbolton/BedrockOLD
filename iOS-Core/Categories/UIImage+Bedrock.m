@@ -289,4 +289,11 @@
     return newImage;
 }
 
+- (BOOL)isEqualToImage:(UIImage *)image {
+    
+    NSData *selfData = UIImagePNGRepresentation(self);
+    NSData *imageData = UIImagePNGRepresentation(image);
+    return [selfData isEqualToData:imageData];
+}
+
 @end

@@ -11,17 +11,22 @@
 
 @implementation NSImage (Bedrock)
 
+- (BOOL)isEqualToImage:(NSImage *)image {
+    
+    NSData *selfData = [self pngData];
+    NSData *imageData = [image pngData];
+    return [selfData isEqualToData:imageData];
+}
+
 - (NSData *)pngData {
 
     [self lockFocus];
-
-    NSBitmapImageRep* bitmapRep =
-    [[NSBitmapImageRep alloc]
-     initWithFocusedViewRect:NSMakeRect(0, 0, self.size.width, self.size.height)];
-
+    
+    CGImageRef cgRef = [self CGImageForProposedRect:NULL context:nil hints:nil];
+    NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+    [newRep setSize:[self size]];   // if you want the same resolution
     [self unlockFocus];
-
-    return [bitmapRep representationUsingType:NSPNGFileType properties:nil];
+    return [newRep representationUsingType:NSPNGFileType properties:nil];
 }
 
 
