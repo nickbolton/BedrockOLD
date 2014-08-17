@@ -296,4 +296,8 @@
     return [selfData isEqualToData:imageData];
 }
 
+- (NSData *)pngData {
+    return UIImagePNGRepresentation(self);
+}
+
 @end

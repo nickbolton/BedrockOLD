@@ -21,5 +21,6 @@
 
 - (UIImage *)scaledToSize:(CGSize)size;
 - (BOOL)isEqualToImage:(UIImage *)image;
+- (NSData *)pngData;
 
 @end
