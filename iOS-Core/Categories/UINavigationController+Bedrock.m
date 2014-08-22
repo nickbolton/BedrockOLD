@@ -51,15 +51,6 @@
     [self popToViewController:viewController animated:animated];
 }
 
-- (void)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    
-    NSAssert(viewController != nil, @"No view controller given");
-
-    if (viewController != nil) {
-        [self popToViewController:viewController animated:animated];
-    }
-}
-
 - (UIViewController *)viewControllerOfType:(Class)type {
     
     __block UIViewController *viewController = nil;
