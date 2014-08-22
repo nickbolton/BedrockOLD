@@ -21,5 +21,7 @@
 
 
 - (void)popToViewControllerOfType:(Class)type animated:(BOOL)animated;
+- (void)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
+- (UIViewController *)viewControllerOfType:(Class)type;
 
 @end
