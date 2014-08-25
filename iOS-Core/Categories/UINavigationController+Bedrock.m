@@ -42,7 +42,7 @@
 
 - (void)popToViewControllerOfType:(Class)type animated:(BOOL)animated {
     
-    UIViewController *viewController = [self viewControllerOfType:type];
+    UIViewController *viewController = [self viewControllerOfType:type index:NULL];
     
     NSAssert(viewController != nil,
              @"No view controller exists of type %@",
@@ -51,7 +51,7 @@
     [self popToViewController:viewController animated:animated];
 }
 
-- (UIViewController *)viewControllerOfType:(Class)type {
+- (UIViewController *)viewControllerOfType:(Class)type index:(NSUInteger *)indexOut {
     
     __block UIViewController *viewController = nil;
     
@@ -61,6 +61,9 @@
          
          if ([obj isKindOfClass:type]) {
              viewController = obj;
+             if (indexOut) {
+                 *indexOut = idx;
+             }
              *stop = YES;
          }
      }];

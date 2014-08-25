@@ -21,6 +21,6 @@
 
 
 - (void)popToViewControllerOfType:(Class)type animated:(BOOL)animated;
-- (UIViewController *)viewControllerOfType:(Class)type;
+- (UIViewController *)viewControllerOfType:(Class)type index:(NSUInteger *)indexOut;
 
 @end
