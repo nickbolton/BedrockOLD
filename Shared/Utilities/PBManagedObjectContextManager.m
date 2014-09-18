@@ -62,7 +62,7 @@
                                          error:&error]) {
 
         } else {
-            NSLog(@"Unable to find or create application support directory:\n%@", error);
+            PBLog(@"Unable to find or create application support directory:\n%@", error);
             url = nil;
         }
     }
@@ -95,7 +95,7 @@
 
     NSManagedObjectModel *model = [self managedObjectModel];
     if (model == nil) {
-        NSLog(@"%@:%@ No model to generate a store from", [self class], NSStringFromSelector(_cmd));
+        PBLog(@"%@:%@ No model to generate a store from", [self class], NSStringFromSelector(_cmd));
         return nil;
     }
 
@@ -110,7 +110,7 @@
                                                                                options:nil
                                                                                  error:&error];
     if (store == nil) {
-        NSLog(@"Failed to create PBRemoteMessage internal persistence store: %@", error);
+        PBLog(@"Failed to create PBRemoteMessage internal persistence store: %@", error);
     }
 
     return _persistentStoreCoordinator;
@@ -129,7 +129,7 @@
         [dict setValue:@"Failed to initialize the store" forKey:NSLocalizedDescriptionKey];
         [dict setValue:@"There was an error building up the data file." forKey:NSLocalizedFailureReasonErrorKey];
         NSError *error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        NSLog(@"%@", error);
+        PBLog(@"%@", error);
         return nil;
     }
 
