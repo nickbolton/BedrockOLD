@@ -242,6 +242,7 @@ static NSInteger const kPBListDefaultTag = 105;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tableView.layoutMargins = UIEdgeInsetsZero;
     
     if (self.separatorColor != nil) {
         self.tableView.separatorColor = self.separatorColor;
@@ -1430,6 +1431,10 @@ forRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
 
     PBListItem *item = [self itemAtIndexPath:indexPath];
 
