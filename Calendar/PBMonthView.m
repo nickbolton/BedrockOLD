@@ -10,12 +10,11 @@
 #import "PBCalendarView.h"
 
 static CGFloat const kPBMonthViewSeparatorLeftInset = 15.0f;
-static CGFloat const kPBMonthViewItemWidth = 44.0f;
+//static CGFloat const kPBMonthViewItemWidth = 44.0f;
+static CGFloat const kPBMonthViewItemMargin= .5f;
 static CGFloat const kPBMonthViewItemHeight = 36.0f;
 static CGFloat const kPBMonthViewTopSpace = 42.0f;
 static CGFloat const kPBMonthViewBottomSpace = 7.5f;
-static CGFloat const kPBMonthViewWidthLeadingPadding = 2.5f;
-static CGFloat const kPBMonthViewWidthTrailingPadding = 2.5f;
 static CGFloat const kPBMonthViewEndPointRadius = 16.0f;
 static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
@@ -40,8 +39,9 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 @property (nonatomic, strong) UIColor *withinRangeBackgroundColor;
 @property (nonatomic, readwrite) NSDateComponents *monthComponents;
 @property (nonatomic, readwrite) NSInteger daysInMonth;
-@property (nonatomic) CGRect startingMarkerRect;
-@property (nonatomic) CGRect endingMarkerRect;
+@property (nonatomic) CGPoint startingMarkerPoint;
+@property (nonatomic) CGPoint endingMarkerPoint;
+@property (nonatomic, readonly) CGFloat itemWidth;
 
 @end
 
@@ -293,6 +293,10 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 #pragma mark - Sizing
 
+- (CGFloat)itemWidth {
+    return (CGRectGetWidth(self.frame) - (2.0f * kPBMonthViewItemMargin)) / [NSCalendar numberOfDaysInWeek];
+}
+
 - (void)setFrame:(CGRect)frame
 {
 	[super setFrame:frame];
@@ -318,20 +322,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 - (CGFloat)topOffset
 {
 	return self._topLeftPoint.y;
-}
-
-+ (CGFloat)topOffsetForWidth:(CGFloat)width month:(NSDate *)month
-{
-	CGFloat offset = 0.0;
-
-	CGFloat dayHeight = roundf((width - kPBMonthViewItemWidth) / [NSCalendar numberOfDaysInWeek]);
-
-	NSInteger firstDayOffset = month.firstDayOfMonth.weekday - [[NSCalendar calendarForCurrentThread] firstWeekday];
-	if (firstDayOffset != 0) {
-		offset -= dayHeight;
-	}
-
-	return offset;
 }
 
 + (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month {
@@ -376,7 +366,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
 - (CGPoint)_bottomRightPoint
 {
-	CGPoint point = CGPointMake(self.bounds.size.width-kPBMonthViewWidthTrailingPadding, self.bounds.size.height);
+	CGPoint point = CGPointMake(self.bounds.size.width-kPBMonthViewItemMargin, self.bounds.size.height);
 	NSInteger numberOfDays = [NSCalendar numberOfDaysInWeek];
 	NSInteger lastDayOffset = [self _lastDayOffset];
 	if (lastDayOffset != numberOfDays - 1) {
@@ -468,12 +458,14 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         lastDay = [day copy];
         lastDayRect = dayRect;
 
-        CGFloat xMargins = padding + (kPBMonthViewItemWidth - CGRectGetWidth(dayRect)) / 2.0f;
+        CGFloat xMargins = kPBMonthViewItemMargin;
         CGFloat yMargins = padding + (kPBMonthViewItemHeight - CGRectGetHeight(dayRect)) / 2.0f;
 
+        CGFloat widthDelta = self.itemWidth - CGRectGetWidth(dayRect);
+
         CGRect expandedRect = dayRect;
-        expandedRect.origin.x -= xMargins;
-        expandedRect.size.width += xMargins * 2.0f;
+        expandedRect.origin.x -= xMargins + widthDelta / 2.0f;
+        expandedRect.size.width = self.itemWidth;
         expandedRect.origin.y -= yMargins;
         expandedRect.size.height += yMargins * 2.0f;
 
@@ -514,15 +506,17 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 
         CGFloat xDelta = point.x - midpoint.x;
         CGFloat yDelta = point.y - midpoint.y;
+        
+        NSLog(@"yDelta: %f", yDelta);
 
-        CGFloat distanceToFirstDay = (xDelta * xDelta) + (yDelta * yDelta);
+        CGFloat distanceToFirstDay = fabs(yDelta);
 
         midpoint = [self midpointOfRect:lastDayRect];
 
         xDelta = point.x - midpoint.x;
         yDelta = point.y - midpoint.y;
 
-        CGFloat distanceToLastDay = (xDelta * xDelta) + (yDelta * yDelta);
+        CGFloat distanceToLastDay = fabs(yDelta);
 
         if (distanceToFirstDay <= distanceToLastDay) {
 
@@ -540,11 +534,11 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 #pragma mark - End Points
 
 - (CGPoint)pointForStartingMarkerView {
-    return self.startingMarkerRect.origin;
+    return self.startingMarkerPoint;
 }
 
 - (CGPoint)pointForEndingMarkerView {
-    return self.endingMarkerRect.origin;
+    return self.endingMarkerPoint;
 }
 
 - (BOOL)isWeekday:(NSDateComponents *)day {
@@ -614,11 +608,11 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 - (BOOL)isPoint:(CGPoint)point inColumn:(NSInteger)column {
 
     CGFloat diameter = kPBMonthViewEndPointRadius * 2.0f;
-    CGFloat leftSpace = (kPBMonthViewItemWidth - diameter) / 2.0f;
+    CGFloat leftSpace = (self.itemWidth - diameter) / 2.0f;
 
     CGRect dayRect;
-	dayRect.origin.x = column * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
-	dayRect.size = CGSizeMake(diameter, diameter);
+	dayRect.origin.x = kPBMonthViewItemMargin + (column * self.itemWidth) + leftSpace;
+	dayRect.size = CGSizeMake(self.itemWidth, diameter);
 
     return point.x >= CGRectGetMinX(dayRect) && point.x <= CGRectGetMaxX(dayRect);
 }
@@ -629,7 +623,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
     CGFloat diameter = kPBMonthViewEndPointRadius * 2.0f;
 
     CGFloat topSpace = (kPBMonthViewItemHeight - diameter) / 2.0f;
-    CGFloat leftSpace = (kPBMonthViewItemWidth - diameter) / 2.0f;
+    CGFloat leftSpace = (self.itemWidth - diameter) / 2.0f;
 
 	NSRange weeks = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSWeekCalendarUnit inUnit:NSMonthCalendarUnit forDate:self.month];
 	NSRange days = [[NSCalendar calendarForCurrentThread] rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit forDate:self.month];
@@ -644,23 +638,24 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         weeks = NSMakeRange(weeks.location-1, weeks.length+1);
         firstDayOffset = 7 + firstDayOffset;
     }
-	dayRect.origin.x = firstDayOffset * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
+	dayRect.origin.x = kPBMonthViewItemMargin + (firstDayOffset * self.itemWidth) + leftSpace;
 	dayRect.size = CGSizeMake(diameter, diameter);
 	BOOL stop = NO;
-
-    CGFloat lastDayOfWeekXPos =
-    ([NSCalendar numberOfDaysInWeek]-1) * kPBMonthViewItemWidth + kPBMonthViewWidthLeadingPadding + leftSpace;
+    
+    NSInteger column = firstDayOffset;
 
 	for (NSInteger week = 0; week < weeks.length && !stop; week++) {
 		dayRect.origin.y = week * kPBMonthViewItemHeight + kPBMonthViewTopSpace + topSpace;
 
-		while (dayRect.origin.x <= lastDayOfWeekXPos && day.day < days.location + days.length && !stop) {
+		while (column < [NSCalendar numberOfDaysInWeek] && day.day < days.location + days.length && !stop) {
 			dayBlock(day, dayRect, &stop);
-			dayRect.origin.x += kPBMonthViewItemWidth;
+			dayRect.origin.x += self.itemWidth;
 			day.day++;
+            column++;
 		}
 
-		dayRect.origin.x = kPBMonthViewWidthLeadingPadding + leftSpace;
+		dayRect.origin.x = kPBMonthViewItemMargin + leftSpace;
+        column = 0.0f;
 	}
 }
 
@@ -715,8 +710,8 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
 	NSDateComponents *today = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:[NSDate date]];
 	NSDateComponents *month = [[NSCalendar calendarForCurrentThread] components:NSYearCalendarUnit | NSMonthCalendarUnit fromDate:self.month];
 
-    self.startingMarkerRect = CGRectZero;
-    self.endingMarkerRect = CGRectZero;
+    self.startingMarkerPoint = CGPointZero;
+    self.endingMarkerPoint = CGPointZero;
 
 	[self _enumerateDays:^(NSDateComponents *day, CGRect dayRect, BOOL *stop) {
 		CGContextSaveGState(context);
@@ -728,12 +723,16 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         BOOL isStartingDay = [self isStartingDay:day];
         BOOL isEndingDay = [self isEndingDay:day];
 
+        CGPoint endPointOrigin = dayRect.origin;
+        endPointOrigin.x -= CGRectGetWidth(dayRect) / 2.0f;
+        endPointOrigin.y -= CGRectGetHeight(dayRect) / 2.0f;
+
         if (isStartingDay) {
-            self.startingMarkerRect = dayRect;
+            self.startingMarkerPoint = endPointOrigin;
         }
 
         if (isEndingDay) {
-            self.endingMarkerRect = dayRect;
+            self.endingMarkerPoint = endPointOrigin;
         }
 
         BOOL showEndPoint =
@@ -770,7 +769,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
             CGRect fillRect = dayRect;
 
             CGFloat margins =
-            (kPBMonthViewItemWidth - CGRectGetWidth(dayRect)) / 2.0f;
+            (self.itemWidth - CGRectGetWidth(dayRect)) / 2.0f;
 
             CGPoint dayRectMidpoint = [self midpointOfRect:dayRect];
 
@@ -838,7 +837,7 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
                 if ([self isPoint:dayRectMidpoint inColumn:0] && day.day != 1) {
                     
                     fillRect.origin.x = 0.0f;
-                    fillRect.size.width += kPBMonthViewWidthLeadingPadding;
+                    fillRect.size.width += kPBMonthViewItemMargin;
                 }
             }
 

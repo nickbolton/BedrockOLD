@@ -27,7 +27,6 @@
 @property (nonatomic, strong) UIColor *separatorColor;
 
 - (CGFloat)topOffset;
-+ (CGFloat)topOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 + (CGFloat)verticalOffsetForWidth:(CGFloat)width month:(NSDate *)month;
 
 - (NSDateComponents *)dayAtPoint:(CGPoint)point;
