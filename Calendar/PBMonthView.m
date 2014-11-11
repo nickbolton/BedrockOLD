@@ -507,8 +507,6 @@ static CGFloat const kPBMonthViewDayTextTopSpace = 6.0f;
         CGFloat xDelta = point.x - midpoint.x;
         CGFloat yDelta = point.y - midpoint.y;
         
-        NSLog(@"yDelta: %f", yDelta);
-
         CGFloat distanceToFirstDay = fabs(yDelta);
 
         midpoint = [self midpointOfRect:lastDayRect];
