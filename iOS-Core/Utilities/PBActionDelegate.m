@@ -96,4 +96,22 @@ didDismissWithButtonIndex:(NSInteger)buttonIndex {
     [self performSelectorForButtonIndex:buttonIndex];
 }
 
+#pragma mark - UIActionSheetDelegate
+
+- (void)willPresentActionSheet:(UIActionSheet *)actionSheet {
+    
+    if ([self.delegate respondsToSelector:@selector(willPresentActionSheet:)]) {
+        [self.delegate willPresentActionSheet:actionSheet];
+    }
+}
+
+#pragma mark - UIAlertViewDelegate
+
+- (void)willPresentAlertView:(UIAlertView *)alertView {
+    
+    if ([self.delegate respondsToSelector:@selector(willPresentAlertView:)]) {
+        [self.delegate willPresentAlertView:alertView];
+    }
+}
+
 @end

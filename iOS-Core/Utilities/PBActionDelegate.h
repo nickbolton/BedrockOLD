@@ -10,6 +10,8 @@
 
 @interface PBActionDelegate : NSObject <UIActionSheetDelegate, UIAlertViewDelegate>
 
+@property (nonatomic, weak) id delegate;
+
 - (void)addTarget:(id)target
            action:(SEL)action
       userContext:(id)userContext
