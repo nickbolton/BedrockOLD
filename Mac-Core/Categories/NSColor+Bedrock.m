@@ -60,7 +60,7 @@
     CGFloat blue;
     CGFloat green;
 
-    [self getRGBComponents:&red green:&green blue:&blue alpha:&alpha];
+    [self getRGBComponents:&red green:&green blue:&blue alpha:NULL];
 
     return
     [NSColor
